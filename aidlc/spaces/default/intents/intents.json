@@ -1,0 +1,10 @@
+[
+  {
+    "uuid": "01a11fed-d78f-7c00-b380-339fd69eba7c",
+    "slug": "hf-airgap-cli",
+    "dirName": "261009-hf-airgap-cli",
+    "scope": "security-patch",
+    "status": "in-flight",
+    "request": "7cd3faef"
+  }
+]

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "modelhub"
+version = "0.1.0"
+description = "Download Hugging Face repos into airgap-transferable bundles and restore them on-prem"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["typer>=0.12", "huggingface_hub>=0.24"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5"]
+
+[project.scripts]
+modelhub = "modelhub.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/modelhub"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["typer.Option", "typer.Argument"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
