@@ -87,6 +87,7 @@ def test_an_unknown_build_tool_is_refused():
         load_build_module().command_for("magic", Path("out"))
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="the fake program is a #! script")
 def test_the_smoke_check_runs_the_file_with_a_scrubbed_environment(tmp_path):
     build = load_build_module()
     script = tmp_path / "fake-program"

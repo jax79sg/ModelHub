@@ -3,17 +3,18 @@ on: workflow_dispatch
 jobs:
   win:
     runs-on: windows-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install -e ".[dev]"
-      - run: pytest tests/test_packaging_defs.py tests/test_portable_names.py -q --tb=short -p no:cacheprovider
+      - run: |
+          foreach ($f in (Get-ChildItem tests/test_*.py | Sort-Object Name)) {
+            $before = (Get-PSDrive C).Free / 1GB
+            python -m pytest $f.FullName -q --tb=line -p no:cacheprovider --timeout=200 2>&1 | Select-Object -Last 3
+            $after = (Get-PSDrive C).Free / 1GB
+            "{0}: free GB before {1:N1} after {2:N1}" -f $f.Name, $before, $after
+          }
         continue-on-error: true
-      - run: pytest tests/test_scale.py -q --tb=short -p no:cacheprovider --timeout=120 -k "999999 or ten_thousand"
-        continue-on-error: true
-        env:
-          PYTHONUNBUFFERED: "1"
-      - run: Get-PSDrive C | Format-Table

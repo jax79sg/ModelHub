@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 from conftest import FakeHub
 
@@ -38,6 +40,7 @@ def hub_with_awkward_names():
     return hub
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="a Windows disk cannot hold 'a:b.txt'")
 def test_pull_on_linux_warns_about_names_windows_cannot_hold_but_keeps_them(tmp_path, monkeypatch):
     monkeypatch.setattr(fsutil, "IS_WINDOWS", False)
     result = pull.pull_model(hub_with_awkward_names(), "org/tiny", tmp_path, selection={"all"})
