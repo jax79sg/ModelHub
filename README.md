@@ -3,7 +3,7 @@
 > [!NOTE]
 > **About this project.** This is **jax79sg**'s means of learning and understanding the challenges of building software with a coding agent. **Much of this entire repository — the code, the tests and the documentation — was made with [Claude Code](https://claude.com/claude-code), using Anthropic's Claude Sonnet model.** The [`aidlc/`](aidlc/) folder keeps the trail: what was asked, what was decided and what was built, stage by stage.
 >
-> **How it was checked.** The tool is built behind automated tests (343 pass on a Mac; the checks on Linux and Windows have not run on GitHub yet). **No security scanning has been switched on** and no one has reviewed it independently; the breakdown, and what this is *not*, is in [How this was reviewed and hardened](#how-this-was-reviewed-and-hardened).
+> **How it was checked.** The tool is built behind automated tests (345 pass on Linux, Windows and macOS in GitHub Actions). **No security scanning has been switched on** and no one has reviewed it independently; the breakdown, and what this is *not*, is in [How this was reviewed and hardened](#how-this-was-reviewed-and-hardened).
 
 [![CI](https://github.com/jax79sg/ModelHub/actions/workflows/ci.yml/badge.svg)](https://github.com/jax79sg/ModelHub/actions/workflows/ci.yml)
 [![Release](https://github.com/jax79sg/ModelHub/actions/workflows/release.yml/badge.svg)](https://github.com/jax79sg/ModelHub/actions/workflows/release.yml)
@@ -22,7 +22,7 @@ Written down so a reader can judge it, including the parts that are not flatteri
 **Reviewed**
 
 - **Approval gates, on the record.** The project follows a written workflow (AI-DLC): the intent, feasibility, requirements, contracts, non-functional requirements, code-generation plan, test instructions and CI plan were each written first and approved by jax79sg before the next step. Every request, answer and approval is logged in [`aidlc/spaces/default/intents/261009-hf-airgap-cli/audit/`](aidlc/spaces/default/intents/261009-hf-airgap-cli/audit/) (about 3,800 lines). Automated reviewer agents were turned off by jax79sg's instruction ("stop using sub-agents"), so the reviews were done by the same session that wrote the work.
-- **Tests: 343** run without the internet, plus 6 that use the real Hugging Face Hub (run on request with `pytest -m network`). They were written before the code they test (the team's test-first practice). They include: a flipped byte in every kind of piece, killing the tool at every write point and running it again, memory use on a 1 GB file, a 10,000-folder store listed in under 5 seconds, 999,999 pieces accepted and one more refused, and the air-gapped commands run with the network blocked.
+- **Tests: 345** run without the internet, plus 6 that use the real Hugging Face Hub (run on request with `pytest -m network`). They were written before the code they test (the team's test-first practice). They include: a flipped byte in every kind of piece, killing the tool at every write point and running it again, memory use on a 1 GB file, a 10,000-folder store listed in under 5 seconds, 999,999 pieces accepted and one more refused, and the air-gapped commands run with the network blocked.
 - **Bugs found by running it**, not by reading it: a damaged manifest crashed `verify`; stopping `unpack` early left stale pointers; a README with Windows line endings lost them; a packed program started helper processes wrongly. Each now has a test.
 - **Measured download speed:** 0.94 of the connection's best speed on a 1 GB file (target 0.8), by hand with `tools/benchmark_download.py`. A first run reported 6.9 because the measuring method was wrong; it was fixed and re-run. This is one run on one connection.
 - **Every requirement traced to code or a test:** [`traceability.json`](aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/code-generation/traceability.json) maps 112 requirement IDs to a file, and a check confirms each file exists. That shows a test exists, not that the test is good.
@@ -38,7 +38,7 @@ Written down so a reader can judge it, including the parts that are not flatteri
 **What this is not**
 
 - It has had **no independent security review or penetration test**. No dependency or code scanning, secret scanning or Dependabot is switched on yet, and the CI plan did not include a dependency scan.
-- **The CI has not run on GitHub yet.** The workflow files are tested only as text; the Linux, Windows and macOS test runs, the old-Linux build and the release job are unproven until the first run. The Linux file has not been tried on RHEL 8 or Ubuntu 20.04, and the Windows file has not been built.
+- **The CI first ran on 10 October 2026 and failed on Windows**: a real bug (plain file names refused as escaping their folder, when Windows spelled the folder differently) and several tests that assumed Linux or macOS behaviour. These are fixed and the checks now pass on Linux, Windows and macOS with Python 3.10 and 3.12. The Linux file was built in an AlmaLinux 8 container and started on Ubuntu 20.04; it has not been tried on a real RHEL 8 machine. Nothing has been released yet (no `v1.0.0` tag).
 - **Everything was committed straight to `main`**; there have been no pull requests yet. The GitHub settings that would require them are described in [`ci-config.md`](aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/ci-pipeline/ci-config.md) but not switched on.
 - Memory and size targets were checked at 1 GB and by calculation, not with a real 500 GB or 1 TB file.
 - It is a tool for moving **public** models only; private and gated models are refused. Treat it as a learning project.
@@ -203,7 +203,7 @@ Full instructions: [`aidlc/spaces/default/intents/261009-hf-airgap-cli/construct
 
 ```
 src/modelhub/          The package: commands and modules (see Architecture)
-tests/                 343 tests (+6 against the real Hub); conftest.py holds a fake Hugging Face
+tests/                 345 tests (+6 against the real Hub); conftest.py holds a fake Hugging Face
 packaging/             Program-file build, offline install pack, whole-workflow smoke script
 tools/                 benchmark_download.py — the manual download-speed check
 .github/workflows/     ci.yml (checks and builds) and release.yml (publish on a v* tag)
