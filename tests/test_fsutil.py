@@ -55,3 +55,32 @@ def test_git_blob_sha1_matches_git_definition(tmp_path):
     path = tmp_path / "f"
     path.write_bytes(b"hello\n")
     assert fsutil.git_blob_sha1(path) == "ce013625030ba8dba906f756967f9e9ca394464a"
+
+
+def test_safe_join_does_not_depend_on_how_the_system_spells_the_target(tmp_path, monkeypatch):
+    # Found on Windows: while several files were being written at once, resolving a new file's
+    # path sometimes gave the old short spelling of the folder (RUNNER~1) and a plain
+    # "config.json" was refused as escaping its folder.
+    real = fsutil.Path.resolve
+
+    def spelled_differently(self, *args, **kwargs):
+        resolved = real(self, *args, **kwargs)
+        if resolved.name == "config.json":
+            return resolved.parent.parent / "SHORT~1" / "config.json"
+        return resolved
+
+    monkeypatch.setattr(fsutil.Path, "resolve", spelled_differently)
+    assert fsutil.safe_join(tmp_path, "config.json").name == "config.json"
+
+
+def test_safe_join_refuses_a_link_inside_the_folder_that_leads_outside(tmp_path):
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    inside = tmp_path / "root"
+    inside.mkdir()
+    try:
+        (inside / "link").symlink_to(outside, target_is_directory=True)
+    except OSError:
+        pytest.skip("this system does not allow making links")
+    with pytest.raises(fsutil.UnsafePathError):
+        fsutil.safe_join(inside, "link/stolen.txt")

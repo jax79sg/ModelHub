@@ -151,10 +151,17 @@ def safe_join(root: Path | str, rel: str) -> Path:
     if ".." in normalized.split("/"):
         raise UnsafePathError(f"path escapes its folder: {rel!r}")
     base = Path(root).resolve()
-    target = (base / normalized).resolve()
-    if base != target and base not in target.parents:
-        raise UnsafePathError(f"path escapes its folder: {rel!r}")
-    return target
+    # The name has no "..", so only a link inside the folder could lead out of it. Look for links
+    # directly instead of resolving the new path a second time: on Windows that second answer can
+    # be spelled differently (8.3 short names) while files are being written at once.
+    current = base
+    for part in normalized.split("/"):
+        if part in ("", "."):
+            continue
+        current = current / part
+        if current.is_symlink() or getattr(os.path, "isjunction", lambda _: False)(current):
+            raise UnsafePathError(f"path escapes its folder: {rel!r}")
+    return base / normalized
 
 
 def free_bytes(path: Path | str) -> int:
