@@ -1,0 +1,24 @@
+name: diag
+on: workflow_dispatch
+jobs:
+  win:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - run: Get-PSDrive C,D | Format-Table
+        continue-on-error: true
+      - run: pytest tests/test_signing.py tests/test_bundle_split.py -x --tb=short -q -p no:cacheprovider
+        continue-on-error: true
+        env:
+          PYTHONUNBUFFERED: "1"
+      - run: pytest tests/test_list.py tests/test_logging.py tests/test_offline.py -x --tb=short -q -p no:cacheprovider
+        continue-on-error: true
+      - run: pytest tests/test_download.py tests/test_portable_names.py tests/test_packaging_defs.py -x --tb=short -q -p no:cacheprovider
+        continue-on-error: true
+      - run: Get-PSDrive C,D | Format-Table
+        continue-on-error: true
