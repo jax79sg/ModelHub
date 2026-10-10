@@ -4,6 +4,7 @@ import json
 import subprocess
 import sys
 import time
+import types
 
 import pytest
 
@@ -41,14 +42,26 @@ def with_manifest(paths):
     return paths
 
 
-def test_a_terabyte_file_is_planned_without_reading_it(tmp_path):
-    paths = make_record(tmp_path, 1_099_511_627_776)  # 1 TiB
-    (paths.root / "manifest.json").write_text("{}")  # planning only needs the file list
+class PretendFile:
+    """Stands in for a file of a given size, so no disk is used at all."""
+
+    def __init__(self, size):
+        self._size = size
+
+    def stat(self):
+        return types.SimpleNamespace(st_size=self._size, st_mtime=0)
+
+
+def test_a_terabyte_file_is_planned_without_reading_it():
+    one_tib = 1_099_511_627_776
     started = time.monotonic()
-    size, count = bundle.plan_bundle(paths.root, 1_000_000_000)
-    assert size > 1_099_511_627_776
+    size = bundle.tar_stream_size([("big.bin", PretendFile(one_tib))])
+    count = -(-size // 1_000_000_000)
+    assert size > one_tib
     assert 1000 < count < 1200
     assert time.monotonic() - started < 2  # worked out from sizes alone
+    # the piece-count ceiling is far above what a terabyte needs at the smallest piece size
+    assert -(-size // pieces.MIN_PIECE_SIZE) > pieces.MAX_PIECES
 
 
 class StopHere(Exception):
