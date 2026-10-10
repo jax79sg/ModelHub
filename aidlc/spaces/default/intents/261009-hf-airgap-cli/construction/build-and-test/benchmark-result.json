@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-10T02:04:16Z",
+  "model": "Qwen/Qwen2.5-0.5B",
+  "file": "model.safetensors",
+  "file_bytes": 999629043,
+  "seconds": 32.90838608297054,
+  "tool_rate_bytes_per_s": 30376118.733980972,
+  "link_rate_bytes_per_s": 32433573.189451437,
+  "ratio": 0.9365640522105771,
+  "target": 0.8,
+  "passed": true,
+  "platform": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python": "3.12.14"
+  }
+}

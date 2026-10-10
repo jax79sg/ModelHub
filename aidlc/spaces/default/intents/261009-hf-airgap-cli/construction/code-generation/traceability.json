@@ -1,0 +1,679 @@
+{
+  "stage": "code-generation",
+  "upstream_ids": [
+    "FR1.1",
+    "FR1.2",
+    "FR1.3",
+    "FR1.4",
+    "FR2.1",
+    "FR2.2",
+    "FR2.3",
+    "FR2.4",
+    "FR2.5",
+    "FR3.1",
+    "FR3.2",
+    "FR3.3",
+    "FR3.4",
+    "FR3.5",
+    "FR3.6",
+    "FR4.1",
+    "FR4.2",
+    "FR4.3",
+    "FR4.4",
+    "FR5.1",
+    "FR5.2",
+    "FR5.3",
+    "FR5.4",
+    "FR5.5",
+    "FR6.1",
+    "FR6.2",
+    "FR6.3",
+    "FR6.4",
+    "FR6.5",
+    "FR6.6",
+    "FR6.7",
+    "FR6.8",
+    "FR7.1",
+    "FR7.2",
+    "FR7.3",
+    "FR7.4",
+    "FR7.5",
+    "FR7.6",
+    "FR8.1",
+    "FR8.2",
+    "FR8.3",
+    "FR8.4",
+    "FR9.1",
+    "FR9.2",
+    "FR1",
+    "FR2",
+    "FR3",
+    "FR4",
+    "FR5",
+    "FR6",
+    "FR7",
+    "FR8",
+    "FR9",
+    "NFR1.1",
+    "NFR1.2",
+    "NFR1.3",
+    "NFR1.4",
+    "NFR1.5",
+    "NFR1.6",
+    "NFR1.7",
+    "NFR1.8",
+    "NFR1.9",
+    "NFR1.10",
+    "NFR1.11",
+    "NFR2.1",
+    "NFR2.2",
+    "NFR2.3",
+    "NFR2.4",
+    "NFR2.5",
+    "NFR2.6",
+    "NFR2.7",
+    "NFR2.8",
+    "NFR2.9",
+    "NFR2.10",
+    "NFR3.1",
+    "NFR3.2",
+    "NFR3.3",
+    "NFR3.4",
+    "NFR3.5",
+    "NFR3.6",
+    "NFR3.7",
+    "NFR3.8",
+    "NFR4.1",
+    "NFR4.2",
+    "NFR4.3",
+    "NFR4.4",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR6.1",
+    "NFR6.2",
+    "NFR6.3",
+    "NFR6.4",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR7.3",
+    "NFR7.4",
+    "NFR7.5",
+    "NFR7.6",
+    "NFR8.1",
+    "NFR8.2",
+    "NFR8.3",
+    "NFR8.4",
+    "NFR8.5",
+    "NFR1",
+    "NFR2",
+    "NFR3",
+    "NFR4",
+    "NFR5",
+    "NFR6",
+    "NFR7",
+    "NFR8"
+  ],
+  "coverage": [
+    {
+      "id": "FR1.1",
+      "status": "OK",
+      "target": "tests/test_cli.py"
+    },
+    {
+      "id": "FR1.2",
+      "status": "OK",
+      "target": "tests/test_pull_selection.py"
+    },
+    {
+      "id": "FR1.3",
+      "status": "OK",
+      "target": "tests/test_pull_metadata.py"
+    },
+    {
+      "id": "FR1.4",
+      "status": "OK",
+      "target": "tests/test_pull_selection.py"
+    },
+    {
+      "id": "FR2.1",
+      "status": "OK",
+      "target": "tests/test_filetypes.py"
+    },
+    {
+      "id": "FR2.2",
+      "status": "OK",
+      "target": "tests/test_pull_selection.py"
+    },
+    {
+      "id": "FR2.3",
+      "status": "OK",
+      "target": "tests/test_pull_selection.py"
+    },
+    {
+      "id": "FR2.4",
+      "status": "OK",
+      "target": "tests/test_pull_selection.py"
+    },
+    {
+      "id": "FR2.5",
+      "status": "OK",
+      "target": "tests/test_pull_selection.py"
+    },
+    {
+      "id": "FR3.1",
+      "status": "OK",
+      "target": "tests/test_pull_metadata.py"
+    },
+    {
+      "id": "FR3.2",
+      "status": "OK",
+      "target": "tests/test_summary.py"
+    },
+    {
+      "id": "FR3.3",
+      "status": "OK",
+      "target": "tests/test_pull_metadata.py"
+    },
+    {
+      "id": "FR3.4",
+      "status": "OK",
+      "target": "tests/test_pull_metadata.py"
+    },
+    {
+      "id": "FR3.5",
+      "status": "OK",
+      "target": "tests/test_record.py"
+    },
+    {
+      "id": "FR3.6",
+      "status": "OK",
+      "target": "tests/test_pull_metadata.py"
+    },
+    {
+      "id": "FR4.1",
+      "status": "OK",
+      "target": "tests/test_readme_assets.py"
+    },
+    {
+      "id": "FR4.2",
+      "status": "OK",
+      "target": "tests/test_readme_assets.py"
+    },
+    {
+      "id": "FR4.3",
+      "status": "OK",
+      "target": "tests/test_readme_assets.py"
+    },
+    {
+      "id": "FR4.4",
+      "status": "OK",
+      "target": "tests/test_readme_assets.py"
+    },
+    {
+      "id": "FR5.1",
+      "status": "OK",
+      "target": "src/modelhub/hubclient.py"
+    },
+    {
+      "id": "FR5.2",
+      "status": "OK",
+      "target": "tests/test_download.py"
+    },
+    {
+      "id": "FR5.3",
+      "status": "OK",
+      "target": "tests/test_kill_restart.py"
+    },
+    {
+      "id": "FR5.4",
+      "status": "OK",
+      "target": "tests/test_download.py"
+    },
+    {
+      "id": "FR5.5",
+      "status": "OK",
+      "target": "tests/test_token.py"
+    },
+    {
+      "id": "FR6.1",
+      "status": "OK",
+      "target": "tests/test_bundle_cli.py"
+    },
+    {
+      "id": "FR6.2",
+      "status": "OK",
+      "target": "tests/test_bundle_split.py"
+    },
+    {
+      "id": "FR6.3",
+      "status": "OK",
+      "target": "tests/test_interactive_drives.py"
+    },
+    {
+      "id": "FR6.4",
+      "status": "OK",
+      "target": "tests/test_pieces.py"
+    },
+    {
+      "id": "FR6.5",
+      "status": "OK",
+      "target": "tests/test_verify.py"
+    },
+    {
+      "id": "FR6.6",
+      "status": "OK",
+      "target": "tests/test_kill_restart.py"
+    },
+    {
+      "id": "FR6.7",
+      "status": "OK",
+      "target": "tests/test_bundle_split.py"
+    },
+    {
+      "id": "FR6.8",
+      "status": "OK",
+      "target": "tests/test_portable_names.py"
+    },
+    {
+      "id": "FR7.1",
+      "status": "OK",
+      "target": "tests/test_verify.py"
+    },
+    {
+      "id": "FR7.2",
+      "status": "OK",
+      "target": "tests/test_unpack.py"
+    },
+    {
+      "id": "FR7.3",
+      "status": "OK",
+      "target": "tests/test_unpack_safety.py"
+    },
+    {
+      "id": "FR7.4",
+      "status": "OK",
+      "target": "tests/test_list.py"
+    },
+    {
+      "id": "FR7.5",
+      "status": "OK",
+      "target": "tests/test_verify.py"
+    },
+    {
+      "id": "FR7.6",
+      "status": "OK",
+      "target": "tests/test_offline.py"
+    },
+    {
+      "id": "FR8.1",
+      "status": "OK",
+      "target": "tests/test_packaging_defs.py"
+    },
+    {
+      "id": "FR8.2",
+      "status": "OK",
+      "target": "tests/test_portable_names.py"
+    },
+    {
+      "id": "FR8.3",
+      "status": "OK",
+      "target": "tests/test_packaging_defs.py"
+    },
+    {
+      "id": "FR8.4",
+      "status": "OK",
+      "target": "pyproject.toml"
+    },
+    {
+      "id": "FR9.1",
+      "status": "OK",
+      "target": "tests/test_exit_status.py"
+    },
+    {
+      "id": "FR9.2",
+      "status": "OK",
+      "target": "tests/test_runrecord.py"
+    },
+    {
+      "id": "FR1",
+      "status": "OK",
+      "target": "tests/test_cli.py"
+    },
+    {
+      "id": "FR2",
+      "status": "OK",
+      "target": "tests/test_filetypes.py"
+    },
+    {
+      "id": "FR3",
+      "status": "OK",
+      "target": "tests/test_pull_metadata.py"
+    },
+    {
+      "id": "FR4",
+      "status": "OK",
+      "target": "tests/test_readme_assets.py"
+    },
+    {
+      "id": "FR5",
+      "status": "OK",
+      "target": "src/modelhub/hubclient.py"
+    },
+    {
+      "id": "FR6",
+      "status": "OK",
+      "target": "tests/test_bundle_cli.py"
+    },
+    {
+      "id": "FR7",
+      "status": "OK",
+      "target": "tests/test_verify.py"
+    },
+    {
+      "id": "FR8",
+      "status": "OK",
+      "target": "tests/test_packaging_defs.py"
+    },
+    {
+      "id": "FR9",
+      "status": "OK",
+      "target": "tests/test_exit_status.py"
+    },
+    {
+      "id": "NFR1.1",
+      "status": "OK",
+      "target": "tests/test_benchmark.py"
+    },
+    {
+      "id": "NFR1.2",
+      "status": "OK",
+      "target": "tests/test_download.py"
+    },
+    {
+      "id": "NFR1.3",
+      "status": "OK",
+      "target": "tests/test_memory_limits.py"
+    },
+    {
+      "id": "NFR1.4",
+      "status": "OK",
+      "target": "tests/test_memory_limits.py"
+    },
+    {
+      "id": "NFR1.5",
+      "status": "OK",
+      "target": "tests/test_progress.py"
+    },
+    {
+      "id": "NFR1.6",
+      "status": "OK",
+      "target": "tests/test_scale.py"
+    },
+    {
+      "id": "NFR1.7",
+      "status": "OK",
+      "target": "tests/test_list.py"
+    },
+    {
+      "id": "NFR1.8",
+      "status": "OK",
+      "target": "tests/test_scale.py"
+    },
+    {
+      "id": "NFR1.9",
+      "status": "OK",
+      "target": "tests/test_memory_limits.py"
+    },
+    {
+      "id": "NFR1.10",
+      "status": "OK",
+      "target": "tests/test_pieces.py"
+    },
+    {
+      "id": "NFR1.11",
+      "status": "OK",
+      "target": "tests/test_list.py"
+    },
+    {
+      "id": "NFR2.1",
+      "status": "OK",
+      "target": "tests/test_tamper_regression.py"
+    },
+    {
+      "id": "NFR2.2",
+      "status": "OK",
+      "target": "tests/test_download.py"
+    },
+    {
+      "id": "NFR2.3",
+      "status": "OK",
+      "target": "tests/test_signing.py"
+    },
+    {
+      "id": "NFR2.4",
+      "status": "OK",
+      "target": "tests/test_trust.py"
+    },
+    {
+      "id": "NFR2.5",
+      "status": "OK",
+      "target": "tests/test_signing.py"
+    },
+    {
+      "id": "NFR2.6",
+      "status": "OK",
+      "target": "tests/test_trust.py"
+    },
+    {
+      "id": "NFR2.7",
+      "status": "OK",
+      "target": "tests/test_trust.py"
+    },
+    {
+      "id": "NFR2.8",
+      "status": "OK",
+      "target": "tests/test_trust.py"
+    },
+    {
+      "id": "NFR2.9",
+      "status": "OK",
+      "target": "tests/test_trust.py"
+    },
+    {
+      "id": "NFR2.10",
+      "status": "OK",
+      "target": "tests/test_unpack_safety.py"
+    },
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "tests/test_kill_restart.py"
+    },
+    {
+      "id": "NFR3.2",
+      "status": "OK",
+      "target": "tests/test_kill_restart.py"
+    },
+    {
+      "id": "NFR3.3",
+      "status": "OK",
+      "target": "tests/test_kill_restart.py"
+    },
+    {
+      "id": "NFR3.4",
+      "status": "OK",
+      "target": "tests/test_kill_restart.py"
+    },
+    {
+      "id": "NFR3.5",
+      "status": "OK",
+      "target": "tests/test_download.py"
+    },
+    {
+      "id": "NFR3.6",
+      "status": "OK",
+      "target": "tests/test_bundle_split.py"
+    },
+    {
+      "id": "NFR3.7",
+      "status": "OK",
+      "target": "tests/test_locking.py"
+    },
+    {
+      "id": "NFR3.8",
+      "status": "OK",
+      "target": "tests/test_bundle_split.py"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "tests/test_verify.py"
+    },
+    {
+      "id": "NFR4.2",
+      "status": "OK",
+      "target": "tests/test_verify.py"
+    },
+    {
+      "id": "NFR4.3",
+      "status": "OK",
+      "target": "tests/test_verify.py"
+    },
+    {
+      "id": "NFR4.4",
+      "status": "OK",
+      "target": "tests/test_verify.py"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "tests/test_offline.py"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "tests/test_offline.py"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "tests/test_hubclient_network.py"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "tests/test_secrets.py"
+    },
+    {
+      "id": "NFR6.2",
+      "status": "OK",
+      "target": "tests/test_token.py"
+    },
+    {
+      "id": "NFR6.3",
+      "status": "OK",
+      "target": "tests/test_hubclient_network.py"
+    },
+    {
+      "id": "NFR6.4",
+      "status": "OK",
+      "target": "tests/test_filetypes.py"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "tests/test_packaging_defs.py"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "packaging/build.py"
+    },
+    {
+      "id": "NFR7.3",
+      "status": "OK",
+      "target": "tests/test_portable_names.py"
+    },
+    {
+      "id": "NFR7.4",
+      "status": "OK",
+      "target": "tests/test_text_encoding.py"
+    },
+    {
+      "id": "NFR7.5",
+      "status": "OK",
+      "target": "tests/test_portable_names.py"
+    },
+    {
+      "id": "NFR7.6",
+      "status": "OK",
+      "target": "tests/test_portable_names.py"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "tests/test_scale.py"
+    },
+    {
+      "id": "NFR8.2",
+      "status": "OK",
+      "target": "tests/conftest.py"
+    },
+    {
+      "id": "NFR8.3",
+      "status": "OK",
+      "target": "tests/test_runrecord.py"
+    },
+    {
+      "id": "NFR8.4",
+      "status": "OK",
+      "target": "tests/test_logging.py"
+    },
+    {
+      "id": "NFR8.5",
+      "status": "OK",
+      "target": "tests/test_exit_status.py"
+    },
+    {
+      "id": "NFR1",
+      "status": "OK",
+      "target": "tests/test_benchmark.py"
+    },
+    {
+      "id": "NFR2",
+      "status": "OK",
+      "target": "tests/test_tamper_regression.py"
+    },
+    {
+      "id": "NFR3",
+      "status": "OK",
+      "target": "tests/test_kill_restart.py"
+    },
+    {
+      "id": "NFR4",
+      "status": "OK",
+      "target": "tests/test_verify.py"
+    },
+    {
+      "id": "NFR5",
+      "status": "OK",
+      "target": "tests/test_offline.py"
+    },
+    {
+      "id": "NFR6",
+      "status": "OK",
+      "target": "tests/test_secrets.py"
+    },
+    {
+      "id": "NFR7",
+      "status": "OK",
+      "target": "tests/test_packaging_defs.py"
+    },
+    {
+      "id": "NFR8",
+      "status": "OK",
+      "target": "tests/test_scale.py"
+    }
+  ]
+}

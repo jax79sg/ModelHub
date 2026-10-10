@@ -1,0 +1,108 @@
+# Automatic checks for modelhub. A change cannot merge to main unless every job here passes.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+
+  # Built inside an old RHEL 8 compatible system so the file does not need a newer system library
+  # than RHEL 8 and Ubuntu 20.04 have (NFR7.2).
+  build-linux:
+    runs-on: ubuntu-latest
+    container: almalinux:8
+    steps:
+      - run: dnf install -y git python3.12 python3.12-pip binutils
+      - uses: actions/checkout@v4
+      - run: python3.12 -m pip install -e ".[build]"
+      - run: python3.12 packaging/build.py pyinstaller
+      - run: python3.12 packaging/roundtrip_smoke.py dist/modelhub-linux-x86_64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: modelhub-linux-x86_64
+          path: dist/modelhub-linux-x86_64
+          if-no-files-found: error
+
+  # The same file, started on an older Ubuntu that has no Python of ours installed.
+  run-linux-on-ubuntu-20-04:
+    needs: build-linux
+    runs-on: ubuntu-latest
+    container: ubuntu:20.04
+    steps:
+      - run: apt-get update && apt-get install -y python3 ca-certificates
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: modelhub-linux-x86_64
+          path: dist
+      - run: chmod +x dist/modelhub-linux-x86_64
+      - run: python3 packaging/roundtrip_smoke.py dist/modelhub-linux-x86_64
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[build]"
+      - run: python packaging/build.py pyinstaller
+      - run: python packaging/roundtrip_smoke.py dist/modelhub-windows-x86_64.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: modelhub-windows-x86_64.exe
+          path: dist/modelhub-windows-x86_64.exe
+          if-no-files-found: error
+
+  # Offline install packs for computers that have Python but no internet.
+  offline-pack:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python packaging/offline_pack.py pack
+      - run: pip install --no-index --find-links pack modelhub
+      - run: modelhub --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: modelhub-pack-${{ runner.os }}-py${{ matrix.python }}
+          path: pack
+          if-no-files-found: error

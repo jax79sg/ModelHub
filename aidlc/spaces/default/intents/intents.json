@@ -4,7 +4,7 @@
     "slug": "hf-airgap-cli",
     "dirName": "261009-hf-airgap-cli",
     "scope": "security-patch",
-    "status": "in-flight",
+    "status": "complete",
     "request": "7cd3faef"
   }
 ]

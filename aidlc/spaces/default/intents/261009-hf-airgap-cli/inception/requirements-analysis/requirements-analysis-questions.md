@@ -12,7 +12,7 @@ C. Show me the file list and total size first, and let me choose for each model
 D. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]:X. I need to know what are the types, and what each does. Then i decide by selecting one or more of them in.
 
 ## Q2. How will you tell the tool which models to fetch?
 
@@ -24,7 +24,7 @@ C. Both A and B
 D. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: C
 
 ## Q3. What should be kept for each model so the web app can show a model page? (select all that apply)
 
@@ -37,7 +37,7 @@ D. The change history and named versions (branches and tags)
 E. The community discussions
 X. Other (please specify)
 
-[Answer]:
+[Answer]:A, B, C, D
 
 ## Q4. What should happen to pictures and links in a README that point to other websites?
 
@@ -49,7 +49,7 @@ C. Download them when it is simple, and report the ones that could not be fetche
 D. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]:A
 
 ## Q5. How should the splitting of a bundle into pieces be controlled?
 
@@ -61,7 +61,7 @@ C. Both A and B
 D. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]:A, B
 
 ## Q6. What must the tool do inside the air-gapped environment?
 
@@ -73,7 +73,7 @@ C. Check, put the pieces back together, and also list what models are available 
 D. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]:C
 
 ## Q7. How can the tool be installed on the air-gapped computers?
 
@@ -85,7 +85,7 @@ C. Neither: only a plain archive of files can be brought in
 D. Not known yet
 X. Other (please specify)
 
-[Answer]:
+[Answer]:B
 
 ## Q8. About how fast is the internet connection on the download computer?
 
@@ -97,7 +97,7 @@ C. Over 1 Gbit/s
 D. I don't know
 X. Other (please specify)
 
-[Answer]:
+[Answer]:B
 
 ## Q9. What would count as "noticeably faster" for large files?
 
@@ -109,4 +109,56 @@ C. As close to the full speed of the connection as the official tool allows
 D. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]:A
+
+## Q10. You asked to see the file types and what each does, then choose. Here they are. If you run the tool without choosing, what should it do?
+
+Why we ask: your answer to Q1 means the tool will list a model's files grouped by type, with a plain explanation, and let you pick one or more types. That is now a requirement. This question only settles what happens when you don't pick.
+
+The types found in typical model repositories (sizes are from the Hugging Face documentation's example for the `gpt2` model):
+
+- `.safetensors`: the model's learned numbers in a plain format that cannot contain runnable code. This is the current standard. About 0.55 GB for `gpt2`.
+- `.bin` (for example `pytorch_model.bin`): the older PyTorch format. It uses a method that can hide runnable code, which is why scanners check it. About 0.55 GB.
+- `.h5` (for example `tf_model.h5`): the same model for TensorFlow and Keras. About 0.50 GB.
+- `.msgpack` (for example `flax_model.msgpack`): the same model for JAX and Flax. About 0.50 GB.
+- `.onnx`: a format for running the model in many tools through ONNX Runtime. Several variants, about 0.65 GB each.
+- `.tflite`: smaller versions meant for phones and small devices. About 0.13 to 0.50 GB each.
+- `.ot`: the model for the Rust library rust-bert. About 0.70 GB.
+- `.gguf`: a compact format used by llama.cpp and Ollama. Not in `gpt2`, but common in other models, often in several sizes per model.
+- `.json` and `.txt` (for example `config.json`, `tokenizer.json`, `vocab.json`): small settings and word-list files needed to load the model. Kilobytes to a few megabytes.
+- `README.md`: the model card, and `.gitattributes`: a technical settings file.
+
+For `gpt2`, the documentation's example shows the whole repository at about 5.6 GB, against about 0.55 GB for the single `.safetensors` file. The other formats are copies of the same model for different tools.
+
+A. Stop and show me the list of types so I choose
+B. Fetch the small files plus the `.safetensors` weights (when they exist), and nothing else
+C. Fetch everything
+D. Not yet defined
+X. Other (please specify)
+
+[Answer]: A
+
+## Q11. You chose "at least twice as fast as a single connection" (Q9) on a connection of 100 Mbit/s to 1 Gbit/s (Q8). How should the goal be worded?
+
+Why we ask: extra connections only help if a single connection does not already use the whole link. At the slow end of your range a single connection may already be at full speed, so "twice as fast" could be impossible there, while it may be reachable at the fast end. The feasibility research did not measure this.
+
+A. Keep "at least twice as fast as a single connection", and prove it on your actual connection
+B. Change it to: the download reaches at least 80% of your measured connection speed
+C. Measure first on your connection, then decide the number before building
+D. Not yet defined
+X. Other (please specify)
+
+[Answer]: B
+
+## Q12. If everything you chose does not fit in the one month before the air-gapped environment goes live, which things should slip first? (select all that apply)
+
+Why we ask: you chose a lot (Q4 to Q7) and a one-month deadline (feasibility Q10). Choosing now keeps the essentials safe. Items left unselected stay in the first version.
+
+A. Downloading outside pictures and rewriting the README to use them (Q4)
+B. Listing the available models on the air-gapped side (Q6)
+C. The interactive "fill a drive and tell me to swap" splitting (Q5), keeping the fixed piece size
+D. The standalone program for Windows, doing Linux first (Q7)
+E. Nothing should slip; the date can move instead
+X. Other (please specify)
+
+[Answer]:E
