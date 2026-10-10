@@ -16,5 +16,6 @@ jobs:
             python -m pytest $f.FullName -q --tb=line -p no:cacheprovider --timeout=200 2>&1 | Select-Object -Last 3
             $after = (Get-PSDrive C).Free / 1GB
             "{0}: free GB before {1:N1} after {2:N1}" -f $f.Name, $before, $after
+            if ($after -lt 5) { "STOPPING: disk nearly full after $($f.Name)"; break }
           }
         continue-on-error: true
