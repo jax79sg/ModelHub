@@ -1,0 +1,19 @@
+name: diag
+on: workflow_dispatch
+jobs:
+  win:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - run: pytest tests/test_packaging_defs.py tests/test_portable_names.py -q --tb=short -p no:cacheprovider
+        continue-on-error: true
+      - run: pytest tests/test_scale.py -q --tb=short -p no:cacheprovider --timeout=120 -k "999999 or ten_thousand"
+        continue-on-error: true
+        env:
+          PYTHONUNBUFFERED: "1"
+      - run: Get-PSDrive C | Format-Table
