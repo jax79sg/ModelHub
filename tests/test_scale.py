@@ -1,6 +1,8 @@
 """Limits of scale (NFR1.7 to NFR1.11): a big store, the piece-count ceiling, huge files."""
 
 import json
+import subprocess
+import sys
 import time
 
 import pytest
@@ -8,13 +10,20 @@ import pytest
 from modelhub import bundle, pieces, record, store, unpack, verify
 
 
+def sparse_file(path, size):
+    """Make `path` a file of `size` bytes that uses (almost) no disk. Windows must be told to."""
+    with open(path, "wb") as handle:
+        if sys.platform == "win32":  # NTFS fills a stretched file with real zeros unless flagged
+            subprocess.run(["fsutil", "sparse", "setflag", str(path)], check=True)
+        handle.truncate(size)
+
+
 def make_record(tmp_path, size, model="org/big"):
     """A download record holding one sparse file of `size` bytes (no real disk used)."""
     paths = record.RecordPaths(tmp_path / "work", model, "d" * 40)
     paths.files.mkdir(parents=True)
     try:
-        with open(paths.files / "big.bin", "wb") as handle:
-            handle.truncate(size)
+        sparse_file(paths.files / "big.bin", size)
     except OSError:
         pytest.skip("this file system cannot make a file that large")
     return paths
@@ -55,14 +64,12 @@ def test_999999_pieces_are_allowed_and_one_more_is_refused(tmp_path, key_id, mon
     overhead = bundle.plan_bundle(paths.root, piece_size)[0] - 1024
     inside = limit - overhead - 10_240
     while True:
-        with open(paths.files / "big.bin", "wb") as handle:
-            handle.truncate(inside)
+        sparse_file(paths.files / "big.bin", inside)
         if bundle.plan_bundle(paths.root, piece_size)[0] > limit:
             inside -= 512
             continue
         break
-    with open(paths.files / "big.bin", "wb") as handle:
-        handle.truncate(inside)
+    sparse_file(paths.files / "big.bin", inside)
     with_manifest(paths)
 
     def stop(self, data):
@@ -74,8 +81,7 @@ def test_999999_pieces_are_allowed_and_one_more_is_refused(tmp_path, key_id, mon
     with pytest.raises(StopHere):  # the checks passed; writing began
         bundle.bundle_record(paths.root, out, key_id, piece_size=piece_size)
 
-    with open(paths.files / "big.bin", "wb") as handle:
-        handle.truncate(inside + 20_480)  # now past the limit
+    sparse_file(paths.files / "big.bin", inside + 20_480)  # now past the limit
     with_manifest(paths)
     with pytest.raises(bundle.TooManyPieces):
         bundle.bundle_record(paths.root, tmp_path / "out2", key_id, piece_size=piece_size)
