@@ -37,6 +37,8 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: pip install -e ".[dev]"
       - run: pytest -v --timeout=240 --durations=15
+        env:
+          PYTHONUNBUFFERED: "1"
 
   # Built inside an old RHEL 8 compatible system so the file does not need a newer system library
   # than RHEL 8 and Ubuntu 20.04 have (NFR7.2).
