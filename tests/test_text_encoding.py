@@ -2,6 +2,7 @@
 endings, odd bytes, non-English and long file names."""
 
 import json
+import sys
 
 from conftest import COMMIT, FakeHub
 
@@ -54,7 +55,8 @@ AWKWARD = {
     "README.md": b"r",
     "ünï/日本語.txt": "naïve — 日本語".encode(),
     "with space.json": b"{}",
-    "quote\"and'single.txt": b"q",
+    # a double quote cannot be in a Windows file name
+    ("quote'single.txt" if sys.platform == "win32" else "quote\"and'single.txt"): b"q",
     "a/" * 40 + "deep-name-" + "x" * 60 + ".json": b"long",  # over 100 characters in all
 }
 
