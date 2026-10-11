@@ -38,7 +38,7 @@ Written down so a reader can judge it, including the parts that are not flatteri
 **What this is not**
 
 - It has had **no independent security review or penetration test**. No dependency or code scanning, secret scanning or Dependabot is switched on yet, and the CI plan did not include a dependency scan.
-- **The CI first ran on 10 October 2026 and failed on Windows**: a real bug (plain file names refused as escaping their folder, when Windows spelled the folder differently) and several tests that assumed Linux or macOS behaviour. These are fixed and the checks now pass on Linux, Windows and macOS with Python 3.10 and 3.12. The Linux file was built in an AlmaLinux 8 container and started on Ubuntu 20.04; it has not been tried on a real RHEL 8 machine. Nothing has been released yet (no `v1.0.0` tag).
+- **The CI first ran on 10 October 2026 and failed on Windows**: a real bug (plain file names refused as escaping their folder, when Windows spelled the folder differently) and several tests that assumed Linux or macOS behaviour. These are fixed and the checks now pass on Linux, Windows and macOS with Python 3.10 and 3.12. The Linux file was built in an AlmaLinux 8 container and started on Ubuntu 20.04; it has not been tried on a real RHEL 8 machine. Version 1.0.0 was released on 10 October 2026 (Linux and Windows files and offline packs); 1.1.0 adds the Mac file.
 - **Everything was committed straight to `main`**; there have been no pull requests yet. The GitHub settings that would require them are described in [`ci-config.md`](aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/ci-pipeline/ci-config.md) but not switched on.
 - Memory and size targets were checked at 1 GB and by calculation, not with a real 500 GB or 1 TB file.
 - It is a tool for moving **public** models only; private and gated models are refused. Treat it as a learning project.
@@ -240,7 +240,7 @@ python packaging/roundtrip_smoke.py dist/modelhub-<system>-x86_64   # runs the w
 python packaging/offline_pack.py                                    # the offline install pack
 ```
 
-The checks in `.github/workflows/ci.yml` do this on every pull request; pushing a tag such as `v1.0.0` runs them and then attaches the files to a GitHub release.
+The checks in `.github/workflows/ci.yml` do this on every pull request; pushing a tag such as `v1.1.0` runs them and then attaches the files to a GitHub release.
 
 Full instructions: [`aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/build-and-test/`](aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/build-and-test/).
 
