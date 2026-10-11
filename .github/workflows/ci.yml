@@ -88,6 +88,23 @@ jobs:
           path: dist/modelhub-windows-x86_64.exe
           if-no-files-found: error
 
+  # macOS on Apple Silicon: macos-latest is an arm64 Mac, so this builds and runs the real file.
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[build]"
+      - run: python packaging/build.py pyinstaller
+      - run: python packaging/roundtrip_smoke.py dist/modelhub-darwin-arm64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: modelhub-darwin-arm64
+          path: dist/modelhub-darwin-arm64
+          if-no-files-found: error
+
   # Offline install packs for computers that have Python but no internet.
   offline-pack:
     strategy:

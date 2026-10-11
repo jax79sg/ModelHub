@@ -50,3 +50,17 @@ def test_the_release_reuses_the_checks_instead_of_copying_them():
 
 def test_the_speed_benchmark_is_not_automatic():
     assert "benchmark_download" not in CI and "benchmark_download" not in RELEASE
+
+
+def test_the_macos_program_is_built_on_apple_silicon_and_driven_through_the_workflow():
+    job = CI[CI.index("  build-macos:") :]
+    job = job[: job.index("\n  offline-pack:")] if "\n  offline-pack:" in job else job
+    assert "runs-on: macos-latest" in job  # the current Mac runner is Apple Silicon (arm64)
+    assert "packaging/build.py pyinstaller" in job
+    assert "packaging/roundtrip_smoke.py dist/modelhub-darwin-arm64" in job
+    assert "name: modelhub-darwin-arm64" in job and "path: dist/modelhub-darwin-arm64" in job
+
+
+def test_the_release_publishes_every_built_file_including_the_macos_one():
+    # the release downloads all artifacts of the run, so the macOS file needs no extra step
+    assert "actions/download-artifact@v4" in RELEASE and "find files -type f" in RELEASE

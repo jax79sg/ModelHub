@@ -1,4 +1,4 @@
-# Publishing: push a tag such as v1.0.0. All checks run first; the files are then attached to a
+# Publishing: push a tag such as v1.1.0. All checks run first; the files are then attached to a
 # GitHub release, ready to carry to the air-gapped side.
 name: release
 
