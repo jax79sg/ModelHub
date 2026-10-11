@@ -1,0 +1,62 @@
+{% extends "model_base.html" %}
+{% from "_icons.html" import icon %}
+{% macro scan_badge(scan) -%}
+  {%- set st = (scan or {}).get('status') -%}
+  {%- if st == 'safe' %}<span class="badge safe" title="Scanned by the Hub when pulled">{{ icon('shield', 11) }} Safe</span>
+  {%- elif st in ('unsafe', 'caution') %}<span class="badge danger" title="The Hub flagged this file when it was pulled">{{ icon('alert', 11) }} {{ st|capitalize }}</span>{% endif -%}
+{%- endmacro %}
+{% block content %}
+<div class="container">
+  <div class="files-head">
+    <nav class="crumbs" aria-label="Path">
+      <a href="/{{ model.id }}/tree/{{ q(rev) }}" class="mono">{{ model.short_name }}</a>
+      {% for part, full in crumbs %}<span class="slash">/</span><a href="/{{ model.id }}/tree/{{ q(rev) }}/{{ q(full, '/') }}" class="mono">{{ part }}</a>{% endfor %}
+      <span class="size-pill" title="Total size on the Hub">{{ fmt.size(files_total) }}</span>
+    </nav>
+    <div class="files-head-right">
+      {% if contributors %}<span class="contributors" title="{{ contributors|map(attribute='user')|join(', ') }}">
+        {% for c in contributors[:5] %}<span class="avatar xs {{ avatar_class(c.user) }}">{{ c.user[0]|upper }}</span>{% endfor %}
+        <span class="muted small">{{ contributors|length }} contributor{{ 's' if contributors|length != 1 }}</span></span>{% endif %}
+      <a class="btn history" href="/{{ model.id }}/commits/{{ q(rev) }}">{{ icon('clock', 15) }} History: {{ n_commits }} commit{{ 's' if n_commits != 1 }}</a>
+    </div>
+  </div>
+
+  <div class="file-table" role="table" aria-label="Files">
+    {% if last_commit and not path %}
+    <div class="file-row last-commit" role="row">
+      <span class="lc-author"><span class="avatar xs {{ avatar_class((last_commit.authors[0].user if last_commit.authors else '?')) }}">{{ (last_commit.authors[0].user if last_commit.authors else '?')[0]|upper }}</span>
+        <b>{{ last_commit.authors[0].user if last_commit.authors else 'unknown' }}</b></span>
+      <a class="lc-title" href="/{{ model.id }}/commits/{{ q(rev) }}">{{ last_commit.title }}</a>
+      <span class="lc-hash mono">{{ last_commit.id[:7] }}</span>
+      <span class="lc-date muted" title="{{ fmt.datetime_iso(last_commit.date) }}">{{ fmt.time_ago(last_commit.date) }}</span>
+    </div>
+    {% endif %}
+    {% if path %}
+    <a class="file-row up" role="row" href="/{{ model.id }}/tree/{{ q(rev) }}{{ ('/' ~ q(path.rsplit('/', 1)[0], '/')) if '/' in path else '' }}">{{ icon('folder', 16, 'folder-icon') }} <span>..</span></a>
+    {% endif %}
+    {% for e in children %}
+      {% if e.type == 'directory' %}
+      <a class="file-row" role="row" href="/{{ model.id }}/tree/{{ q(rev) }}/{{ q(e.path, '/') }}">
+        <span class="f-name">{{ icon('folder', 16, 'folder-icon') }} <span class="mono-ish">{{ e.name }}</span></span>
+        <span class="f-size"></span>
+        <span class="f-msg" title="{{ e.last_commit.title if e.last_commit }}">{{ e.last_commit.title if e.last_commit }}</span>
+        <span class="f-date muted">{{ fmt.time_ago(e.last_commit.date) if e.last_commit }}</span>
+      </a>
+      {% else %}
+      <div class="file-row {{ '' if e.in_store else 'not-in-store' }}" role="row">
+        <span class="f-name">{{ icon('file', 16, 'file-icon') }}
+          {% if e.in_store %}<a href="/{{ model.id }}/blob/{{ q(rev) }}/{{ q(e.path, '/') }}" class="mono-ish">{{ e.name }}</a>{% else %}<span class="mono-ish" title="Listed on the Hub but not downloaded">{{ e.name }}</span>{% endif %}
+          {{ scan_badge(e.scan) }}
+          {% if not e.in_store %}<span class="badge muted-badge" title="This file was not included when the model was pulled">not in store</span>{% endif %}
+        </span>
+        <span class="f-size muted">{{ fmt.size(e.size) }}{% if e.in_store %} <a class="dl" href="/{{ model.id }}/resolve/{{ q(rev) }}/{{ q(e.path, '/') }}" title="Download" aria-label="Download {{ e.name }}">{{ icon('download', 14) }}</a>{% endif %}</span>
+        <span class="f-msg" title="{{ e.last_commit.title if e.last_commit }}">{{ e.last_commit.title if e.last_commit }}</span>
+        <span class="f-date muted">{{ fmt.time_ago(e.last_commit.date) if e.last_commit }}</span>
+      </div>
+      {% endif %}
+    {% else %}
+      <div class="file-row"><span class="muted">This folder is empty.</span></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

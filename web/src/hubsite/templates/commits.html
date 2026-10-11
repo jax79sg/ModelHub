@@ -1,0 +1,30 @@
+{% extends "model_base.html" %}
+{% from "_icons.html" import icon %}
+{% block content %}
+<div class="container narrow-wide">
+  <h2 class="section-title">{{ icon('clock', 16) }} Commit History</h2>
+  {% if history %}
+  <ol class="commit-list">
+    {% for c in history %}
+    <li class="commit">
+      <div class="commit-main">
+        <div class="commit-title">{{ c.title or '(no message)' }}
+          <span class="mono hash">{{ c.id[:7] }}</span>
+          <button class="icon-btn" type="button" data-copy="{{ c.id }}" title="Copy full commit id" aria-label="Copy commit id">{{ icon('copy', 13) }}</button>
+          {% if tags.get(c.id) %}<span class="badge">{{ icon('tag', 11) }} {{ tags[c.id] }}</span>{% endif %}
+          {% if c.id == commit %}<span class="badge safe">captured</span>{% endif %}
+        </div>
+        <div class="commit-sub">
+          {% for a in c.authors or [] %}<span class="avatar xs {{ avatar_class(a.user) }}">{{ a.user[0]|upper }}</span><b>{{ a.user }}</b>{% endfor %}
+          <span class="muted">committed on <span title="{{ fmt.datetime_iso(c.date) }}">{{ fmt.date_long(c.date) }}</span></span>
+        </div>
+        {% if c.message %}<pre class="commit-body">{{ c.message }}</pre>{% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}
+  <div class="empty-state left"><p>No commit history was captured for this revision.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

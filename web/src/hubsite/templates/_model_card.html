@@ -1,0 +1,16 @@
+{# One row of the /models list. #}
+{% from "_icons.html" import icon %}
+{% macro model_row(m) %}
+<article class="model-row">
+  <a class="model-row-link" href="/{{ m.id }}">
+    <h4 class="model-id"><span class="avatar sm {{ avatar_class(m.org or m.id) }}" aria-hidden="true">{{ (m.org or m.id)[0]|upper }}</span><span class="model-id-text">{{ m.org }}<span class="slash">/</span>{{ m.short_name }}</span></h4>
+    <div class="model-meta">
+      {% if m.pipeline_tag %}<span class="meta-item pipeline pl-{{ fmt.pipeline_color(m.pipeline_tag) }}">{{ fmt.pipeline_label(m.pipeline_tag) }}</span><span class="dot">•</span>{% endif %}
+      {% if fmt.params(m.num_parameters) %}<span class="meta-item" title="{{ '{:,}'.format(m.num_parameters) }} parameters">{{ fmt.params(m.num_parameters) }}</span><span class="dot">•</span>{% endif %}
+      <span class="meta-item" title="Last modified {{ fmt.datetime_iso(m.last_modified) }}">Updated {{ fmt.time_ago(m.last_modified) }}</span>
+      {% if m.downloads is not none %}<span class="dot">•</span><span class="meta-item" title="{{ '{:,}'.format(m.downloads) }} downloads">{{ icon('download', 14) }} {{ fmt.count(m.downloads) }}</span>{% endif %}
+      {% if m.likes is not none %}<span class="dot">•</span><span class="meta-item" title="{{ '{:,}'.format(m.likes) }} likes">{{ icon('heart', 14) }} {{ fmt.count(m.likes) }}</span>{% endif %}
+    </div>
+  </a>
+</article>
+{% endmacro %}

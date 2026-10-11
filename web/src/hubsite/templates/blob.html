@@ -1,0 +1,51 @@
+{% extends "model_base.html" %}
+{% from "_icons.html" import icon %}
+{% block content %}
+<div class="container">
+  <nav class="crumbs" aria-label="Path">
+    <a href="/{{ model.id }}/tree/{{ q(rev) }}" class="mono">{{ model.short_name }}</a>
+    {% for part, full in crumbs %}<span class="slash">/</span>{% if not loop.last %}<a href="/{{ model.id }}/tree/{{ q(rev) }}/{{ q(full, '/') }}" class="mono">{{ part }}</a>{% else %}<b class="mono">{{ part }}</b>{% endif %}{% endfor %}
+  </nav>
+
+  <div class="blob">
+    <div class="blob-head">
+      <div class="blob-info">
+        <span class="mono-ish">{{ entry.name }}</span>
+        <span class="muted">{{ fmt.size(entry.size) }}</span>
+        {% if view.kind == 'text' %}<span class="muted">· {{ '{:,}'.format(view.lines) }} lines</span>{% endif %}
+      </div>
+      {% if entry.in_store %}
+      <div class="blob-actions">
+        {% if view.kind == 'text' %}<a class="btn small" href="/{{ model.id }}/raw/{{ q(rev) }}/{{ q(path, '/') }}">Raw</a>{% endif %}
+        <a class="btn small" href="/{{ model.id }}/resolve/{{ q(rev) }}/{{ q(path, '/') }}">{{ icon('download', 14) }} Download</a>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if entry.sha256 or entry.scan %}
+    <dl class="blob-facts">
+      {% if entry.sha256 %}<dt>SHA256</dt><dd class="mono wrap">{{ entry.sha256 }}</dd>{% endif %}
+      {% if entry.scan and entry.scan.get('status') %}<dt>Hub safety scan</dt><dd>{{ entry.scan.status|capitalize }}</dd>{% endif %}
+      {% if entry.last_commit %}<dt>Last change</dt><dd>{{ entry.last_commit.title }} <span class="muted">· {{ fmt.time_ago(entry.last_commit.date) }}</span></dd>{% endif %}
+    </dl>
+    {% endif %}
+
+    {% if pickle_imports %}
+    <details class="pickle"><summary>{{ icon('alert', 14) }} Detected Pickle imports ({{ pickle_imports|length }})</summary>
+      <ul class="mono">{% for imp in pickle_imports %}<li>{{ imp.module if imp is mapping else imp }}{% if imp is mapping and imp.name %}.{{ imp.name }}{% endif %}</li>{% endfor %}</ul>
+    </details>
+    {% endif %}
+
+    {% if view.kind == 'text' %}
+      {% if view.truncated %}<div class="banner warn">{{ icon('info', 15) }} Showing the first 512 kB. Download the file for the rest.</div>{% endif %}
+      <pre class="code-view"><code>{{ view.text }}</code></pre>
+    {% elif view.kind == 'image' %}
+      <div class="image-view"><img src="/{{ model.id }}/resolve/{{ q(rev) }}/{{ q(path, '/') }}?inline=true" alt="{{ entry.name }}"></div>
+    {% elif view.kind == 'binary' %}
+      <div class="empty-state"><p>This is a binary file ({{ fmt.size(entry.size) }}), so it is not previewed.</p></div>
+    {% else %}
+      <div class="empty-state"><p>This file was listed by the Hub but not downloaded, so there is nothing to show. Pull it again with a file type that includes it.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

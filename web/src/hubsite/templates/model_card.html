@@ -1,0 +1,68 @@
+{% extends "model_base.html" %}
+{% from "_icons.html" import icon %}
+{% block content %}
+<div class="container card-layout">
+  <article class="card-main">
+    {% if readme and readme.toc|length > 2 %}
+    <details class="toc"><summary>{{ icon('list', 14) }} On this page</summary>
+      <ul>{% for level, id, title in readme.toc %}<li class="lvl-{{ level }}"><a href="#{{ id }}">{{ title }}</a></li>{% endfor %}</ul>
+    </details>
+    {% endif %}
+    {% if readme %}
+      <div class="prose">{{ readme.html|safe }}</div>
+    {% else %}
+      <div class="empty-state left">
+        <h2>No model card</h2>
+        <p>This repository has no README, or it was not included when the model was pulled.</p>
+      </div>
+    {% endif %}
+  </article>
+
+  <aside class="card-side" aria-label="Model information">
+    <section class="side-block">
+      <div class="side-stat">
+        <div class="side-label">Downloads last month<span class="muted"> (at capture)</span></div>
+        <div class="side-value" title="{{ '{:,}'.format(model.downloads) if model.downloads is not none else '' }}">{{ fmt.count(model.downloads) }}</div>
+      </div>
+    </section>
+
+    {% if sidebar.dtype_params %}
+    <section class="side-block">
+      <h3>{{ icon('database', 15) }} Safetensors</h3>
+      <div class="kv-chips">
+        <span class="kv"><span>Model size</span><b title="{{ '{:,}'.format(model.num_parameters) if model.num_parameters }}">{{ fmt.params(model.num_parameters) }} params</b></span>
+        <span class="kv"><span>Tensor type</span>{% for dtype, n in sidebar.dtype_params.items() %}<b title="{{ '{:,}'.format(n) }} parameters">{{ dtype }}</b>{% endfor %}</span>
+      </div>
+    </section>
+    {% elif model.num_parameters %}
+    <section class="side-block"><h3>{{ icon('database', 15) }} Parameters</h3><div class="kv-chips"><span class="kv"><span>Model size</span><b>{{ fmt.params(model.num_parameters) }} params</b></span></div></section>
+    {% endif %}
+
+    {% if sidebar.datasets %}
+    <section class="side-block">
+      <h3>Datasets used to train {{ model.id }}</h3>
+      <ul class="plain-list">{% for d in sidebar.datasets %}<li class="mono">{{ d }}</li>{% endfor %}</ul>
+    </section>
+    {% endif %}
+    {% if sidebar.papers %}
+    <section class="side-block">
+      <h3>Paper{{ 's' if sidebar.papers|length > 1 }}</h3>
+      <ul class="plain-list">{% for a in sidebar.papers %}<li><a class="mono" href="https://arxiv.org/abs/{{ a }}" rel="noopener noreferrer">arXiv:{{ a }}</a></li>{% endfor %}</ul>
+    </section>
+    {% endif %}
+
+    <section class="side-block capture">
+      <h3>{{ icon('shield', 15) }} Captured by modelhub</h3>
+      <dl class="kv-list">
+        <dt>Commit</dt><dd><a class="mono" href="/{{ model.id }}/commits/{{ q(rev) }}">{{ commit[:12] }}</a></dd>
+        <dt>Captured</dt><dd title="{{ fmt.datetime_iso(summary.get('captured_at')) }}">{{ fmt.time_ago(summary.get('captured_at')) }}</dd>
+        <dt>Last modified</dt><dd>{{ fmt.date_long(model.last_modified) }}</dd>
+        <dt>Files in store</dt><dd>{{ files_in_store }} <span class="muted">({{ fmt.size(files_total) }} on the Hub)</span></dd>
+        <dt>Revisions</dt><dd>{{ revisions|length }}</dd>
+        <dt>Pulled with</dt><dd>modelhub {{ summary.get('tool_version', '?') }}</dd>
+      </dl>
+      <a class="btn small block" href="/{{ model.id }}/tree/{{ q(rev) }}">{{ icon('list', 14) }} Browse files</a>
+    </section>
+  </aside>
+</div>
+{% endblock %}
