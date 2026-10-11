@@ -54,7 +54,7 @@ _Snapshot taken 11 October 2026. Cost is Claude Code's own running estimate, not
 |---|---|
 | Sessions | 1 |
 | Days with activity | 3 (2026-10-09 to 2026-10-11) |
-| Messages typed by a person (approximate) | 36 |
+| Messages typed by a person (approximate) | 41 |
 | Estimated cost | $54.60 |
 | Time Claude spent working (API) | 1.3 hours |
 | Lines added / removed in files | 9,693 / 527 |
@@ -70,7 +70,7 @@ _Snapshot taken 11 October 2026. Cost is Claude Code's own running estimate, not
 |---|---|---|---|---|---|
 | 2026-10-09 | 148 | 300 | 120,649 | 44,746,399 | 1,461,243 |
 | 2026-10-10 | 284 | 568 | 409,201 | 138,412,048 | 1,509,966 |
-| 2026-10-11 | 9 | 18 | 16,302 | 2,414,252 | 267,776 |
+| 2026-10-11 | 24 | 48 | 20,309 | 6,549,738 | 822,603 |
 
 _The per-day table counts the replies stored in the conversation file. Calls to the small helper model are only in Claude Code's own totals above, so the days add up to less than the totals._
 <!-- usage:end -->
