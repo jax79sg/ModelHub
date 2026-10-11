@@ -3,16 +3,18 @@
 > [!NOTE]
 > **About this project.** This is **jax79sg**'s means of learning and understanding the challenges of building software with a coding agent. **Much of this entire repository — the code, the tests and the documentation — was made with [Claude Code](https://claude.com/claude-code), using Anthropic's Claude Sonnet model.** The [`aidlc/`](aidlc/) folder keeps the trail: what was asked, what was decided and what was built, stage by stage.
 >
-> **How it was checked.** The tool is built behind automated tests (361 pass on Linux, Windows and macOS in GitHub Actions). **No security scanning has been switched on** and no one has reviewed it independently; the breakdown, and what this is *not*, is in [How this was reviewed and hardened](#how-this-was-reviewed-and-hardened).
+> **How it was checked.** The tool is built behind automated tests (361 pass on Linux, Windows and macOS in GitHub Actions). The web app added later in [`web/`](web/) has 24 more tests of its own; its CI job is written but has not yet run on GitHub. **No security scanning has been switched on** and no one has reviewed either independently; the breakdown, and what this is *not*, is in [How this was reviewed and hardened](#how-this-was-reviewed-and-hardened).
 
 [![CI](https://github.com/jax79sg/ModelHub/actions/workflows/ci.yml/badge.svg)](https://github.com/jax79sg/ModelHub/actions/workflows/ci.yml)
 [![Release](https://github.com/jax79sg/ModelHub/actions/workflows/release.yml/badge.svg)](https://github.com/jax79sg/ModelHub/actions/workflows/release.yml)
 
-A command-line tool that downloads public Hugging Face models (files, README, metadata) on a computer with internet, packs them into signed pieces that fit on removable drives, and rebuilds them inside an air-gapped environment into a folder layout that a web app can read directly. The same program runs on Linux and Windows on both sides; the web app that reads the folders is a separate, later project.
+A command-line tool that downloads public Hugging Face models (files, README, metadata) on a computer with internet, packs them into signed pieces that fit on removable drives, and rebuilds them inside an air-gapped environment into a folder layout that a web app can read directly. The same program runs on Linux and Windows on both sides. A small web app in [`web/`](web/) reads that folder and shows the models the way [huggingface.co/models](https://huggingface.co/models) does, with no internet needed.
 
 ```
 online computer                              drives                 air-gapped computer
 pull  ->  bundle (signed, split)  ->  carry  ->  verify  ->  unpack  ->  list
+                                                                    |
+                                                                    +-->  web app (web/): browse, search, read model cards
 ```
 
 ## How this was reviewed and hardened
@@ -25,6 +27,7 @@ Written down so a reader can judge it, including the parts that are not flatteri
 - **Tests: 361** run without the internet, plus 6 that use the real Hugging Face Hub (run on request with `pytest -m network`). They were written before the code they test (the team's test-first practice). They include: a flipped byte in every kind of piece, killing the tool at every write point and running it again, memory use on a 1 GB file, a 10,000-folder store listed in under 5 seconds, 999,999 pieces accepted and one more refused, and the air-gapped commands run with the network blocked.
 - **Bugs found by running it**, not by reading it: a damaged manifest crashed `verify`; stopping `unpack` early left stale pointers; a README with Windows line endings lost them; a packed program started helper processes wrongly. Each now has a test.
 - **Measured download speed:** 0.94 of the connection's best speed on a 1 GB file (target 0.8), by hand with `tools/benchmark_download.py`. A first run reported 6.9 because the measuring method was wrong; it was fixed and re-run. This is one run on one connection.
+- **Web app: designed from evidence, tested with real data.** Its pages were worked out by pointing [REA](https://github.com/morluto/rea) at huggingface.co/models ([notes and screenshots](docs/reverse-engineering/)). It has **24 tests** against a made-up store, and it was also run against a store built by this tool's own pull, bundle, verify and unpack from four small public models; that is how odd real data (a licence given as a list, a missing README, files the Hub lists but that were never downloaded, a download-cache folder inside `files/`) was found. Looked at by eye in dark and light themes; phone widths were not tried on a phone.
 - **Every requirement traced to code or a test:** [`traceability.json`](aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/code-generation/traceability.json) maps 112 requirement IDs to a file, and a check confirms each file exists. That shows a test exists, not that the test is good.
 
 **Hardened (in the tool)**
@@ -35,12 +38,20 @@ Written down so a reader can judge it, including the parts that are not flatteri
 - The air-gapped commands (`verify`, `unpack`, `list`, `key`) make no network connection (tested with the network blocked). The tool never loads or runs a model file.
 - Hugging Face usage reporting is switched off by default.
 
+**Hardened (in the web app)**
+
+- A model card (README) is treated as hostile text: scripts, styles, iframes, forms, event handlers and `javascript:` links are removed, and pictures that point to the internet are replaced by their alt text, so nothing is requested from outside. Every page carries a strict Content-Security-Policy.
+- Files are never rendered by the site: they are served as downloads or as plain text, so an HTML or SVG file inside a model cannot run in the site's address. Paths are checked (`..`, encoded `..`, absolute paths, a link that leaves the folder, and the downloader's `.modelhub-dl/` cache are all refused; tested), and only files named in the store's own `summary.json` can be served.
+- It listens on `127.0.0.1` by default and has no login. It only reads the store and never writes to it.
+
 **What this is not**
 
 - It has had **no independent security review or penetration test**. No dependency or code scanning, secret scanning or Dependabot is switched on yet, and the CI plan did not include a dependency scan.
 - **The CI first ran on 10 October 2026 and failed on Windows**: a real bug (plain file names refused as escaping their folder, when Windows spelled the folder differently) and several tests that assumed Linux or macOS behaviour. These are fixed and the checks now pass on Linux, Windows and macOS with Python 3.10 and 3.12. The Linux file was built in an AlmaLinux 8 container and started on Ubuntu 20.04; it has not been tried on a real RHEL 8 machine. Version 1.0.0 was released on 10 October 2026 (Linux and Windows files and offline packs); 1.1.0 adds the Mac file.
 - **Everything was committed straight to `main`**; there have been no pull requests yet. The GitHub settings that would require them are described in [`ci-config.md`](aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/ci-pipeline/ci-config.md) but not switched on.
 - Memory and size targets were checked at 1 GB and by calculation, not with a real 500 GB or 1 TB file.
+- **The web app is newer and less checked than the tool.** Its tests have so far run only on one Mac with Python 3.12; the Windows and Python 3.10 runs are in the CI definition but have not happened. Its six dependencies (FastAPI, uvicorn, Jinja2, markdown-it-py, mdit-py-plugins, nh3) were installed at their newest versions and not audited. Its sanitiser and path checks are tested against the attacks its author thought of, not an attacker's. Only small models were tried; the whole store is read into memory, which has not been timed on thousands of models.
+- **The web app is not the real site.** Trending, inference widgets and providers, Spaces, community discussions, likes, sign-in and the model tree are not reproduced; the store holds nothing to build them from. Downloads and likes are a snapshot from the day each model was pulled.
 - It is a tool for moving **public** models only; private and gated models are refused. Treat it as a learning project.
 
 ## How much Claude Code was used
@@ -98,12 +109,18 @@ python tools/claude_usage.py --snapshot docs/claude-usage.json --update-readme R
 - **Signed and checked:** each bundle has a description file and a signature; `verify` names every missing or damaged piece, not just the first.
 - **Rebuilt for a web app:** `unpack` puts the model into a fixed folder layout (the model store) with plain-text `latest` and `refs/<name>` pointer files, no links, so it works on Linux and Windows.
 - **Lists what you have:** `list` shows name, commit, capture date, size and licence for every model in a store.
+- **Browse it like the Hub:** the web app in [`web/`](web/) reads the model store and offers the same pages as huggingface.co/models, with nothing fetched from the internet:
+  - **Models list** (`/models`): filter by task, library, licence, language and number of parameters (the Hub's six slider stops); filter by name; sort by downloads, likes, last update, creation date or name; 30 per page. Every control is a plain link or form, so it works without JavaScript.
+  - **Model card** (`/org/name`): the README rendered safely, task, library, language and licence tags, parameter counts per type, datasets and papers named in the tags, and a box saying which commit this is and when it was pulled.
+  - **Files and versions** (`/org/name/tree/<rev>`): folders and files with the last commit that touched each, the Hub's safety-scan badge, a "not in store" mark on files that were listed but not downloaded; a viewer for text files and images, SHA-256s, pickle imports the Hub detected, and downloads.
+  - **Commit history** (`/org/name/commits/<rev>`) and a revision menu for branches, tags and every captured commit.
+  - Dark and light themes, a small JSON API (`/api/models`), and new models show up on the next page load with no restart. What it leaves out is listed in [`web/README.md`](web/README.md#what-it-does-not-do).
 - **Progress and records:** live progress for anything over 2 seconds; a run record of what was fetched, skipped and failed; exit status 0, 1 (an item failed) or 2 (could not run).
 - **Delivered three ways:** a single program file per system (Linux, Windows, Mac with Apple Silicon; no Python needed), an offline install pack for computers with Python, or `pip install`.
 
 ## Architecture
 
-One Python package, `src/modelhub/`, with a small command layer over single-purpose modules:
+Two separate Python packages. The tool is `src/modelhub/`, a small command layer over single-purpose modules:
 
 | Module | Role | Talks to |
 |---|---|---|
@@ -114,7 +131,17 @@ One Python package, `src/modelhub/`, with a small command layer over single-purp
 | `signing.py`, `verify.py`, `unpack.py`, `store.py` | Keys and trust, checks, safe rebuild, the model store and `list` | the pieces, the model store |
 | `fsutil.py`, `progress.py`, `runrecord.py`, `logsetup.py`, `redact.py` | Safe file writes, locking, progress, run records, logs, hiding secrets | local disk |
 
-Only the `pull` step uses the network. The three formats between the steps are fixed contracts, written in [`contract-summary.md`](aidlc/spaces/default/intents/261009-hf-airgap-cli/inception/contract-design/contract-summary.md): the download record, the bundle, and the model store. Full design rationale and decision history: [`aidlc/`](aidlc/).
+The web app is `web/src/hubsite/`, with its own `pyproject.toml` and dependencies so the single-file program of the tool stays small. It never imports `modelhub`; it reads only the model-store folder layout:
+
+| Module | Role | Talks to |
+|---|---|---|
+| `app.py` | Routes, security headers, file serving, JSON API | the modules below |
+| `store.py` | Reads the store layout and `summary.json`, resolves revisions, lists files, refuses paths outside `files/` | the store on disk |
+| `catalog.py`, `fmt.py` | Filter, sort, facet counts and paging; numbers, sizes and times written the way the Hub writes them | `store.py` |
+| `markdown.py` | README to safe HTML | the store's `readme/` folder |
+| `templates/`, `static/` | The pages, one stylesheet, a small optional script | none |
+
+Only the `pull` step uses the network. The three formats between the steps are fixed contracts, written in [`contract-summary.md`](aidlc/spaces/default/intents/261009-hf-airgap-cli/inception/contract-design/contract-summary.md): the download record, the bundle, and the model store. Full design rationale and decision history: [`aidlc/`](aidlc/). The web app only reads the third contract; where each Hub field comes from in a store is in [`docs/reverse-engineering/`](docs/reverse-engineering/README.md).
 
 ## Prerequisites
 
@@ -122,6 +149,7 @@ Only the `pull` step uses the network. The three formats between the steps are f
 - **Air-gapped computer:** the program file for your system, or Python 3.10+ with the offline install pack. No internet is needed or used.
 - **Both sides:** a way to carry the pieces (removable drives) and a separate way to send one short fingerprint (phone, chat, paper) so the air-gapped side can trust your signing key.
 - Linux or Windows, 64-bit Intel/AMD, or a Mac with Apple Silicon (macOS 11 or newer). Intel Macs can run the code with Python, but no program file is published for them.
+- **Web app (optional):** Python 3.10+ and a browser, on the computer that holds the model store. Its six packages are installed with `pip`; on an air-gapped computer bring their wheels in with the offline pack route. The web app is not part of the program file.
 
 ## Quick Start
 
@@ -195,6 +223,17 @@ modelhub verify /srv/models                          # re-check every file of th
 
 The store holds `models/<id>/commits/<commit>/{files,raw,readme,manifest.json,summary.json}` plus `latest` and `refs/<name>` text files naming a commit.
 
+### 6. Browse the store (air-gapped, optional)
+
+```bash
+cd web
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e .                                     # FastAPI, uvicorn, Jinja2, markdown-it-py, mdit-py-plugins, nh3
+python -m hubsite --store /srv/models --port 8765    # then open http://127.0.0.1:8765
+```
+
+Search from the header, filter on the left, open a model, then try **Files and versions** and the revision menu. The site only reads the store; it never changes it. `web/README.md` has the page list and details. A store built from four small public models is in `store/` after the steps above are run on those models (it is not committed: it is about 100 MB).
+
 ### Recovering by hand
 
 Pieces are plain slices of one tar file; the signature file lists their names and checksums.
@@ -208,7 +247,7 @@ copy /b name.part-000001+name.part-000002 name.tar        (Windows)
 
 ## Stopping / Resetting
 
-Stop any command with Ctrl-C at any moment and run it again; it continues from the verified work. Only one run may use an output folder at a time. To start over, delete the output folder (`pulled`, the pieces folder, or the store).
+Stop any command with Ctrl-C at any moment and run it again; it continues from the verified work. Only one run may use an output folder at a time. To start over, delete the output folder (`pulled`, the pieces folder, or the store). Stop the web app with Ctrl-C; it keeps no data of its own, and only your light or dark choice is remembered, in your browser.
 
 ## Configuration Reference
 
@@ -221,6 +260,8 @@ There is no config file. The few settings:
 - **`--verbose` / `--debug`** — also write `modelhub.log` beside the output.
 - `HF_HUB_DISABLE_TELEMETRY` and the update check are switched off by default.
 
+The web app has no config file either: `--store` (or `HUBSITE_STORE`, default `./store`), `--host` (default `127.0.0.1`, this computer only; use `0.0.0.0` only on a network you trust, since there is no login) and `--port` (default 8000).
+
 ## Development
 
 ```bash
@@ -230,6 +271,17 @@ pytest                       # real-network tests are skipped; run them with: py
 ruff check . && ruff format --check .
 python tools/benchmark_download.py org/model big-file.bin   # speed check against the link (80%)
 ```
+
+### The web app
+
+```bash
+cd web && python3.12 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+pytest                                  # 24 tests; no internet and no real store needed
+ruff check . && ruff format --check .   # web/ has its own ruff settings (line length 140)
+```
+
+The tests build a tiny store in a temporary folder. To look at the site while changing it, run it with `--store ../store` and reload. The root `pytest` and `ruff` commands do not run the web tests; CI has a separate `web` job for them.
 
 ### Build the program file
 
@@ -256,12 +308,21 @@ Full instructions: [`aidlc/spaces/default/intents/261009-hf-airgap-cli/construct
 
 **The Mac program file is killed as soon as it starts (exit status 137)** — macOS has marked it as downloaded from the internet. Run `xattr -d com.apple.quarantine <file>` once.
 
+**Web app says "No models in this store yet"** — `--store` must be the folder that contains `models/`, not `models/` itself. `modelhub list <store>` shows what it holds.
+
+**A model is missing from the web list** — it is skipped if it has no `commits/<commit>/summary.json` or that file is damaged. `modelhub verify <store>` checks every file.
+
+**A file shows "not in store"; a picture in a model card shows as `[name]`** — the first was listed by the Hub but not downloaded (pull again with a `--type` that includes it); the second pointed to the internet and could not be copied. The site never loads remote pictures.
+
 **The program file will not start on an old Linux** — it must be built on RHEL 8 or older; the CI does this, a build on a newer system will not run there.
 
 ## Project Structure
 
 ```
-src/modelhub/          The package: commands and modules (see Architecture)
+src/modelhub/          The tool: commands and modules (see Architecture)
+web/                   The web app (own pyproject.toml): src/hubsite/, tests/ (24), README.md
+docs/reverse-engineering/  Screenshots and notes from studying huggingface.co/models with REA
+store/                 Optional sample model store for the web app (git-ignored)
 tests/                 361 tests (+6 against the real Hub); conftest.py holds a fake Hugging Face
 packaging/             Program-file build, offline install pack, whole-workflow smoke script
 tools/                 benchmark_download.py (manual speed check), claude_usage.py (Claude Code usage tracker)

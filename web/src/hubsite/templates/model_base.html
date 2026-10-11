@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block body %}
+{% set card = summary.get('card') or {} %}
+<div class="model-header">
+  <div class="container">
+    <div class="title-row">
+      <span class="avatar {{ avatar_class(model.org or model.id) }}" aria-hidden="true">{{ (model.org or model.id)[0]|upper }}</span>
+      <h1 class="repo-title"><a href="/models?{{ qs([('search', model.org ~ '/')]) }}">{{ model.org }}</a><span class="slash">/</span><b>{{ model.short_name }}</b></h1>
+      <button class="icon-btn" type="button" data-copy="{{ model.id }}" title="Copy model id" aria-label="Copy model id">{{ icon('copy', 15) }}</button>
+      {% if model.likes is not none %}<span class="stat-pill" title="{{ '{:,}'.format(model.likes) }} likes when pulled">{{ icon('heart', 14) }} Likes <b>{{ fmt.count(model.likes) }}</b></span>{% endif %}
+    </div>
+
+    <div class="tag-row">
+      {% if model.pipeline_tag %}<a class="tag pl-{{ fmt.pipeline_color(model.pipeline_tag) }}" href="/models?pipeline_tag={{ q(model.pipeline_tag) }}"><span class="tag-dot"></span>{{ fmt.pipeline_label(model.pipeline_tag) }}</a>{% endif %}
+      {% set libs = [] %}
+      {% if model.library %}{% set _ = libs.append(model.library) %}{% endif %}
+      {% for t in model.tags if t in fmt.LIBRARIES and t not in libs %}{% set _ = libs.append(t) %}{% endfor %}
+      {% for lib in libs %}<a class="tag" href="/models?library={{ q(lib) }}">{{ fmt.library_label(lib) }}</a>{% endfor %}
+      {% for lang in model.languages[:3] %}<a class="tag" href="/models?language={{ q(lang) }}">{{ fmt.language_label(lang) }}</a>{% endfor %}
+      {% for t in model.tags if not t.startswith(('region:', 'license:', 'dataset:', 'arxiv:', 'doi:', 'base_model:', 'deploy:')) and t not in fmt.LIBRARIES and t != model.pipeline_tag and t not in model.languages and t not in ('endpoints_compatible',) %}{% if loop.index <= 14 %}<a class="tag plain" href="/models?other={{ q(t) }}">{{ t }}</a>{% endif %}{% endfor %}
+      {% for t in model.tags if t.startswith('arxiv:') %}<span class="tag plain">{{ t }}</span>{% endfor %}
+      {% if model.license %}<a class="tag" href="/models?license={{ q(model.license) }}">{{ icon('scale', 13) }} License: <b>{{ model.license }}</b></a>{% endif %}
+    </div>
+
+    <div class="tab-row">
+      <nav class="tabs" aria-label="Repository">
+        <a href="/{{ model.id }}{{ '?rev=' ~ q(rev) if rev not in ('main', 'latest') else '' }}" class="{{ 'active' if active_tab == 'card' }}">{{ icon('cube', 15) }} Model card</a>
+        <a href="/{{ model.id }}/tree/{{ q(rev) }}" class="{{ 'active' if active_tab == 'files' }}">{{ icon('list', 15) }} Files and versions</a>
+      </nav>
+      <div class="tab-actions">
+        <details class="menu rev-menu">
+          <summary class="btn small">{{ icon('branch', 14) }} {{ rev if rev|length < 20 else rev[:7] }} {{ icon('chevron', 12) }}</summary>
+          <div class="menu-panel">
+            {% for r in revisions %}
+              <a class="{{ 'current' if r.commit == commit and (r.name == rev or r.commit.startswith(rev)) }}" href="{{ ('/' ~ model.id ~ '?rev=' ~ q(r.name)) if active_tab == 'card' else ('/' ~ model.id ~ '/tree/' ~ q(r.name)) }}">
+                {{ icon('branch' if r.kind == 'branch' else 'clock', 13) }} {{ r.name }} <span class="muted mono">{{ r.commit[:7] }}</span>
+              </a>
+            {% endfor %}
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if not is_latest %}
+<div class="container"><div class="banner warn">{{ icon('info', 15) }} You are viewing an older capture (<span class="mono">{{ commit[:7] }}</span>). The latest captured commit is <a class="mono" href="/{{ model.id }}?rev=latest">{{ model.latest[:7] }}</a>.</div></div>
+{% endif %}
+
+{% block content %}{% endblock %}
+{% endblock %}

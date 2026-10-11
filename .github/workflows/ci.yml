@@ -126,3 +126,25 @@ jobs:
           name: modelhub-pack-${{ runner.os }}-py${{ matrix.python }}
           path: pack
           if-no-files-found: error
+
+  # The web app that reads a model store (web/). It has its own dependencies and ruff settings.
+  web:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.12"]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: pytest -v

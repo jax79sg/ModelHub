@@ -33,3 +33,9 @@ aidlc/diagnostics/
 # END AI-DLC:gitignore
 *.swp
 *.swo
+
+# web app
+web/.venv/
+web/.ruff_cache/
+web/.pytest_cache/
+/store/

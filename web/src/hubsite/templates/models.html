@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_model_card.html" import model_row %}
+{% macro chip_list(facets, key, limit=None) %}
+  <div class="chips">
+  {% for f in (facets[:limit] if limit else facets) %}
+    <a class="chip {{ 'active' if f.active }}" href="/models?{{ qs(query.toggled(key, f.value)) }}" title="{{ f.count }} model{{ 's' if f.count != 1 }}">
+      {{ f.label }} <span class="chip-count">{{ f.count }}</span>
+    </a>
+  {% endfor %}
+  {% if limit and facets|length > limit %}<a class="chip more" href="/models?{{ qs(query.params(displayed={'pipeline_tag': 'tasks', 'library': 'libraries', 'license': 'licenses'}[key], page=0)) }}">+ {{ facets|length - limit }}</a>{% endif %}
+  </div>
+{% endmacro %}
+{% block body %}
+<div class="container list-layout">
+  <aside class="filters" aria-label="Filters">
+    <nav class="filter-tabs" aria-label="Filter groups">
+      {% for key, label in [('main','Main'),('tasks','Tasks'),('libraries','Libraries'),('languages','Languages'),('licenses','Licenses'),('other','Other')] %}
+        <a href="/models?{{ qs(query.params(displayed=key, page=0)) }}" class="{{ 'active' if query.displayed == key }}">{{ label }}</a>
+      {% endfor %}
+    </nav>
+    {% if query.displayed == 'main' %}
+      <section><h3>Tasks</h3>
+        {% if result.tasks %}{{ chip_list(result.tasks, 'pipeline_tag', 8) }}{% else %}<p class="muted small">No task information in the store.</p>{% endif %}
+      </section>
+      <section><h3>Parameters</h3>
+        <form class="param-form" action="/models" method="get" data-autosubmit>
+          {% for k, v in query.params(pmin=0, pmax=5, page=0) %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+          <div class="range" data-range data-labels="{{ fmt.PARAM_LABELS|join('|') }}">
+            <div class="range-track"><div class="range-fill"></div></div>
+            <input type="range" name="pmin" min="0" max="5" step="1" value="{{ query.pmin }}" aria-label="Minimum parameters">
+            <input type="range" name="pmax" min="0" max="5" step="1" value="{{ query.pmax }}" aria-label="Maximum parameters">
+          </div>
+          <div class="range-labels"><span data-range-min>{{ fmt.PARAM_LABELS[query.pmin] }}</span><span data-range-max>{{ fmt.PARAM_LABELS[query.pmax] }}</span></div>
+          <noscript><button class="btn small" type="submit">Apply</button></noscript>
+        </form>
+      </section>
+      <section><h3>Libraries</h3>
+        {% if result.libraries %}{{ chip_list(result.libraries, 'library', 8) }}{% else %}<p class="muted small">No library information in the store.</p>{% endif %}
+      </section>
+      {% if result.licenses %}<section><h3>Licenses</h3>{{ chip_list(result.licenses, 'license', 8) }}</section>{% endif %}
+    {% elif query.displayed == 'tasks' %}<section><h3>Tasks</h3>{{ chip_list(result.tasks, 'pipeline_tag') }}</section>
+    {% elif query.displayed == 'libraries' %}<section><h3>Libraries</h3>{{ chip_list(result.libraries, 'library') }}</section>
+    {% elif query.displayed == 'languages' %}<section><h3>Languages</h3>{% if result.languages %}{{ chip_list(result.languages, 'language') }}{% else %}<p class="muted small">None of the pulled models declare a language.</p>{% endif %}</section>
+    {% elif query.displayed == 'licenses' %}<section><h3>Licenses</h3>{{ chip_list(result.licenses, 'license') }}</section>
+    {% else %}<section><h3>Other</h3>{{ chip_list(result.others, 'other') }}</section>
+    {% endif %}
+  </aside>
+
+  <section class="results" aria-label="Models">
+    <div class="results-head">
+      <h1>Models <span class="count">{{ '{:,}'.format(result.total) }}</span>{% if result.total != result.all_total %}<span class="count-of"> of {{ result.all_total }}</span>{% endif %}</h1>
+      <form class="name-filter" action="/models" method="get" data-autosubmit-debounce>
+        {% for k, v in query.params(search='', page=0) %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+        {{ icon('cube', 15) }}<input type="search" name="search" value="{{ query.search }}" placeholder="Filter by name" aria-label="Filter by name" autocomplete="off">
+      </form>
+      <form class="sort-form" action="/models" method="get" data-autosubmit>
+        {% for k, v in query.params(sort='downloads', page=0) %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+        <label class="sort">{{ icon('sort', 15) }}
+          <select name="sort" aria-label="Sort by">{% for key, label in catalog.SORTS %}<option value="{{ key }}" {{ 'selected' if key == query.sort }}>Sort: {{ label }}</option>{% endfor %}</select>
+        </label>
+        <noscript><button class="btn small" type="submit">Apply</button></noscript>
+      </form>
+    </div>
+
+    {% set groups = [('pipeline_tag', fmt.pipeline_label), ('library', fmt.library_label), ('license', none), ('language', fmt.language_label), ('other', none)] %}
+    {% if query.pipeline_tag or query.library or query.license or query.language or query.other or query.params_active or query.search %}
+    <div class="active-filters">
+      {% for key, label_fn in groups %}{% for v in query[key] %}
+        <a class="chip active" href="/models?{{ qs(query.toggled(key, v)) }}" title="Remove filter">{{ label_fn(v) if label_fn else v }} ✕</a>
+      {% endfor %}{% endfor %}
+      {% if query.params_active %}<a class="chip active" href="/models?{{ qs(query.params(pmin=0, pmax=5, page=0)) }}" title="Remove filter">{{ fmt.PARAM_LABELS[query.pmin] }} – {{ fmt.PARAM_LABELS[query.pmax] }} params ✕</a>{% endif %}
+      {% if query.search %}<a class="chip active" href="/models?{{ qs(query.params(search='', page=0)) }}" title="Remove filter">“{{ query.search }}” ✕</a>{% endif %}
+      <a class="chip clear" href="/models">Clear all</a>
+    </div>
+    {% endif %}
+
+    {% if result.models %}
+      <div class="model-list">{% for m in result.models %}{{ model_row(m) }}{% endfor %}</div>
+      {% if result.pages > 1 %}
+      <nav class="pagination" aria-label="Pagination">
+        {% set cur = query.page %}
+        {% if cur > 0 %}<a href="/models?{{ qs(query.params(page=cur-1)) }}" rel="prev">‹ Previous</a>{% endif %}
+        {% for n in range(result.pages) %}
+          {% if n == 0 or n == result.pages - 1 or (n - cur)|abs <= 2 %}
+            <a class="{{ 'current' if n == cur }}" href="/models?{{ qs(query.params(page=n)) }}" {{ 'aria-current=page' if n == cur }}>{{ n + 1 }}</a>
+          {% elif (n - cur)|abs == 3 %}<span class="ellipsis">…</span>{% endif %}
+        {% endfor %}
+        {% if cur < result.pages - 1 %}<a href="/models?{{ qs(query.params(page=cur+1)) }}" rel="next">Next ›</a>{% endif %}
+      </nav>
+      {% endif %}
+    {% elif store_empty %}
+      <div class="empty-state">
+        <h2>No models in this store yet</h2>
+        <p>Pull and unpack some with the <code>modelhub</code> CLI, then reload.</p>
+        <pre><code>modelhub pull org/name --type safetensors
+modelhub bundle pulled/models/org/name/commits/&lt;commit&gt; --out outgoing
+modelhub unpack outgoing --store store</code></pre>
+      </div>
+    {% else %}
+      <div class="empty-state"><h2>No models match these filters</h2><p><a href="/models">Clear all filters</a></p></div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
