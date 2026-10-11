@@ -3888,3 +3888,32 @@
 **Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
 
 ---
+
+## Human Turn
+**Timestamp**: 2026-10-11T05:08:49Z
+**Event**: HUMAN_TURN
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+
+---
+
+## Session End
+**Timestamp**: 2026-10-11T05:18:25Z
+**Event**: SESSION_ENDED
+**Reason**: other
+
+---
+
+## Session Resume
+**Timestamp**: 2026-10-11T05:19:38Z
+**Event**: SESSION_RESUMED
+**Source**: resume
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+
+---
+
+## Human Turn
+**Timestamp**: 2026-10-11T05:19:55Z
+**Event**: HUMAN_TURN
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+
+---
