@@ -1,0 +1,55 @@
+{
+  "sessions": {
+    "5686a56e-f4cb-480b-9d8e-9df6328a1a78": {
+      "api_seconds": 4571.1,
+      "cost_usd": 54.6004,
+      "days": {
+        "2026-10-09": {
+          "cache_read": 44746399,
+          "cache_write": 1461243,
+          "input": 300,
+          "output": 120649,
+          "responses": 148
+        },
+        "2026-10-10": {
+          "cache_read": 138412048,
+          "cache_write": 1509966,
+          "input": 568,
+          "output": 409201,
+          "responses": 284
+        },
+        "2026-10-11": {
+          "cache_read": 2414252,
+          "cache_write": 267776,
+          "input": 18,
+          "output": 16302,
+          "responses": 9
+        }
+      },
+      "first": "2026-10-09T06:01:36.430Z",
+      "last": "2026-10-11T00:13:37.157Z",
+      "lines_added": 9693,
+      "lines_removed": 527,
+      "models": {
+        "claude-haiku-5-5": {
+          "cache_read": 0,
+          "cache_write": 0,
+          "cost_usd": 0.0376788,
+          "input": 297513,
+          "output": 15855,
+          "thinking": 8746
+        },
+        "claude-sonnet-5-5": {
+          "cache_read": 191579843,
+          "cache_write": 2738490,
+          "cost_usd": 54.56270960000001,
+          "input": 18454,
+          "output": 541196,
+          "thinking": 186064
+        }
+      },
+      "prompts": 36,
+      "session": "5686a56e-f4cb-480b-9d8e-9df6328a1a78"
+    }
+  }
+}
