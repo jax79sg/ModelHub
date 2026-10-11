@@ -61,6 +61,7 @@ def test_the_entry_script_lets_a_packed_program_start_its_own_helper_processes()
         ("Linux", "x86_64", "modelhub-linux-x86_64"),
         ("Windows", "AMD64", "modelhub-windows-x86_64.exe"),
         ("Windows", "x86_64", "modelhub-windows-x86_64.exe"),
+        ("Darwin", "arm64", "modelhub-darwin-arm64"),
     ],
 )
 def test_the_program_file_is_named_for_its_system(system, machine, expected):
