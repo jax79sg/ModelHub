@@ -3,7 +3,7 @@
 > [!NOTE]
 > **About this project.** This is **jax79sg**'s means of learning and understanding the challenges of building software with a coding agent. **Much of this entire repository — the code, the tests and the documentation — was made with [Claude Code](https://claude.com/claude-code), using Anthropic's Claude Sonnet model.** The [`aidlc/`](aidlc/) folder keeps the trail: what was asked, what was decided and what was built, stage by stage.
 >
-> **How it was checked.** The tool is built behind automated tests (361 pass on Linux, Windows and macOS in GitHub Actions). The web app added later in [`web/`](web/) has 24 more tests of its own; its CI job is written but has not yet run on GitHub. **No security scanning has been switched on** and no one has reviewed either independently; the breakdown, and what this is *not*, is in [How this was reviewed and hardened](#how-this-was-reviewed-and-hardened).
+> **How it was checked.** The tool is built behind automated tests (369 pass on Linux, Windows and macOS in GitHub Actions). The web app added later in [`web/`](web/) has 24 more tests of its own; its CI job is written but has not yet run on GitHub. **No security scanning has been switched on** and no one has reviewed either independently; the breakdown, and what this is *not*, is in [How this was reviewed and hardened](#how-this-was-reviewed-and-hardened).
 
 [![CI](https://github.com/jax79sg/ModelHub/actions/workflows/ci.yml/badge.svg)](https://github.com/jax79sg/ModelHub/actions/workflows/ci.yml)
 [![Release](https://github.com/jax79sg/ModelHub/actions/workflows/release.yml/badge.svg)](https://github.com/jax79sg/ModelHub/actions/workflows/release.yml)
@@ -24,7 +24,7 @@ Written down so a reader can judge it, including the parts that are not flatteri
 **Reviewed**
 
 - **Approval gates, on the record.** The project follows a written workflow (AI-DLC): the intent, feasibility, requirements, contracts, non-functional requirements, code-generation plan, test instructions and CI plan were each written first and approved by jax79sg before the next step. Every request, answer and approval is logged in [`aidlc/spaces/default/intents/261009-hf-airgap-cli/audit/`](aidlc/spaces/default/intents/261009-hf-airgap-cli/audit/) (about 3,800 lines). Automated reviewer agents were turned off by jax79sg's instruction ("stop using sub-agents"), so the reviews were done by the same session that wrote the work.
-- **Tests: 361** run without the internet, plus 6 that use the real Hugging Face Hub (run on request with `pytest -m network`). They were written before the code they test (the team's test-first practice). They include: a flipped byte in every kind of piece, killing the tool at every write point and running it again, memory use on a 1 GB file, a 10,000-folder store listed in under 5 seconds, 999,999 pieces accepted and one more refused, and the air-gapped commands run with the network blocked.
+- **Tests: 369** run without the internet, plus 6 that use the real Hugging Face Hub (run on request with `pytest -m network`). They were written before the code they test (the team's test-first practice). They include: a flipped byte in every kind of piece, killing the tool at every write point and running it again, memory use on a 1 GB file, a 10,000-folder store listed in under 5 seconds, 999,999 pieces accepted and one more refused, and the air-gapped commands run with the network blocked.
 - **Bugs found by running it**, not by reading it: a damaged manifest crashed `verify`; stopping `unpack` early left stale pointers; a README with Windows line endings lost them; a packed program started helper processes wrongly. Each now has a test.
 - **Measured download speed:** 0.94 of the connection's best speed on a 1 GB file (target 0.8), by hand with `tools/benchmark_download.py`. A first run reported 6.9 because the measuring method was wrong; it was fixed and re-run. This is one run on one connection.
 - **Web app: designed from evidence, tested with real data.** Its pages were worked out by pointing [REA](https://github.com/morluto/rea) at huggingface.co/models ([notes and screenshots](docs/reverse-engineering/)). It has **24 tests** against a made-up store, and it was also run against a store built by this tool's own pull, bundle, verify and unpack from four small public models; that is how odd real data (a licence given as a list, a missing README, files the Hub lists but that were never downloaded, a download-cache folder inside `files/`) was found. Looked at by eye in dark and light themes; phone widths were not tried on a phone.
@@ -48,7 +48,7 @@ Written down so a reader can judge it, including the parts that are not flatteri
 
 - It has had **no independent security review or penetration test**. No dependency or code scanning, secret scanning or Dependabot is switched on yet, and the CI plan did not include a dependency scan.
 - **The CI first ran on 10 October 2026 and failed on Windows**: a real bug (plain file names refused as escaping their folder, when Windows spelled the folder differently) and several tests that assumed Linux or macOS behaviour. These are fixed and the checks now pass on Linux, Windows and macOS with Python 3.10 and 3.12. The Linux file was built in an AlmaLinux 8 container and started on Ubuntu 20.04; it has not been tried on a real RHEL 8 machine. Version 1.0.0 was released on 10 October 2026 (Linux and Windows files and offline packs); 1.1.0 adds the Mac file.
-- **Everything was committed straight to `main`**; there have been no pull requests yet. The GitHub settings that would require them are described in [`ci-config.md`](aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/ci-pipeline/ci-config.md) but not switched on.
+- **The first version was committed straight to `main`.** Since then every change has gone through a pull request: a ruleset on `main` requires a pull request, squash merging only, and the required checks to pass. No independent person has reviewed any of it; each pull request was merged on the project owner's instruction.
 - Memory and size targets were checked at 1 GB and by calculation, not with a real 500 GB or 1 TB file.
 - **The web app is newer and less checked than the tool.** Its tests have so far run only on one Mac with Python 3.12; the Windows and Python 3.10 runs are in the CI definition but have not happened. Its six dependencies (FastAPI, uvicorn, Jinja2, markdown-it-py, mdit-py-plugins, nh3) were installed at their newest versions and not audited. Its sanitiser and path checks are tested against the attacks its author thought of, not an attacker's. Only small models were tried; the whole store is read into memory, which has not been timed on thousands of models.
 - **The web app is not the real site.** Trending, inference widgets and providers, Spaces, community discussions, likes, sign-in and the model tree are not reproduced; the store holds nothing to build them from. Downloads and likes are a snapshot from the day each model was pulled.
@@ -183,6 +183,8 @@ Files copied on a USB drive from a computer that did not download them normally 
 modelhub key create                          # prints the key id and fingerprint
 modelhub key export <key-id> --out modelhub-public.key
 ```
+
+Anywhere a command asks for a key, you can give its key id, its fingerprint (with or without dashes, any capitals) or the first few characters of either. `modelhub key list` shows them.
 
 Carry `modelhub-public.key` to the air-gapped side. Send its **fingerprint by a different route**. On the air-gapped computer:
 
@@ -323,7 +325,7 @@ src/modelhub/          The tool: commands and modules (see Architecture)
 web/                   The web app (own pyproject.toml): src/hubsite/, tests/ (24), README.md
 docs/reverse-engineering/  Screenshots and notes from studying huggingface.co/models with REA
 store/                 Optional sample model store for the web app (git-ignored)
-tests/                 361 tests (+6 against the real Hub); conftest.py holds a fake Hugging Face
+tests/                 369 tests (+6 against the real Hub); conftest.py holds a fake Hugging Face
 packaging/             Program-file build, offline install pack, whole-workflow smoke script
 tools/                 benchmark_download.py (manual speed check), claude_usage.py (Claude Code usage tracker)
 .github/workflows/     ci.yml (checks and builds) and release.yml (publish on a v* tag)

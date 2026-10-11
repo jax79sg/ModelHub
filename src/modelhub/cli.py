@@ -259,14 +259,14 @@ def bundle(
     out: Path = typer.Option(..., "--out", help="Folder for the pieces."),
     piece_size: str = typer.Option(None, "--piece-size", help="Largest piece, such as 900MB."),
     interactive: bool = typer.Option(False, "--interactive", help="Fill drives one at a time."),
-    key: str = typer.Option(None, "--key", help="Key id to sign with."),
+    key: str = typer.Option(None, "--key", help="Key id or fingerprint to sign with."),
 ) -> None:
     """Check a download record, then cut it into signed pieces."""
     with _guard(), _session("bundle", out) as (shown, run, names):
         try:
             if interactive == (piece_size is not None):
                 raise ValueError("choose exactly one of --piece-size or --interactive")
-            key_id = key or signing.default_key_id()
+            key_id = signing.find_own_key(key)["key_id"] if key else signing.default_key_id()
             size = pieces.parse_size(piece_size) if piece_size else None
             if size:
                 total, count = bundle_mod.plan_bundle(record_dir, size)
@@ -386,8 +386,8 @@ def key_create(
 def key_export(key_id: str, out: Path = typer.Option(..., "--out")) -> None:
     """Write the public half of a key to a file."""
     with _guard():
-        signing.export_public(key_id, out)
-        typer.echo(f"Wrote public key {key_id} to {out}")
+        doc = signing.export_public(key_id, out)
+        typer.echo(f"Wrote public key {doc['key_id']} to {out}")
 
 
 @key_app.command("fingerprint")
@@ -395,11 +395,16 @@ def key_fingerprint(target: str) -> None:
     """Show the fingerprint of a public key file, or of a key made on this computer."""
     with _guard():
         path = Path(target)
-        doc = (
-            signing.read_public_doc(path)
-            if path.is_file()
-            else signing.read_public_doc(signing.home() / "keys" / f"{target}.pub.json")
-        )
+        if path.is_file():
+            doc = signing.read_public_doc(path)
+        else:
+            try:
+                doc = signing.find_own_key(target)
+            except signing.KeyError_ as own_error:
+                try:
+                    doc = signing.find_trusted_key(target)
+                except signing.KeyError_:
+                    raise own_error from None
         typer.echo(f"Fingerprint: {doc['fingerprint']}")
 
 

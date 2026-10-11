@@ -10,6 +10,7 @@ import base64
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -131,11 +132,44 @@ def default_key_id() -> str:
     raise KeyError_("more than one signing key exists; choose one with --key")
 
 
+MIN_KEY_TEXT = 4  # the fewest characters of a key's id or fingerprint accepted as its name
+
+
+def _find_key(text: str, keys: list[dict], whose: str) -> dict:
+    """Pick one key from `keys` by what a person typed: its id, its fingerprint (dashes, spaces
+    and capitals do not matter), or the first few characters of either. The key id is the start
+    of the fingerprint, so one rule covers all of them."""
+    typed = _normalize(text) if re.fullmatch(r"[0-9a-fA-F\s:\-]+", text.strip() or "x") else ""
+    found = (
+        [k for k in keys if _normalize(k["fingerprint"]).startswith(typed)]
+        if len(typed) >= MIN_KEY_TEXT
+        else []
+    )
+    if len(found) == 1:
+        return found[0]
+    if len(found) > 1:
+        raise KeyError_(f"more than one key starts with {text!r}; type more of its id")
+    if not keys:
+        raise KeyError_(f"there is no key {whose}; make one with 'modelhub key create'")
+    known = "; ".join(f"{k['key_id']} (fingerprint {k['fingerprint']}, {k['name']})" for k in keys)
+    raise KeyError_(
+        f"no key matches {text!r}. Keys {whose}: {known}. "
+        "Use the key id or fingerprint, as shown by 'modelhub key list'."
+    )
+
+
+def find_own_key(text: str) -> dict:
+    """A key made on this computer, named by id, fingerprint or the start of either."""
+    return _find_key(text, list_keys(), "made on this computer")
+
+
+def find_trusted_key(text: str) -> dict:
+    """A key this computer trusts, named the same ways."""
+    return _find_key(text, trusted_keys(), "trusted on this computer")
+
+
 def export_public(key_id: str, out: Path) -> dict:
-    source = _keys_dir() / f"{key_id}.pub.json"
-    if not source.is_file():
-        raise KeyError_(f"no key named {key_id}")
-    doc = json.loads(source.read_text())
+    doc = find_own_key(key_id)
     atomic_write_text(out, json.dumps(doc, indent=2) + "\n")
     return doc
 
@@ -166,6 +200,10 @@ def trust_key(doc: dict, typed_fingerprint: str) -> None:
 
 
 def untrust_key(key_id: str) -> bool:
+    try:
+        key_id = find_trusted_key(key_id)["key_id"]
+    except KeyError_:
+        return False
     target = _trusted_dir() / f"{key_id}.pub.json"
     if target.is_file():
         target.unlink()

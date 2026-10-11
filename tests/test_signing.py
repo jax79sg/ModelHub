@@ -124,3 +124,85 @@ def test_cli_fingerprint_works_for_a_key_id_or_a_file(run, tmp_path):
     run("key", "export", key_id, "--out", tmp_path / "p.json")
     by_file = run("key", "fingerprint", tmp_path / "p.json").output
     assert by_id == by_file and "Fingerprint:" in by_id
+
+
+# --- naming a key: the id, the fingerprint, or the start of the id --------------------------
+
+
+def test_a_key_can_be_named_by_its_id_its_fingerprint_or_the_start_of_its_id(home):
+    doc = signing.create_key("laptop")
+    for text in (
+        doc["key_id"],
+        doc["fingerprint"],
+        doc["fingerprint"].upper(),
+        doc["fingerprint"].replace("-", ""),
+        f"  {doc['fingerprint']}  ",
+        doc["key_id"][:6],
+    ):
+        assert signing.find_own_key(text)["key_id"] == doc["key_id"], text
+
+
+def test_an_unknown_key_name_lists_the_keys_that_exist(home):
+    doc = signing.create_key("laptop")
+    with pytest.raises(signing.KeyError_) as error:
+        signing.find_own_key("ffffffffffffffff")
+    message = str(error.value)
+    assert (
+        "no key matches" in message and doc["key_id"] in message and doc["fingerprint"] in message
+    )
+
+
+def test_with_no_keys_the_message_says_how_to_make_one(home):
+    with pytest.raises(signing.KeyError_, match="key create"):
+        signing.find_own_key("abc")
+
+
+def test_a_start_of_an_id_that_fits_two_keys_is_refused_not_guessed(home, monkeypatch):
+    one = {
+        "key_id": "0000aaaa00000001",
+        "fingerprint": "0000-aaaa-0000-0001" + "-0000" * 4,
+        "name": "a",
+    }
+    two = {
+        "key_id": "0000aaaa00000002",
+        "fingerprint": "0000-aaaa-0000-0002" + "-0000" * 4,
+        "name": "b",
+    }
+    monkeypatch.setattr(signing, "list_keys", lambda: [one, two])
+    with pytest.raises(signing.KeyError_, match="more than one"):
+        signing.find_own_key("0000aaaa")
+    assert signing.find_own_key("0000aaaa00000002")["name"] == "b"
+
+
+def test_a_too_short_start_of_an_id_is_not_accepted(home):
+    doc = signing.create_key("laptop")
+    with pytest.raises(signing.KeyError_):
+        signing.find_own_key(doc["key_id"][:2])
+
+
+def test_cli_export_accepts_the_fingerprint_that_key_create_prints(run, tmp_path):
+    created = run("key", "create")
+    fingerprint = re.search(r"Fingerprint: (\S+)", created.output).group(1)
+    out = tmp_path / "pub.json"
+    result = run("key", "export", fingerprint, "--out", out)
+    assert result.exit_code == 0, result.output
+    assert out.is_file()
+
+
+def test_cli_export_of_an_unknown_key_tells_the_person_what_to_use(run, tmp_path):
+    run("key", "create")
+    result = run("key", "export", "nonsense-key", "--out", tmp_path / "pub.json")
+    assert result.exit_code == 1
+    assert "no key matches" in result.output and "modelhub key list" in result.output
+
+
+def test_cli_fingerprint_and_untrust_accept_the_fingerprint_too(run, home, tmp_path):
+    created = run("key", "create")
+    fingerprint = re.search(r"Fingerprint: (\S+)", created.output).group(1)
+    shown = run("key", "fingerprint", fingerprint)
+    assert shown.exit_code == 0 and fingerprint in shown.output
+    out = tmp_path / "pub.json"
+    run("key", "export", fingerprint, "--out", out)
+    run("key", "trust", out, input=fingerprint + "\n")
+    removed = run("key", "untrust", fingerprint)
+    assert removed.exit_code == 0 and "Removed" in removed.output
