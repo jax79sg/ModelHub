@@ -3,7 +3,7 @@
 > [!NOTE]
 > **About this project.** This is **jax79sg**'s means of learning and understanding the challenges of building software with a coding agent. **Much of this entire repository — the code, the tests and the documentation — was made with [Claude Code](https://claude.com/claude-code), using Anthropic's Claude Sonnet model.** The [`aidlc/`](aidlc/) folder keeps the trail: what was asked, what was decided and what was built, stage by stage.
 >
-> **How it was checked.** The tool is built behind automated tests (358 pass on Linux, Windows and macOS in GitHub Actions). **No security scanning has been switched on** and no one has reviewed it independently; the breakdown, and what this is *not*, is in [How this was reviewed and hardened](#how-this-was-reviewed-and-hardened).
+> **How it was checked.** The tool is built behind automated tests (361 pass on Linux, Windows and macOS in GitHub Actions). **No security scanning has been switched on** and no one has reviewed it independently; the breakdown, and what this is *not*, is in [How this was reviewed and hardened](#how-this-was-reviewed-and-hardened).
 
 [![CI](https://github.com/jax79sg/ModelHub/actions/workflows/ci.yml/badge.svg)](https://github.com/jax79sg/ModelHub/actions/workflows/ci.yml)
 [![Release](https://github.com/jax79sg/ModelHub/actions/workflows/release.yml/badge.svg)](https://github.com/jax79sg/ModelHub/actions/workflows/release.yml)
@@ -22,7 +22,7 @@ Written down so a reader can judge it, including the parts that are not flatteri
 **Reviewed**
 
 - **Approval gates, on the record.** The project follows a written workflow (AI-DLC): the intent, feasibility, requirements, contracts, non-functional requirements, code-generation plan, test instructions and CI plan were each written first and approved by jax79sg before the next step. Every request, answer and approval is logged in [`aidlc/spaces/default/intents/261009-hf-airgap-cli/audit/`](aidlc/spaces/default/intents/261009-hf-airgap-cli/audit/) (about 3,800 lines). Automated reviewer agents were turned off by jax79sg's instruction ("stop using sub-agents"), so the reviews were done by the same session that wrote the work.
-- **Tests: 358** run without the internet, plus 6 that use the real Hugging Face Hub (run on request with `pytest -m network`). They were written before the code they test (the team's test-first practice). They include: a flipped byte in every kind of piece, killing the tool at every write point and running it again, memory use on a 1 GB file, a 10,000-folder store listed in under 5 seconds, 999,999 pieces accepted and one more refused, and the air-gapped commands run with the network blocked.
+- **Tests: 361** run without the internet, plus 6 that use the real Hugging Face Hub (run on request with `pytest -m network`). They were written before the code they test (the team's test-first practice). They include: a flipped byte in every kind of piece, killing the tool at every write point and running it again, memory use on a 1 GB file, a 10,000-folder store listed in under 5 seconds, 999,999 pieces accepted and one more refused, and the air-gapped commands run with the network blocked.
 - **Bugs found by running it**, not by reading it: a damaged manifest crashed `verify`; stopping `unpack` early left stale pointers; a README with Windows line endings lost them; a packed program started helper processes wrongly. Each now has a test.
 - **Measured download speed:** 0.94 of the connection's best speed on a 1 GB file (target 0.8), by hand with `tools/benchmark_download.py`. A first run reported 6.9 because the measuring method was wrong; it was fixed and re-run. This is one run on one connection.
 - **Every requirement traced to code or a test:** [`traceability.json`](aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/code-generation/traceability.json) maps 112 requirement IDs to a file, and a check confirms each file exists. That shows a test exists, not that the test is good.
@@ -99,7 +99,7 @@ python tools/claude_usage.py --snapshot docs/claude-usage.json --update-readme R
 - **Rebuilt for a web app:** `unpack` puts the model into a fixed folder layout (the model store) with plain-text `latest` and `refs/<name>` pointer files, no links, so it works on Linux and Windows.
 - **Lists what you have:** `list` shows name, commit, capture date, size and licence for every model in a store.
 - **Progress and records:** live progress for anything over 2 seconds; a run record of what was fetched, skipped and failed; exit status 0, 1 (an item failed) or 2 (could not run).
-- **Delivered three ways:** a single program file per system (no Python needed), an offline install pack for computers with Python, or `pip install`.
+- **Delivered three ways:** a single program file per system (Linux, Windows, Mac with Apple Silicon; no Python needed), an offline install pack for computers with Python, or `pip install`.
 
 ## Architecture
 
@@ -121,7 +121,7 @@ Only the `pull` step uses the network. The three formats between the steps are f
 - **Online computer:** Python 3.10 or newer (or the program file), internet access to Hugging Face, and disk space for the model plus the pieces.
 - **Air-gapped computer:** the program file for your system, or Python 3.10+ with the offline install pack. No internet is needed or used.
 - **Both sides:** a way to carry the pieces (removable drives) and a separate way to send one short fingerprint (phone, chat, paper) so the air-gapped side can trust your signing key.
-- Linux or Windows, 64-bit Intel/AMD. macOS runs the code but no macOS program file is published.
+- Linux or Windows, 64-bit Intel/AMD, or a Mac with Apple Silicon (macOS 11 or newer). Intel Macs can run the code with Python, but no program file is published for them.
 
 ## Quick Start
 
@@ -132,11 +132,22 @@ pip install .            # needs Python 3.10 or newer
 modelhub --version
 ```
 
-Where Python is not available, use the single program file for your system (`modelhub-linux-x86_64`, `modelhub-windows-x86_64.exe`) from the GitHub release. Where Python 3.10+ is available but there is no internet, use the offline pack for your system and Python version (`modelhub-pack-<system>-py<version>.zip` from the release), unzipped:
+Where Python is not available, use the single program file for your system (`modelhub-linux-x86_64`, `modelhub-windows-x86_64.exe`, `modelhub-darwin-arm64` for a Mac with Apple Silicon) from the GitHub release. Where Python 3.10+ is available but there is no internet, use the offline pack for your system and Python version (`modelhub-pack-<system>-py<version>.zip` from the release), unzipped:
 
 ```bash
 pip install --no-index --find-links <unzipped-folder> modelhub
 ```
+
+**Linux and Mac program files:** the download does not keep the "may be run" setting, so make the file runnable first: `chmod +x modelhub-linux-x86_64` (or `modelhub-darwin-arm64`).
+
+**Mac program file:** the file is not signed with an Apple developer certificate (that needs a paid Apple account). If it was downloaded with a web browser, macOS marks it as from the internet and kills it with no message when started. Remove the mark once, then it runs:
+
+```bash
+xattr -d com.apple.quarantine modelhub-darwin-arm64
+./modelhub-darwin-arm64 --version
+```
+
+Files copied on a USB drive from a computer that did not download them normally carry no such mark.
 
 ### 2. Once: make a signing key (online side) and trust it (air-gapped side)
 
@@ -243,13 +254,15 @@ Full instructions: [`aidlc/spaces/default/intents/261009-hf-airgap-cli/construct
 
 **"another run is using <folder>"** — a second `modelhub` is running on the same output folder, or an earlier one is still open. Close it, or wait. A run that was killed releases the folder by itself.
 
+**The Mac program file is killed as soon as it starts (exit status 137)** — macOS has marked it as downloaded from the internet. Run `xattr -d com.apple.quarantine <file>` once.
+
 **The program file will not start on an old Linux** — it must be built on RHEL 8 or older; the CI does this, a build on a newer system will not run there.
 
 ## Project Structure
 
 ```
 src/modelhub/          The package: commands and modules (see Architecture)
-tests/                 358 tests (+6 against the real Hub); conftest.py holds a fake Hugging Face
+tests/                 361 tests (+6 against the real Hub); conftest.py holds a fake Hugging Face
 packaging/             Program-file build, offline install pack, whole-workflow smoke script
 tools/                 benchmark_download.py (manual speed check), claude_usage.py (Claude Code usage tracker)
 .github/workflows/     ci.yml (checks and builds) and release.yml (publish on a v* tag)
