@@ -3,7 +3,7 @@
 > [!NOTE]
 > **About this project.** This is **jax79sg**'s means of learning and understanding the challenges of building software with a coding agent. **Much of this entire repository — the code, the tests and the documentation — was made with [Claude Code](https://claude.com/claude-code), using Anthropic's Claude Sonnet model.** The [`aidlc/`](aidlc/) folder keeps the trail: what was asked, what was decided and what was built, stage by stage.
 >
-> **How it was checked.** The tool is built behind automated tests (345 pass on Linux, Windows and macOS in GitHub Actions). **No security scanning has been switched on** and no one has reviewed it independently; the breakdown, and what this is *not*, is in [How this was reviewed and hardened](#how-this-was-reviewed-and-hardened).
+> **How it was checked.** The tool is built behind automated tests (358 pass on Linux, Windows and macOS in GitHub Actions). **No security scanning has been switched on** and no one has reviewed it independently; the breakdown, and what this is *not*, is in [How this was reviewed and hardened](#how-this-was-reviewed-and-hardened).
 
 [![CI](https://github.com/jax79sg/ModelHub/actions/workflows/ci.yml/badge.svg)](https://github.com/jax79sg/ModelHub/actions/workflows/ci.yml)
 [![Release](https://github.com/jax79sg/ModelHub/actions/workflows/release.yml/badge.svg)](https://github.com/jax79sg/ModelHub/actions/workflows/release.yml)
@@ -22,7 +22,7 @@ Written down so a reader can judge it, including the parts that are not flatteri
 **Reviewed**
 
 - **Approval gates, on the record.** The project follows a written workflow (AI-DLC): the intent, feasibility, requirements, contracts, non-functional requirements, code-generation plan, test instructions and CI plan were each written first and approved by jax79sg before the next step. Every request, answer and approval is logged in [`aidlc/spaces/default/intents/261009-hf-airgap-cli/audit/`](aidlc/spaces/default/intents/261009-hf-airgap-cli/audit/) (about 3,800 lines). Automated reviewer agents were turned off by jax79sg's instruction ("stop using sub-agents"), so the reviews were done by the same session that wrote the work.
-- **Tests: 345** run without the internet, plus 6 that use the real Hugging Face Hub (run on request with `pytest -m network`). They were written before the code they test (the team's test-first practice). They include: a flipped byte in every kind of piece, killing the tool at every write point and running it again, memory use on a 1 GB file, a 10,000-folder store listed in under 5 seconds, 999,999 pieces accepted and one more refused, and the air-gapped commands run with the network blocked.
+- **Tests: 358** run without the internet, plus 6 that use the real Hugging Face Hub (run on request with `pytest -m network`). They were written before the code they test (the team's test-first practice). They include: a flipped byte in every kind of piece, killing the tool at every write point and running it again, memory use on a 1 GB file, a 10,000-folder store listed in under 5 seconds, 999,999 pieces accepted and one more refused, and the air-gapped commands run with the network blocked.
 - **Bugs found by running it**, not by reading it: a damaged manifest crashed `verify`; stopping `unpack` early left stale pointers; a README with Windows line endings lost them; a packed program started helper processes wrongly. Each now has a test.
 - **Measured download speed:** 0.94 of the connection's best speed on a 1 GB file (target 0.8), by hand with `tools/benchmark_download.py`. A first run reported 6.9 because the measuring method was wrong; it was fixed and re-run. This is one run on one connection.
 - **Every requirement traced to code or a test:** [`traceability.json`](aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/code-generation/traceability.json) maps 112 requirement IDs to a file, and a check confirms each file exists. That shows a test exists, not that the test is good.
@@ -42,6 +42,52 @@ Written down so a reader can judge it, including the parts that are not flatteri
 - **Everything was committed straight to `main`**; there have been no pull requests yet. The GitHub settings that would require them are described in [`ci-config.md`](aidlc/spaces/default/intents/261009-hf-airgap-cli/construction/ci-pipeline/ci-config.md) but not switched on.
 - Memory and size targets were checked at 1 GB and by calculation, not with a real 500 GB or 1 TB file.
 - It is a tool for moving **public** models only; private and gated models are refused. Treat it as a learning project.
+
+## How much Claude Code was used
+
+This project was built with Claude Code, so the amount of Claude Code used is tracked and kept with the code. [`tools/claude_usage.py`](tools/claude_usage.py) reads the conversation files that Claude Code keeps on the computer that built this, takes **only numbers** from them (token counts, Claude Code's own cost estimate, timestamps, lines changed) and never copies any prompt or reply text. The numbers are saved in [`docs/claude-usage.json`](docs/claude-usage.json), so they stay even after Claude Code deletes its old conversation files.
+
+<!-- usage:start -->
+_Snapshot taken 11 October 2026. Cost is Claude Code's own running estimate, not a bill; days are UTC; only work on the computer that built this is counted._
+
+| Measure | Value |
+|---|---|
+| Sessions | 1 |
+| Days with activity | 3 (2026-10-09 to 2026-10-11) |
+| Messages typed by a person (approximate) | 36 |
+| Estimated cost | $54.60 |
+| Time Claude spent working (API) | 1.3 hours |
+| Lines added / removed in files | 9,693 / 527 |
+| Tokens read fresh / written | 315,967 / 557,051 |
+| Tokens read from cache / written to cache | 191,579,843 / 2,738,490 |
+
+| Model | Cost | Fresh in | Out | Cache read | Cache write |
+|---|---|---|---|---|---|
+| `claude-haiku-5-5` | $0.04 | 297,513 | 15,855 | 0 | 0 |
+| `claude-sonnet-5-5` | $54.56 | 18,454 | 541,196 | 191,579,843 | 2,738,490 |
+
+| Day (UTC) | Replies | Fresh in | Out | Cache read | Cache write |
+|---|---|---|---|---|---|
+| 2026-10-09 | 148 | 300 | 120,649 | 44,746,399 | 1,461,243 |
+| 2026-10-10 | 284 | 568 | 409,201 | 138,412,048 | 1,509,966 |
+| 2026-10-11 | 9 | 18 | 16,302 | 2,414,252 | 267,776 |
+
+_The per-day table counts the replies stored in the conversation file. Calls to the small helper model are only in Claude Code's own totals above, so the days add up to less than the totals._
+<!-- usage:end -->
+
+What to keep in mind:
+
+- The cost is **Claude Code's own running estimate**, not a bill, and it depends on the plan used.
+- It only sees the computer that built this. Work done anywhere else is not counted.
+- "Messages typed by a person" is a count of conversation entries that look like typed messages, so treat it as approximate.
+- It was added at the end, on 11 October 2026, from the conversation files that were still on disk. If an earlier session's file had been deleted before then, that session is missing.
+- It is a measure of use, not of quality or of how much of the code came from where.
+
+To refresh the numbers (this updates the table above and the saved file):
+
+```bash
+python tools/claude_usage.py --snapshot docs/claude-usage.json --update-readme README.md
+```
 
 ## What it does
 
@@ -203,9 +249,9 @@ Full instructions: [`aidlc/spaces/default/intents/261009-hf-airgap-cli/construct
 
 ```
 src/modelhub/          The package: commands and modules (see Architecture)
-tests/                 345 tests (+6 against the real Hub); conftest.py holds a fake Hugging Face
+tests/                 358 tests (+6 against the real Hub); conftest.py holds a fake Hugging Face
 packaging/             Program-file build, offline install pack, whole-workflow smoke script
-tools/                 benchmark_download.py — the manual download-speed check
+tools/                 benchmark_download.py (manual speed check), claude_usage.py (Claude Code usage tracker)
 .github/workflows/     ci.yml (checks and builds) and release.yml (publish on a v* tag)
 aidlc/                 Design docs, requirements, decision history, audit trail
 pyproject.toml         Dependencies, version, ruff and pytest settings

@@ -3803,3 +3803,53 @@
 **Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
 
 ---
+
+## Session End
+**Timestamp**: 2026-10-10T09:15:06Z
+**Event**: SESSION_ENDED
+**Reason**: other
+
+---
+
+## Session Resume
+**Timestamp**: 2026-10-10T13:05:21Z
+**Event**: SESSION_RESUMED
+**Source**: resume
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+
+---
+
+## Human Turn
+**Timestamp**: 2026-10-10T13:07:21Z
+**Event**: HUMAN_TURN
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+
+---
+
+## Human Turn
+**Timestamp**: 2026-10-10T13:22:18Z
+**Event**: HUMAN_TURN
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+
+---
+
+## Human Turn
+**Timestamp**: 2026-10-10T14:03:14Z
+**Event**: HUMAN_TURN
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+
+---
+
+## Human Turn
+**Timestamp**: 2026-10-11T00:11:34Z
+**Event**: HUMAN_TURN
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+
+---
+
+## Human Turn
+**Timestamp**: 2026-10-11T00:14:24Z
+**Event**: HUMAN_TURN
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+
+---
