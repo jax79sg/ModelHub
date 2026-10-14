@@ -1,0 +1,98 @@
+{
+  "stage": "nfr-design",
+  "unit": "common",
+  "upstream_ids": [
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR5.7",
+    "NFR5.8",
+    "NFR5.9",
+    "NFR5.10",
+    "NFR5.11",
+    "NFR6.1",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "security-design.md: One verification routine with a fixed algorithm list"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "security-design.md: Default-deny request guard"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "security-design.md: Reason codes in logs, minimal answers to callers"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "security-design.md: Secret type that cannot be printed"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "security-design.md: Redaction at the logging boundary"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "security-design.md: Collect-then-stop start-up check"
+    },
+    {
+      "id": "NFR5.7",
+      "status": "OK",
+      "target": "security-design.md: Rate-limited key refresh"
+    },
+    {
+      "id": "NFR5.8",
+      "status": "OK",
+      "target": "security-design.md: One verification routine with a fixed algorithm list"
+    },
+    {
+      "id": "NFR5.9",
+      "status": "OK",
+      "target": "security-design.md: Cached keys, no network on the hot path"
+    },
+    {
+      "id": "NFR5.10",
+      "status": "OK",
+      "target": "security-design.md: Library choice with explicit limits"
+    },
+    {
+      "id": "NFR5.11",
+      "status": "OK",
+      "target": "security-design.md: Few, pinned dependencies"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "logical-components.md: Standard logging with a JSON formatter"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "logical-components.md: One outgoing address"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "logical-components.md: Tested before written"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "logical-components.md: Plain Python for 3.10 and later"
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "stage": "nfr-design",
+  "unit": "platform",
+  "upstream_ids": [
+    "NFR3.1",
+    "NFR3.2",
+    "NFR4.1",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR5.7",
+    "NFR5.8",
+    "NFR5.9",
+    "NFR6.1",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "security-design.md: Restart policy and kept images"
+    },
+    {
+      "id": "NFR3.2",
+      "status": "OK",
+      "target": "security-design.md: Restart policy and kept images"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "security-design.md: Upgrade and data volume"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "security-design.md: Compose secrets from files"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "security-design.md: Least privilege per container"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "security-design.md: Single entry point with TLS"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "security-design.md: Single entry point with TLS"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "security-design.md: Database set-up step"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "security-design.md: Image scan in the release workflow"
+    },
+    {
+      "id": "NFR5.7",
+      "status": "OK",
+      "target": "security-design.md: Pinned tags and digests"
+    },
+    {
+      "id": "NFR5.8",
+      "status": "OK",
+      "target": "security-design.md: No model files in containers"
+    },
+    {
+      "id": "NFR5.9",
+      "status": "OK",
+      "target": "security-design.md: Separate volumes"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "security-design.md: Health checks and standard output logging"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "security-design.md: Upgrade and data volume"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "security-design.md: Disk plan"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "security-design.md: Compose on one server, images through the registry"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "security-design.md: Compose on one server, images through the registry"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "security-design.md: Compose on one server, images through the registry"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "security-design.md: Compose on one server, images through the registry"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "security-design.md: Not a program concern"
+    }
+  ]
+}

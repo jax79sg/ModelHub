@@ -1,0 +1,375 @@
+{
+  "stage": "functional-design",
+  "unit": "common",
+  "upstream_ids": [
+    "FR1",
+    "FR1.1",
+    "FR1.2",
+    "FR1.3",
+    "FR1.4",
+    "FR1.5",
+    "FR1.6",
+    "FR1.7",
+    "FR1.8",
+    "FR1.9",
+    "FR1.10",
+    "FR1.11",
+    "FR1.12",
+    "FR1.13",
+    "FR1.14",
+    "FR2",
+    "FR2.1",
+    "FR2.2",
+    "FR2.3",
+    "FR2.4",
+    "FR2.5",
+    "FR2.6",
+    "FR2.7",
+    "FR2.8",
+    "FR3",
+    "FR3.1",
+    "FR3.2",
+    "FR3.3",
+    "FR3.4",
+    "FR3.5",
+    "FR3.6",
+    "FR3.7",
+    "FR3.8",
+    "FR4",
+    "FR4.1",
+    "FR4.2",
+    "FR4.3",
+    "FR4.4",
+    "FR4.5",
+    "FR4.6",
+    "FR5",
+    "FR5.1",
+    "FR5.2",
+    "FR5.3",
+    "FR5.4",
+    "FR5.5",
+    "FR5.6",
+    "FR5.7",
+    "FR6",
+    "FR6.1",
+    "FR6.2",
+    "FR6.3",
+    "FR6.4",
+    "FR6.5",
+    "FR6.6",
+    "FR7",
+    "FR7.1",
+    "FR7.2",
+    "FR7.3",
+    "FR8",
+    "FR8.1"
+  ],
+  "coverage": [
+    {
+      "id": "FR1",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.1",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.2",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.3",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.4",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.5",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.6",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.7",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.8",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.9",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.10",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.11",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.12",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.13",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR1.14",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR2",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR2.1",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR2.2",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR2.3",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR2.4",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR2.5",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR2.6",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR2.7",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR2.8",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR3",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR3.1",
+      "status": "OK",
+      "target": "BR1.1, BR1.2, BR1.4, BR1.5"
+    },
+    {
+      "id": "FR3.2",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR3.3",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR3.4",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR3.5",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR3.6",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR3.7",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR3.8",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR4",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR4.1",
+      "status": "OK",
+      "target": "BR1.3"
+    },
+    {
+      "id": "FR4.2",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR4.3",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR4.4",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR4.5",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR4.6",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR5",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR5.1",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR5.2",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR5.3",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR5.4",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR5.5",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR5.6",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR5.7",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR6",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR6.1",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR6.2",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR6.3",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR6.4",
+      "status": "OK",
+      "target": "BR1.6, BR1.7"
+    },
+    {
+      "id": "FR6.5",
+      "status": "OK",
+      "target": "BR1.8, BR1.9, BR1.10, BR1.11, BR1.12"
+    },
+    {
+      "id": "FR6.6",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR7",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR7.1",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR7.2",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR7.3",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR8",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    },
+    {
+      "id": "FR8.1",
+      "status": "N/A",
+      "target": "owned by another unit (unit-of-work-story-map.md)"
+    }
+  ],
+  "reverse": []
+}

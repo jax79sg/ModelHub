@@ -1,0 +1,236 @@
+{
+  "stage": "infrastructure-design",
+  "unit": "artifactory-service",
+  "upstream_ids": [
+    "NFR1.1",
+    "NFR2.1",
+    "NFR3.1",
+    "NFR3.2",
+    "NFR4.1",
+    "NFR4.2",
+    "NFR4.3",
+    "NFR4.4",
+    "NFR4.5",
+    "NFR4.6",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR5.7",
+    "NFR5.8",
+    "NFR5.9",
+    "NFR6.1",
+    "NFR6.2",
+    "NFR6.3",
+    "NFR6.4",
+    "NFR6.5",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR7.3",
+    "NFR7.4",
+    "NFR7.5",
+    "NFR7.6",
+    "NFR7.7",
+    "NFR7.8",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR9.4",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1.1",
+      "status": "OK",
+      "target": "Container with 2 GB memory and 8 MiB blocks; import-work volume at disk speed"
+    },
+    {
+      "id": "NFR2.1",
+      "status": "OK",
+      "target": "Container with 2 GB memory and 8 MiB blocks; import-work volume at disk speed"
+    },
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "Restart policy and previous image tags; ready shows degraded"
+    },
+    {
+      "id": "NFR3.2",
+      "status": "OK",
+      "target": "Restart policy and previous image tags; ready shows degraded"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "Container with 2 GB memory and 8 MiB blocks; import-work volume at disk speed"
+    },
+    {
+      "id": "NFR4.2",
+      "status": "OK",
+      "target": "Restart on failure; start-up sweep; 60 s stop grace; stand-in failure-switch tests"
+    },
+    {
+      "id": "NFR4.3",
+      "status": "OK",
+      "target": "Restart on failure; start-up sweep; 60 s stop grace; stand-in failure-switch tests"
+    },
+    {
+      "id": "NFR4.4",
+      "status": "OK",
+      "target": "Restart on failure; start-up sweep; 60 s stop grace; stand-in failure-switch tests"
+    },
+    {
+      "id": "NFR4.5",
+      "status": "OK",
+      "target": "Restart on failure; start-up sweep; 60 s stop grace; stand-in failure-switch tests"
+    },
+    {
+      "id": "NFR4.6",
+      "status": "OK",
+      "target": "Restart on failure; start-up sweep; 60 s stop grace; stand-in failure-switch tests"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "Request guards; manifest check; single-version removal; safe unpacking"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "Artifactory token secret file; private temporary configuration for the JFrog CLI"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "Trusted-key list in the service schema"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "Request guards; manifest check; single-version removal; safe unpacking"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "Private working folder on the import-work volume"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "Request guards; manifest check; single-version removal; safe unpacking"
+    },
+    {
+      "id": "NFR5.7",
+      "status": "OK",
+      "target": "Own schema and database user"
+    },
+    {
+      "id": "NFR5.8",
+      "status": "OK",
+      "target": "Request guards; manifest check; single-version removal; safe unpacking"
+    },
+    {
+      "id": "NFR5.9",
+      "status": "OK",
+      "target": "Request guards; manifest check; single-version removal; safe unpacking"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR6.2",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR6.3",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR6.4",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR6.5",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "Container with 2 GB memory and 8 MiB blocks; import-work volume at disk speed"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "Container with 2 GB memory and 8 MiB blocks; import-work volume at disk speed"
+    },
+    {
+      "id": "NFR7.3",
+      "status": "OK",
+      "target": "Container with 2 GB memory and 8 MiB blocks; import-work volume at disk speed"
+    },
+    {
+      "id": "NFR7.4",
+      "status": "OK",
+      "target": "500 GB import-work volume; 507 check before receiving"
+    },
+    {
+      "id": "NFR7.5",
+      "status": "OK",
+      "target": "Two running imports; state in the service schema; one copy"
+    },
+    {
+      "id": "NFR7.6",
+      "status": "OK",
+      "target": "500 GB import-work volume; 507 check before receiving"
+    },
+    {
+      "id": "NFR7.7",
+      "status": "OK",
+      "target": "Two running imports; state in the service schema; one copy"
+    },
+    {
+      "id": "NFR7.8",
+      "status": "OK",
+      "target": "Two running imports; state in the service schema; one copy"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "Internal network; outbound only to Artifactory, Catalog, PostgreSQL and Keycloak; Linux container"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "CI with stand-in and PostgreSQL; image with pinned JFrog CLI and huggingface_hub"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "CI with stand-in and PostgreSQL; image with pinned JFrog CLI and huggingface_hub"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "CI with stand-in and PostgreSQL; image with pinned JFrog CLI and huggingface_hub"
+    },
+    {
+      "id": "NFR9.4",
+      "status": "OK",
+      "target": "CI with stand-in and PostgreSQL; image with pinned JFrog CLI and huggingface_hub"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "Internal network; outbound only to Artifactory, Catalog, PostgreSQL and Keycloak; Linux container"
+    }
+  ]
+}

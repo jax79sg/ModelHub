@@ -1,0 +1,68 @@
+{
+  "stage": "nfr-requirements",
+  "unit": "portal",
+  "upstream_ids": [
+    "NFR1",
+    "NFR2",
+    "NFR3",
+    "NFR4",
+    "NFR5",
+    "NFR6",
+    "NFR7",
+    "NFR8",
+    "NFR9",
+    "NFR10"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1",
+      "status": "OK",
+      "target": "NFR1.1"
+    },
+    {
+      "id": "NFR2",
+      "status": "OK",
+      "target": "NFR2.1, NFR2.2, NFR2.3, NFR2.4"
+    },
+    {
+      "id": "NFR3",
+      "status": "OK",
+      "target": "NFR3.1"
+    },
+    {
+      "id": "NFR4",
+      "status": "OK",
+      "target": "NFR4.1"
+    },
+    {
+      "id": "NFR5",
+      "status": "OK",
+      "target": "NFR5.1, NFR5.2, NFR5.3, NFR5.4, NFR5.5, NFR5.6, NFR5.7, NFR5.8, NFR5.9, NFR5.10, NFR5.11"
+    },
+    {
+      "id": "NFR6",
+      "status": "OK",
+      "target": "NFR6.1"
+    },
+    {
+      "id": "NFR7",
+      "status": "OK",
+      "target": "NFR7.1"
+    },
+    {
+      "id": "NFR8",
+      "status": "OK",
+      "target": "NFR8.1"
+    },
+    {
+      "id": "NFR9",
+      "status": "OK",
+      "target": "NFR9.1, NFR9.2, NFR9.3, NFR9.4, NFR9.5"
+    },
+    {
+      "id": "NFR10",
+      "status": "OK",
+      "target": "NFR10.1"
+    }
+  ]
+}

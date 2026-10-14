@@ -1,0 +1,242 @@
+{
+  "stage": "infrastructure-design",
+  "unit": "catalog",
+  "upstream_ids": [
+    "NFR1.1",
+    "NFR2.1",
+    "NFR2.2",
+    "NFR2.3",
+    "NFR2.4",
+    "NFR2.5",
+    "NFR2.6",
+    "NFR3.1",
+    "NFR3.2",
+    "NFR3.3",
+    "NFR4.1",
+    "NFR4.2",
+    "NFR4.3",
+    "NFR4.4",
+    "NFR4.5",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR5.7",
+    "NFR5.8",
+    "NFR6.1",
+    "NFR6.2",
+    "NFR6.3",
+    "NFR6.4",
+    "NFR6.5",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR7.3",
+    "NFR7.4",
+    "NFR7.5",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR9.4",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1.1",
+      "status": "OK",
+      "target": "PostgreSQL 16 container with indexes and extensions; Catalog container with 1 GB memory"
+    },
+    {
+      "id": "NFR2.1",
+      "status": "OK",
+      "target": "PostgreSQL 16 container with indexes and extensions; Catalog container with 1 GB memory"
+    },
+    {
+      "id": "NFR2.2",
+      "status": "OK",
+      "target": "PostgreSQL 16 container with indexes and extensions; Catalog container with 1 GB memory"
+    },
+    {
+      "id": "NFR2.3",
+      "status": "OK",
+      "target": "PostgreSQL 16 container with indexes and extensions; Catalog container with 1 GB memory"
+    },
+    {
+      "id": "NFR2.4",
+      "status": "OK",
+      "target": "PostgreSQL 16 container with indexes and extensions; Catalog container with 1 GB memory"
+    },
+    {
+      "id": "NFR2.5",
+      "status": "OK",
+      "target": "PostgreSQL 16 container with indexes and extensions; Catalog container with 1 GB memory"
+    },
+    {
+      "id": "NFR2.6",
+      "status": "OK",
+      "target": "Statement timeout 5 s and 10-connection pool; database limited to 20 connections"
+    },
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "Restart policy and previous image tags kept; rehearsed return"
+    },
+    {
+      "id": "NFR3.2",
+      "status": "OK",
+      "target": "Restart policy and previous image tags kept; rehearsed return"
+    },
+    {
+      "id": "NFR3.3",
+      "status": "OK",
+      "target": "Named volume catalog-db of 100 GB; one copy; per-version limits in the service"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "Restart on failure, database health wait, 30 s stop grace, migration advisory lock"
+    },
+    {
+      "id": "NFR4.2",
+      "status": "OK",
+      "target": "Restart on failure, database health wait, 30 s stop grace, migration advisory lock"
+    },
+    {
+      "id": "NFR4.3",
+      "status": "OK",
+      "target": "Restart on failure, database health wait, 30 s stop grace, migration advisory lock"
+    },
+    {
+      "id": "NFR4.4",
+      "status": "OK",
+      "target": "Restart on failure, database health wait, 30 s stop grace, migration advisory lock"
+    },
+    {
+      "id": "NFR4.5",
+      "status": "OK",
+      "target": "Restart on failure, database health wait, 30 s stop grace, migration advisory lock"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "Internal network only; request guard in the service; parameterised SQL"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "Secret files database_password and token_hash_pepper"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "Runtime and migration database roles; insert/select-only grant on the trail table"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "Internal network only; request guard in the service; parameterised SQL"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "Secret files database_password and token_hash_pepper"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "Internal network only; request guard in the service; parameterised SQL"
+    },
+    {
+      "id": "NFR5.7",
+      "status": "OK",
+      "target": "Internal network only; request guard in the service; parameterised SQL"
+    },
+    {
+      "id": "NFR5.8",
+      "status": "OK",
+      "target": "Internal network only; request guard in the service; parameterised SQL"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR6.2",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR6.3",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR6.4",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR6.5",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "PostgreSQL 16 container with indexes and extensions; Catalog container with 1 GB memory"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "Named volume catalog-db of 100 GB; one copy; per-version limits in the service"
+    },
+    {
+      "id": "NFR7.3",
+      "status": "OK",
+      "target": "Statement timeout 5 s and 10-connection pool; database limited to 20 connections"
+    },
+    {
+      "id": "NFR7.4",
+      "status": "OK",
+      "target": "Named volume catalog-db of 100 GB; one copy; per-version limits in the service"
+    },
+    {
+      "id": "NFR7.5",
+      "status": "OK",
+      "target": "Named volume catalog-db of 100 GB; one copy; per-version limits in the service"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "Internal network with no route to the internet; Linux container"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "CI: ruff, pytest with PostgreSQL, load script; image build on python:3.12-slim"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "CI: ruff, pytest with PostgreSQL, load script; image build on python:3.12-slim"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "CI: ruff, pytest with PostgreSQL, load script; image build on python:3.12-slim"
+    },
+    {
+      "id": "NFR9.4",
+      "status": "OK",
+      "target": "CI: ruff, pytest with PostgreSQL, load script; image build on python:3.12-slim"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "Internal network with no route to the internet; Linux container"
+    }
+  ]
+}
