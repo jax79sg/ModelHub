@@ -1,0 +1,98 @@
+{
+  "stage": "infrastructure-design",
+  "unit": "common",
+  "upstream_ids": [
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR5.7",
+    "NFR5.8",
+    "NFR5.9",
+    "NFR5.10",
+    "NFR5.11",
+    "NFR6.1",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "CI tests for every refusal reason and the token check budget"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "CI tests for every refusal reason and the token check budget"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "CI tests for every refusal reason and the token check budget"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "CI tests for secrets, redaction and start-up failure"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "CI tests for secrets, redaction and start-up failure"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "CI tests for secrets, redaction and start-up failure"
+    },
+    {
+      "id": "NFR5.7",
+      "status": "OK",
+      "target": "CI test for the key refresh limit"
+    },
+    {
+      "id": "NFR5.8",
+      "status": "OK",
+      "target": "CI tests for every refusal reason and the token check budget"
+    },
+    {
+      "id": "NFR5.9",
+      "status": "OK",
+      "target": "CI tests for every refusal reason and the token check budget"
+    },
+    {
+      "id": "NFR5.10",
+      "status": "OK",
+      "target": "CI tests for every refusal reason and the token check budget"
+    },
+    {
+      "id": "NFR5.11",
+      "status": "OK",
+      "target": "Pinned dependencies with Dependabot and code scanning"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "CI test of the log shape; pytest written first"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "CI test that blocks other sockets"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "CI test of the log shape; pytest written first"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "CI matrix: Python 3.10 and 3.12"
+    }
+  ]
+}

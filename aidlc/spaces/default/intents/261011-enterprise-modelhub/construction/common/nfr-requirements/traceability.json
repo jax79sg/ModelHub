@@ -1,0 +1,68 @@
+{
+  "stage": "nfr-requirements",
+  "unit": "common",
+  "upstream_ids": [
+    "NFR1",
+    "NFR2",
+    "NFR3",
+    "NFR4",
+    "NFR5",
+    "NFR6",
+    "NFR7",
+    "NFR8",
+    "NFR9",
+    "NFR10"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1",
+      "status": "N/A",
+      "target": "Not applicable: findability after import concerns the Catalog and portal."
+    },
+    {
+      "id": "NFR2",
+      "status": "N/A",
+      "target": "Not applicable: list speed concerns the Catalog; the token check budget is NFR5.9."
+    },
+    {
+      "id": "NFR3",
+      "status": "N/A",
+      "target": "Not applicable: a library has no availability of its own; services using it report health (NFR6)."
+    },
+    {
+      "id": "NFR4",
+      "status": "N/A",
+      "target": "Not applicable: the library holds no state that an import could leave half-done."
+    },
+    {
+      "id": "NFR5",
+      "status": "OK",
+      "target": "NFR5.1, NFR5.2, NFR5.3, NFR5.4, NFR5.5, NFR5.6, NFR5.7, NFR5.8, NFR5.9, NFR5.10, NFR5.11"
+    },
+    {
+      "id": "NFR6",
+      "status": "OK",
+      "target": "NFR6.1"
+    },
+    {
+      "id": "NFR7",
+      "status": "N/A",
+      "target": "Not applicable: no data of its own."
+    },
+    {
+      "id": "NFR8",
+      "status": "OK",
+      "target": "NFR8.1"
+    },
+    {
+      "id": "NFR9",
+      "status": "OK",
+      "target": "NFR9.1"
+    },
+    {
+      "id": "NFR10",
+      "status": "OK",
+      "target": "NFR10.1"
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "stage": "infrastructure-design",
+  "unit": "portal",
+  "upstream_ids": [
+    "NFR1.1",
+    "NFR2.1",
+    "NFR2.2",
+    "NFR2.3",
+    "NFR2.4",
+    "NFR3.1",
+    "NFR4.1",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR5.7",
+    "NFR5.8",
+    "NFR5.9",
+    "NFR5.10",
+    "NFR5.11",
+    "NFR6.1",
+    "NFR7.1",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR9.4",
+    "NFR9.5",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1.1",
+      "status": "OK",
+      "target": "Container with 4 workers and 1 GB memory; thin pages over single Catalog calls"
+    },
+    {
+      "id": "NFR2.1",
+      "status": "OK",
+      "target": "Container with 4 workers and 1 GB memory; thin pages over single Catalog calls"
+    },
+    {
+      "id": "NFR2.2",
+      "status": "OK",
+      "target": "Container with 4 workers and 1 GB memory; thin pages over single Catalog calls"
+    },
+    {
+      "id": "NFR2.3",
+      "status": "OK",
+      "target": "Container with 4 workers and 1 GB memory; thin pages over single Catalog calls"
+    },
+    {
+      "id": "NFR2.4",
+      "status": "OK",
+      "target": "Container with 4 workers and 1 GB memory; thin pages over single Catalog calls"
+    },
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "Restart on failure; no data to repair; previous image kept"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "Restart on failure; no data to repair; previous image kept"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "Default-deny middleware, form tokens, role checks, no file routes"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "In-memory sessions with secure cookies; Keycloak code flow with proof key; client secret file"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "In-memory sessions with secure cookies; Keycloak code flow with proof key; client secret file"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "Default-deny middleware, form tokens, role checks, no file routes"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "Default-deny middleware, form tokens, role checks, no file routes"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "Sanitiser, document-as-data headers, show-once token page"
+    },
+    {
+      "id": "NFR5.7",
+      "status": "OK",
+      "target": "Sanitiser, document-as-data headers, show-once token page"
+    },
+    {
+      "id": "NFR5.8",
+      "status": "OK",
+      "target": "Sanitiser, document-as-data headers, show-once token page"
+    },
+    {
+      "id": "NFR5.9",
+      "status": "OK",
+      "target": "Default-deny middleware, form tokens, role checks, no file routes"
+    },
+    {
+      "id": "NFR5.10",
+      "status": "OK",
+      "target": "In-memory sessions with secure cookies; Keycloak code flow with proof key; client secret file"
+    },
+    {
+      "id": "NFR5.11",
+      "status": "OK",
+      "target": "In-memory sessions with secure cookies; Keycloak code flow with proof key; client secret file"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "Standard output logs, health checks, central monitoring metrics and alerts"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "Container with 4 workers and 1 GB memory; thin pages over single Catalog calls"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "Internal network; outbound only to the Catalog, artifactory-service and Keycloak"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "CI with stood-in services; image on python:3.12-slim"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "CI with stood-in services; image on python:3.12-slim"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "CI with stood-in services; image on python:3.12-slim"
+    },
+    {
+      "id": "NFR9.4",
+      "status": "OK",
+      "target": "CI with stood-in services; image on python:3.12-slim"
+    },
+    {
+      "id": "NFR9.5",
+      "status": "OK",
+      "target": "CI with stood-in services; image on python:3.12-slim"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "Browser check in current Chrome, Edge and Firefox"
+    }
+  ]
+}

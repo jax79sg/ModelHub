@@ -1,0 +1,242 @@
+{
+  "stage": "nfr-design",
+  "unit": "catalog",
+  "upstream_ids": [
+    "NFR1.1",
+    "NFR2.1",
+    "NFR2.2",
+    "NFR2.3",
+    "NFR2.4",
+    "NFR2.5",
+    "NFR2.6",
+    "NFR3.1",
+    "NFR3.2",
+    "NFR3.3",
+    "NFR4.1",
+    "NFR4.2",
+    "NFR4.3",
+    "NFR4.4",
+    "NFR4.5",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR5.7",
+    "NFR5.8",
+    "NFR6.1",
+    "NFR6.2",
+    "NFR6.3",
+    "NFR6.4",
+    "NFR6.5",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR7.3",
+    "NFR7.4",
+    "NFR7.5",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR9.4",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1.1",
+      "status": "OK",
+      "target": "performance-design.md: Summary row written in the store transaction"
+    },
+    {
+      "id": "NFR2.1",
+      "status": "OK",
+      "target": "performance-design.md: Narrow summary table with one index per filter and sort"
+    },
+    {
+      "id": "NFR2.2",
+      "status": "OK",
+      "target": "performance-design.md: Documents in a separate table the list never joins"
+    },
+    {
+      "id": "NFR2.3",
+      "status": "OK",
+      "target": "performance-design.md: Stored search vector with a GIN index, plus trigram indexes on id and tags"
+    },
+    {
+      "id": "NFR2.4",
+      "status": "OK",
+      "target": "performance-design.md: Version record without documents"
+    },
+    {
+      "id": "NFR2.5",
+      "status": "OK",
+      "target": "performance-design.md: Documents as a binary column read in one piece (question 2 A)"
+    },
+    {
+      "id": "NFR2.6",
+      "status": "OK",
+      "target": "performance-design.md: Query time limit"
+    },
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "reliability-design.md: Restart policy and previous image"
+    },
+    {
+      "id": "NFR3.2",
+      "status": "OK",
+      "target": "reliability-design.md: Restart policy and previous image"
+    },
+    {
+      "id": "NFR3.3",
+      "status": "OK",
+      "target": "reliability-design.md: Data on a volume"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "performance-design.md: One transaction, batched inserts"
+    },
+    {
+      "id": "NFR4.2",
+      "status": "OK",
+      "target": "reliability-design.md: All-or-nothing transaction"
+    },
+    {
+      "id": "NFR4.3",
+      "status": "OK",
+      "target": "reliability-design.md: Connection loss handling"
+    },
+    {
+      "id": "NFR4.4",
+      "status": "OK",
+      "target": "reliability-design.md: Graceful stop"
+    },
+    {
+      "id": "NFR4.5",
+      "status": "OK",
+      "target": "reliability-design.md: Locked migrations"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "security-design.md: Common request guard plus a per-route identity check"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "security-design.md: HMAC-SHA-256 with a secret pepper"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "security-design.md: Database roles"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "security-design.md: Document serving headers"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "security-design.md: Secrets from files"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "security-design.md: Validation at the edge"
+    },
+    {
+      "id": "NFR5.7",
+      "status": "OK",
+      "target": "security-design.md: Parameterised queries only"
+    },
+    {
+      "id": "NFR5.8",
+      "status": "OK",
+      "target": "security-design.md: Accepted limit"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "observability-design.md: Access line per request"
+    },
+    {
+      "id": "NFR6.2",
+      "status": "OK",
+      "target": "observability-design.md: Health with a critical database check"
+    },
+    {
+      "id": "NFR6.3",
+      "status": "OK",
+      "target": "observability-design.md: Measures taken from logs"
+    },
+    {
+      "id": "NFR6.4",
+      "status": "OK",
+      "target": "observability-design.md: Alert thresholds below harm"
+    },
+    {
+      "id": "NFR6.5",
+      "status": "OK",
+      "target": "observability-design.md: Fixed event codes"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "performance-design.md: Narrow summary table with one index per filter and sort"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "scalability-design.md: Database sizing"
+    },
+    {
+      "id": "NFR7.3",
+      "status": "OK",
+      "target": "scalability-design.md: Connection pool of 10"
+    },
+    {
+      "id": "NFR7.4",
+      "status": "OK",
+      "target": "scalability-design.md: Stateless service"
+    },
+    {
+      "id": "NFR7.5",
+      "status": "OK",
+      "target": "scalability-design.md: Per-version limits"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "logical-components.md: Two outgoing connections only"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR9.4",
+      "status": "OK",
+      "target": "logical-components.md: Tests against a real database"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "logical-components.md: Linux container"
+    }
+  ]
+}

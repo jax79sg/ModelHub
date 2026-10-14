@@ -1,0 +1,170 @@
+{
+  "stage": "nfr-design",
+  "unit": "portal",
+  "upstream_ids": [
+    "NFR1.1",
+    "NFR2.1",
+    "NFR2.2",
+    "NFR2.3",
+    "NFR2.4",
+    "NFR3.1",
+    "NFR4.1",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR5.7",
+    "NFR5.8",
+    "NFR5.9",
+    "NFR5.10",
+    "NFR5.11",
+    "NFR6.1",
+    "NFR7.1",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR9.4",
+    "NFR9.5",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1.1",
+      "status": "OK",
+      "target": "performance-design.md: No portal cache"
+    },
+    {
+      "id": "NFR2.1",
+      "status": "OK",
+      "target": "performance-design.md: Thin server-side pages over one Catalog call each"
+    },
+    {
+      "id": "NFR2.2",
+      "status": "OK",
+      "target": "performance-design.md: Model page from two calls"
+    },
+    {
+      "id": "NFR2.3",
+      "status": "OK",
+      "target": "performance-design.md: Light pages, no outside files"
+    },
+    {
+      "id": "NFR2.4",
+      "status": "OK",
+      "target": "performance-design.md: Sign-in steps do little work"
+    },
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "logical-components.md: Restart policy"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "logical-components.md: No portal data"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "security-design.md: Default-deny middleware"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "security-design.md: Server-side sessions"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "security-design.md: Code exchange with proof key via Authlib"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "security-design.md: Form token and origin check"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "security-design.md: Role from the sign-in, rechecked by services"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "security-design.md: Existing sanitiser kept"
+    },
+    {
+      "id": "NFR5.7",
+      "status": "OK",
+      "target": "security-design.md: Documents as data"
+    },
+    {
+      "id": "NFR5.8",
+      "status": "OK",
+      "target": "security-design.md: Show-once page"
+    },
+    {
+      "id": "NFR5.9",
+      "status": "OK",
+      "target": "security-design.md: No file routes"
+    },
+    {
+      "id": "NFR5.10",
+      "status": "OK",
+      "target": "security-design.md: Server-side sessions"
+    },
+    {
+      "id": "NFR5.11",
+      "status": "OK",
+      "target": "security-design.md: Secret from a file"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "logical-components.md: Shared logging and health"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "performance-design.md: Thin server-side pages over one Catalog call each"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "logical-components.md: Three outgoing connections"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR9.4",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR9.5",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "logical-components.md: Browsers"
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "stage": "infrastructure-design",
+  "unit": "import-cli",
+  "upstream_ids": [
+    "NFR1.1",
+    "NFR3.1",
+    "NFR4.1",
+    "NFR4.2",
+    "NFR4.3",
+    "NFR4.4",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR6.1",
+    "NFR6.2",
+    "NFR6.3",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR7.3",
+    "NFR7.4",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR9.4",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1.1",
+      "status": "OK",
+      "target": "Program memory and block design; one piece at a time over one connection"
+    },
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "No availability design for a command-line program"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "Program memory and block design; one piece at a time over one connection"
+    },
+    {
+      "id": "NFR4.2",
+      "status": "OK",
+      "target": "Resume and retry logic tested by killing the process and with the stand-in's failure switches"
+    },
+    {
+      "id": "NFR4.3",
+      "status": "OK",
+      "target": "Resume and retry logic tested by killing the process and with the stand-in's failure switches"
+    },
+    {
+      "id": "NFR4.4",
+      "status": "OK",
+      "target": "Resume and retry logic tested by killing the process and with the stand-in's failure switches"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "Owner-only settings file; output filter; token-leak test in CI"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "Owner-only settings file; output filter; token-leak test in CI"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "HTTPS to the entry point only; system certificate store; no other connection"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "HTTPS to the entry point only; system certificate store; no other connection"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "Local verify of the bundle before sending"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "HTTPS to the entry point only; system certificate store; no other connection"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "Progress display, report, exit status and run record"
+    },
+    {
+      "id": "NFR6.2",
+      "status": "OK",
+      "target": "Progress display, report, exit status and run record"
+    },
+    {
+      "id": "NFR6.3",
+      "status": "OK",
+      "target": "Progress display, report, exit status and run record"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "Program memory and block design; one piece at a time over one connection"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "Program memory and block design; one piece at a time over one connection"
+    },
+    {
+      "id": "NFR7.3",
+      "status": "OK",
+      "target": "Program memory and block design; one piece at a time over one connection"
+    },
+    {
+      "id": "NFR7.4",
+      "status": "OK",
+      "target": "Program memory and block design; one piece at a time over one connection"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "HTTPS to the entry point only; system certificate store; no other connection"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "Existing program and build; httpx; CI with fake service on three systems"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "Existing program and build; httpx; CI with fake service on three systems"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "Existing program and build; httpx; CI with fake service on three systems"
+    },
+    {
+      "id": "NFR9.4",
+      "status": "OK",
+      "target": "Existing program and build; httpx; CI with fake service on three systems"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "Linux, Windows and macOS builds and packs; import tests on all"
+    }
+  ]
+}

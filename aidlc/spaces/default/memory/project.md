@@ -68,3 +68,5 @@ None. (affirmed 2026-10-09)
 
 <!-- Project-specific corrections from human feedback. -->
 <!-- Format: NEVER/ALWAYS [behavior] (learned [date]) -->
+- Write the decision log as a flat table with one row per decision, its ID, and the question it came from, so later stages can cite a decision by its ID. (learned 2026-10-12) <!-- cid:261011-enterprise-modelhub:approval-handoff:291fb26584acb877714214e48efdf0d534782aad3ad64e96edba576553393c80 -->
+- When a vendor's documentation does not say where or how something is stored, do not build the path or call from a guess: discover it at run time (for example by listing), and record the question for confirmation on the real system. (learned 2026-10-12) <!-- cid:261011-enterprise-modelhub:contract-design:33c47b69ebcd7c0da2c435e3c082ff89ef7e5f9cf62edce3229a67134cd3d987 -->

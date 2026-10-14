@@ -1,0 +1,140 @@
+{
+  "stage": "nfr-design",
+  "unit": "artifactory-stand-in",
+  "upstream_ids": [
+    "NFR3.1",
+    "NFR4.1",
+    "NFR4.2",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR6.1",
+    "NFR6.2",
+    "NFR6.3",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR9.5",
+    "NFR9.6",
+    "NFR9.7",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "reliability-design.md: No availability design"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "reliability-design.md: Failure switches checked first on every call"
+    },
+    {
+      "id": "NFR4.2",
+      "status": "OK",
+      "target": "reliability-design.md: Commit moves a version from partial to complete in one step"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "security-design.md: Local bind check at start"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "security-design.md: Token given by the test only"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "security-design.md: Call record without secrets or bodies"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "security-design.md: Path check before any write"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "security-design.md: Kept out of delivered files"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "security-design.md: Token given by the test only"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "observability-design.md: Shared log shape"
+    },
+    {
+      "id": "NFR6.2",
+      "status": "OK",
+      "target": "observability-design.md: Recorded calls readable over a test-only control address"
+    },
+    {
+      "id": "NFR6.3",
+      "status": "OK",
+      "target": "observability-design.md: Register and checklist as data files"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "scalability-design.md: Plain dictionaries keyed by repository, organisation, model and revision"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "scalability-design.md: One lock per version"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "logical-components.md: No outside connection"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "performance-design.md: In-process server on a free port"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "performance-design.md: State in memory, content on disk only when kept"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "performance-design.md: Virtual files streamed through a checksum, then dropped"
+    },
+    {
+      "id": "NFR9.5",
+      "status": "OK",
+      "target": "performance-design.md: In-process server on a free port"
+    },
+    {
+      "id": "NFR9.6",
+      "status": "OK",
+      "target": "logical-components.md: Minimal dependencies and test-first"
+    },
+    {
+      "id": "NFR9.7",
+      "status": "OK",
+      "target": "logical-components.md: Minimal dependencies and test-first"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "logical-components.md: Nothing system-specific"
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "stage": "nfr-design",
+  "unit": "import-cli",
+  "upstream_ids": [
+    "NFR1.1",
+    "NFR3.1",
+    "NFR4.1",
+    "NFR4.2",
+    "NFR4.3",
+    "NFR4.4",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR6.1",
+    "NFR6.2",
+    "NFR6.3",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR7.3",
+    "NFR7.4",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR9.4",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1.1",
+      "status": "OK",
+      "target": "performance-design.md: Poll every 2 seconds and print at once"
+    },
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "reliability-design.md: No availability design"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "performance-design.md: Send only missing pieces"
+    },
+    {
+      "id": "NFR4.2",
+      "status": "OK",
+      "target": "reliability-design.md: Resume by design"
+    },
+    {
+      "id": "NFR4.3",
+      "status": "OK",
+      "target": "reliability-design.md: One retry helper"
+    },
+    {
+      "id": "NFR4.4",
+      "status": "OK",
+      "target": "reliability-design.md: Busy loop"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "security-design.md: Private settings file"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "security-design.md: Output filter"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "security-design.md: https rule"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "security-design.md: Certificate verification always on"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "security-design.md: Verify before send"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "security-design.md: One destination"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "observability-design.md: Progress display"
+    },
+    {
+      "id": "NFR6.2",
+      "status": "OK",
+      "target": "observability-design.md: Report and exit status"
+    },
+    {
+      "id": "NFR6.3",
+      "status": "OK",
+      "target": "observability-design.md: Run record"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "performance-design.md: Block reads, constant memory"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "performance-design.md: One piece at a time over a kept-alive connection"
+    },
+    {
+      "id": "NFR7.3",
+      "status": "OK",
+      "target": "performance-design.md: Block reads, constant memory"
+    },
+    {
+      "id": "NFR7.4",
+      "status": "OK",
+      "target": "scalability-design.md: Bounded run state"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "logical-components.md: One destination"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "logical-components.md: Existing program, httpx, existing bundle code"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "logical-components.md: Existing program, httpx, existing bundle code"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "logical-components.md: Existing program, httpx, existing bundle code"
+    },
+    {
+      "id": "NFR9.4",
+      "status": "OK",
+      "target": "logical-components.md: Tests against a fake import service"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "reliability-design.md: Platform-neutral code"
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "stage": "infrastructure-design",
+  "unit": "artifactory-stand-in",
+  "upstream_ids": [
+    "NFR3.1",
+    "NFR4.1",
+    "NFR4.2",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR6.1",
+    "NFR6.2",
+    "NFR6.3",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR9.5",
+    "NFR9.6",
+    "NFR9.7",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "Failure switches used by tests; no availability infrastructure"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "Failure switches used by tests; no availability infrastructure"
+    },
+    {
+      "id": "NFR4.2",
+      "status": "OK",
+      "target": "Failure switches used by tests; no availability infrastructure"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "Loopback-only binding; no outbound connection; test-supplied token"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "Loopback-only binding; no outbound connection; test-supplied token"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "Loopback-only binding; no outbound connection; test-supplied token"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "Loopback-only binding; no outbound connection; test-supplied token"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "Release check that the stand-in is not delivered"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "Loopback-only binding; no outbound connection; test-supplied token"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "Test log capture, call record and assumption register tests"
+    },
+    {
+      "id": "NFR6.2",
+      "status": "OK",
+      "target": "Test log capture, call record and assumption register tests"
+    },
+    {
+      "id": "NFR6.3",
+      "status": "OK",
+      "target": "Test log capture, call record and assumption register tests"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "Memory-held records and a temporary folder; sizing under 500 MB"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "Memory-held records and a temporary folder; sizing under 500 MB"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "Loopback-only binding; no outbound connection; test-supplied token"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "In-process test server; no container"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "Memory-held records and a temporary folder; sizing under 500 MB"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "Memory-held records and a temporary folder; sizing under 500 MB"
+    },
+    {
+      "id": "NFR9.5",
+      "status": "OK",
+      "target": "In-process test server; no container"
+    },
+    {
+      "id": "NFR9.6",
+      "status": "OK",
+      "target": "CI job: ruff and pytest"
+    },
+    {
+      "id": "NFR9.7",
+      "status": "OK",
+      "target": "CI job: ruff and pytest"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "CI matrix: Linux, Windows, macOS; Python 3.10 and 3.12"
+    }
+  ]
+}

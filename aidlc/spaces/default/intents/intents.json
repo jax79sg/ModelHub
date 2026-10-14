@@ -6,5 +6,13 @@
     "scope": "security-patch",
     "status": "complete",
     "request": "7cd3faef"
+  },
+  {
+    "uuid": "01a12d31-1b85-7039-a844-708ee84f4cee",
+    "slug": "enterprise-modelhub",
+    "dirName": "261011-enterprise-modelhub",
+    "scope": "classic",
+    "status": "complete",
+    "request": "fcb806bb"
   }
 ]

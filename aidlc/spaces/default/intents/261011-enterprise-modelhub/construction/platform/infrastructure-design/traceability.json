@@ -1,0 +1,128 @@
+{
+  "stage": "infrastructure-design",
+  "unit": "platform",
+  "upstream_ids": [
+    "NFR3.1",
+    "NFR3.2",
+    "NFR4.1",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR5.7",
+    "NFR5.8",
+    "NFR5.9",
+    "NFR6.1",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "Restart on failure, start order, previous tags kept, rehearsed return"
+    },
+    {
+      "id": "NFR3.2",
+      "status": "OK",
+      "target": "Restart on failure, start order, previous tags kept, rehearsed return"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "Named volume `catalog-db` and the documented upgrade steps"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "File-backed secrets under /run/secrets; operator script"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "Non-root, read-only, capabilities dropped, no new privileges per container"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "Reverse proxy as the only published port; TLS with the organisation's certificate; internal network"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "Reverse proxy as the only published port; TLS with the organisation's certificate; internal network"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "Database set-up step: one schema and user per service"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "Image scan in the workflow; tags and digests in the Compose file; no latest check"
+    },
+    {
+      "id": "NFR5.7",
+      "status": "OK",
+      "target": "Image scan in the workflow; tags and digests in the Compose file; no latest check"
+    },
+    {
+      "id": "NFR5.8",
+      "status": "OK",
+      "target": "Only the working volume holds model data; separate volumes for database and imports"
+    },
+    {
+      "id": "NFR5.9",
+      "status": "OK",
+      "target": "Only the working volume holds model data; separate volumes for database and imports"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "Health checks and standard output logging for every container"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "Named volume `catalog-db` and the documented upgrade steps"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "Volumes of 100 GB and 500 GB; server minimum"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "Images through the internal registry by the signed server pack; no route to the internet from running containers"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "Docker Compose on one server; GitHub Actions image job"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "Images through the internal registry by the signed server pack; no route to the internet from running containers"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "Docker Compose on one server; GitHub Actions image job"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "Server side only; the program is packaged by the existing release"
+    }
+  ]
+}

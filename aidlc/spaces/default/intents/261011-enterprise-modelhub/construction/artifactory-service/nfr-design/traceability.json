@@ -1,0 +1,236 @@
+{
+  "stage": "nfr-design",
+  "unit": "artifactory-service",
+  "upstream_ids": [
+    "NFR1.1",
+    "NFR2.1",
+    "NFR3.1",
+    "NFR3.2",
+    "NFR4.1",
+    "NFR4.2",
+    "NFR4.3",
+    "NFR4.4",
+    "NFR4.5",
+    "NFR4.6",
+    "NFR5.1",
+    "NFR5.2",
+    "NFR5.3",
+    "NFR5.4",
+    "NFR5.5",
+    "NFR5.6",
+    "NFR5.7",
+    "NFR5.8",
+    "NFR5.9",
+    "NFR6.1",
+    "NFR6.2",
+    "NFR6.3",
+    "NFR6.4",
+    "NFR6.5",
+    "NFR7.1",
+    "NFR7.2",
+    "NFR7.3",
+    "NFR7.4",
+    "NFR7.5",
+    "NFR7.6",
+    "NFR7.7",
+    "NFR7.8",
+    "NFR8.1",
+    "NFR9.1",
+    "NFR9.2",
+    "NFR9.3",
+    "NFR9.4",
+    "NFR10.1"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1.1",
+      "status": "OK",
+      "target": "performance-design.md: Record sent immediately after the listing matches"
+    },
+    {
+      "id": "NFR2.1",
+      "status": "OK",
+      "target": "performance-design.md: Short calls do no heavy work"
+    },
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "reliability-design.md: Restart policy, previous image, degraded ready"
+    },
+    {
+      "id": "NFR3.2",
+      "status": "OK",
+      "target": "reliability-design.md: Restart policy, previous image, degraded ready"
+    },
+    {
+      "id": "NFR4.1",
+      "status": "OK",
+      "target": "performance-design.md: Piece acknowledgement after one move"
+    },
+    {
+      "id": "NFR4.2",
+      "status": "OK",
+      "target": "reliability-design.md: Idempotent steps and start-up sweep"
+    },
+    {
+      "id": "NFR4.3",
+      "status": "OK",
+      "target": "reliability-design.md: Idempotent steps and start-up sweep"
+    },
+    {
+      "id": "NFR4.4",
+      "status": "OK",
+      "target": "reliability-design.md: Plan decided from facts"
+    },
+    {
+      "id": "NFR4.5",
+      "status": "OK",
+      "target": "reliability-design.md: Retry helper with the five timed waits"
+    },
+    {
+      "id": "NFR4.6",
+      "status": "OK",
+      "target": "reliability-design.md: Two-step removal with recorded outcome"
+    },
+    {
+      "id": "NFR5.1",
+      "status": "OK",
+      "target": "security-design.md: Two kinds of identity per route"
+    },
+    {
+      "id": "NFR5.2",
+      "status": "OK",
+      "target": "security-design.md: Credential confined to the gateway"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "security-design.md: Typed-back fingerprint"
+    },
+    {
+      "id": "NFR5.4",
+      "status": "OK",
+      "target": "security-design.md: Two checks on the bundle"
+    },
+    {
+      "id": "NFR5.5",
+      "status": "OK",
+      "target": "security-design.md: Private working folder"
+    },
+    {
+      "id": "NFR5.6",
+      "status": "OK",
+      "target": "security-design.md: Single-version destructive action"
+    },
+    {
+      "id": "NFR5.7",
+      "status": "OK",
+      "target": "security-design.md: Own schema and user"
+    },
+    {
+      "id": "NFR5.8",
+      "status": "OK",
+      "target": "security-design.md: Safe unpacking"
+    },
+    {
+      "id": "NFR5.9",
+      "status": "OK",
+      "target": "security-design.md: Size limits from the signed description"
+    },
+    {
+      "id": "NFR6.1",
+      "status": "OK",
+      "target": "observability-design.md: Request and import-event lines"
+    },
+    {
+      "id": "NFR6.2",
+      "status": "OK",
+      "target": "observability-design.md: Ready check with a critical database"
+    },
+    {
+      "id": "NFR6.3",
+      "status": "OK",
+      "target": "observability-design.md: Progress readable by the CLI and operators"
+    },
+    {
+      "id": "NFR6.4",
+      "status": "OK",
+      "target": "observability-design.md: Alert thresholds"
+    },
+    {
+      "id": "NFR6.5",
+      "status": "OK",
+      "target": "observability-design.md: Fixed event codes"
+    },
+    {
+      "id": "NFR7.1",
+      "status": "OK",
+      "target": "performance-design.md: Streaming pipeline with bounded blocks"
+    },
+    {
+      "id": "NFR7.2",
+      "status": "OK",
+      "target": "performance-design.md: Streaming pipeline with bounded blocks"
+    },
+    {
+      "id": "NFR7.3",
+      "status": "OK",
+      "target": "performance-design.md: Fixed block size and no whole-file reads"
+    },
+    {
+      "id": "NFR7.4",
+      "status": "OK",
+      "target": "scalability-design.md: Disk check at create"
+    },
+    {
+      "id": "NFR7.5",
+      "status": "OK",
+      "target": "scalability-design.md: Counting semaphore for running imports"
+    },
+    {
+      "id": "NFR7.6",
+      "status": "OK",
+      "target": "scalability-design.md: Working volume of 500 GB"
+    },
+    {
+      "id": "NFR7.7",
+      "status": "OK",
+      "target": "scalability-design.md: Short calls stay light"
+    },
+    {
+      "id": "NFR7.8",
+      "status": "OK",
+      "target": "scalability-design.md: State in the database"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "logical-components.md: Four outgoing connections"
+    },
+    {
+      "id": "NFR9.1",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR9.2",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR9.3",
+      "status": "OK",
+      "target": "logical-components.md: Stack"
+    },
+    {
+      "id": "NFR9.4",
+      "status": "OK",
+      "target": "logical-components.md: Tests against the stand-in"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "logical-components.md: Linux container"
+    }
+  ]
+}
