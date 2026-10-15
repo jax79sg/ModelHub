@@ -81,7 +81,9 @@ def postgres_admin_url():
         _wait_ready(url)
         yield url
     finally:
-        subprocess.run(["docker", "rm", "-f", name], capture_output=True, check=False)
+        # The container was started with --rm, so Docker removes it once it stops. Asking for a
+        # second removal (docker rm -f) raced with that and could leave Docker stuck.
+        subprocess.run(["docker", "stop", "-t", "2", name], capture_output=True, check=False)
 
 
 @pytest.fixture
