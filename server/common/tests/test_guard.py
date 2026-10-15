@@ -3,6 +3,7 @@
 import io
 import json
 import logging
+import uuid
 
 import pytest
 from fastapi import Depends, FastAPI, Request
@@ -12,6 +13,8 @@ from modelhub_common.health import HealthCheck, HealthRegistry
 from modelhub_common.keys import KeySet
 from modelhub_common.logs import JsonFormatter
 from modelhub_common.tokens import TokenVerifier
+
+LEAKY = "v" + uuid.uuid4().hex[:12]
 
 
 @pytest.fixture
@@ -62,7 +65,7 @@ def client(issuer, logbuf):
 
     @app.get("/boom")
     def boom():
-        raise RuntimeError("db password pw-123 leaked in a message")
+        raise RuntimeError("db failed with " + LEAKY)
 
     @app.get("/rid")
     def rid(request: Request):
@@ -154,7 +157,7 @@ def test_one_access_line_per_request_with_person_status_and_duration(client, iss
 def test_an_unhandled_error_is_a_plain_500_that_hides_the_detail(client, issuer, logbuf):
     r = client.get("/boom", headers=auth(issuer.token()))
     assert r.status_code == 500
-    assert "pw-123" not in r.text
+    assert LEAKY not in r.text
     assert r.json()["code"] == "internal_error"
 
 

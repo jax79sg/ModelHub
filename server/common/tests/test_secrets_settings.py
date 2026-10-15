@@ -1,16 +1,21 @@
 """Secrets and settings are read once at start-up and a bad one stops the start (BR1.6, BR1.7, BR1.12)."""
 
+import uuid
+
 import pytest
 from modelhub_common.config import Setting, StartupError, load_config, load_secrets
 from modelhub_common.secrets import Secret
 
+V1 = "v" + uuid.uuid4().hex[:12]
+V2 = "v" + uuid.uuid4().hex[:12]
+
 
 def test_a_secret_never_prints(tmp_path):
-    secret = Secret("database_password", "hunter2-value")
-    assert "hunter2-value" not in str(secret)
-    assert "hunter2-value" not in repr(secret)
-    assert "hunter2-value" not in f"{secret!s} {secret!r} {[secret]} {{'k': secret}}"
-    assert secret.reveal() == "hunter2-value"
+    secret = Secret("database_password", V1)
+    assert V1 not in str(secret)
+    assert V1 not in repr(secret)
+    assert V1 not in f"{secret!s} {secret!r} {[secret]} {{'k': secret}}"
+    assert secret.reveal() == V1
 
 
 def test_a_secret_cannot_be_serialised(tmp_path):
@@ -21,11 +26,11 @@ def test_a_secret_cannot_be_serialised(tmp_path):
 
 
 def test_secrets_are_read_from_files_and_one_newline_is_stripped(tmp_path):
-    (tmp_path / "database_password").write_text("pw\n")
-    (tmp_path / "token_hash_pepper").write_text("pepper  \n\n")
+    (tmp_path / "database_password").write_text(V1 + "\n")
+    (tmp_path / "token_hash_pepper").write_text(V2 + "  \n\n")
     got = load_secrets(["database_password", "token_hash_pepper"], directory=tmp_path)
-    assert got["database_password"].reveal() == "pw"
-    assert got["token_hash_pepper"].reveal() == "pepper  \n"
+    assert got["database_password"].reveal() == V1
+    assert got["token_hash_pepper"].reveal() == V2 + "  \n"
 
 
 def test_the_folder_comes_from_the_environment(tmp_path):
@@ -49,11 +54,11 @@ def test_an_unreadable_secret_is_named_not_its_content(tmp_path):
     if sys.platform == "win32" or os.geteuid() == 0:
         pytest.skip("permission test needs a non-root POSIX user")
     f = tmp_path / "locked"
-    f.write_text("sekrit-value")
+    f.write_text(V2)
     f.chmod(0)
     with pytest.raises(StartupError) as err:
         load_secrets(["locked"], directory=tmp_path)
-    assert "locked" in str(err.value) and "sekrit-value" not in str(err.value)
+    assert "locked" in str(err.value) and V2 not in str(err.value)
     f.chmod(0o600)
 
 
