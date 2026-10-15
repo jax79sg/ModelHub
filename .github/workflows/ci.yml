@@ -179,6 +179,23 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: >-
           pip install pytest pytest-timeout
-          -e server/testkit -e server/common -e server/stand_in
+          -e server/testkit -e server/common -e "server/stand_in[test]"
           -e server/catalog -e server/artifactory_service
       - run: pytest server -v --timeout=240
+
+  # The stand-in must run the same where the import command is tested (NFR10): Windows and macOS too.
+  stand-in:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+        python: ["3.10", "3.12"]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install pytest pytest-timeout -e server/testkit -e "server/stand_in[test]"
+      - run: pytest server/stand_in -v --timeout=240

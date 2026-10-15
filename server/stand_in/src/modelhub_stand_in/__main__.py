@@ -1,0 +1,43 @@
+"""Run the stand-in on its own (for whole-stack checks): ``python -m modelhub_stand_in``."""
+
+from __future__ import annotations
+
+import argparse
+import sys
+import time
+
+from .register import checklist_markdown
+from .server import StandIn
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(prog="modelhub_stand_in", description=__doc__)
+    parser.add_argument("--token", help="the one bearer token to accept")
+    parser.add_argument("--repo-key", default="models-hf")
+    parser.add_argument("--layout", choices=["flat", "nested"], default="flat")
+    parser.add_argument("--port", type=int, default=0)
+    parser.add_argument("--keep-limit-bytes", type=int, default=1024 * 1024)
+    parser.add_argument("--checklist", action="store_true", help="print the checklist and exit")
+    args = parser.parse_args(argv)
+    if args.checklist:
+        sys.stdout.write(checklist_markdown())
+        return 0
+    if not args.token:
+        parser.error("--token is required")
+    with StandIn(
+        token=args.token,
+        repo_key=args.repo_key,
+        layout=args.layout,
+        port=args.port,
+        keep_limit_bytes=args.keep_limit_bytes,
+    ) as stand_in:
+        print(f"stand-in listening on {stand_in.url} (endpoint {stand_in.hf_endpoint})", flush=True)
+        try:
+            while True:
+                time.sleep(3600)
+        except KeyboardInterrupt:
+            return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

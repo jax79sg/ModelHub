@@ -1,0 +1,133 @@
+[
+  {
+    "id": "A1",
+    "behaviour": "Artifactory accepts the Hugging Face upload calls that huggingface_hub makes: create repository, pre-upload check, Git LFS batch, object upload, commit, and a README metadata validation call (POST /api/validate-yaml).",
+    "basis": "documented",
+    "source": "https://docs.jfrog.com/artifactory/docs/use-hugging-face-with-jfrog-cli (wraps huggingface_hub upload_folder); the exact set of calls is read from the installed client",
+    "confirm_on_real": true,
+    "check": "Run jf hf upload against the real instance and compare the calls it makes with the stand-in's call record; confirm /api/validate-yaml is answered.",
+    "answers": []
+  },
+  {
+    "id": "A2",
+    "behaviour": "Names that break JFrog's naming rules are refused with HTTP 400 and a readable message naming the field.",
+    "basis": "inferred",
+    "source": "JFrog documents the naming rules; the answer is not documented",
+    "confirm_on_real": true,
+    "check": "Upload with an organisation starting with a hyphen and read the status and body.",
+    "answers": ["400 name_rule_broken", "400 name_refused"]
+  },
+  {
+    "id": "A3",
+    "behaviour": "A repeat upload of a complete version without Delete/Overwrite permission is answered 409 at the commit call and changes nothing.",
+    "basis": "documented",
+    "source": "JFrog documents 409 for overwriting the same version without permission; the call that answers it is assumed to be the commit",
+    "confirm_on_real": true,
+    "check": "Upload the same revision twice and see which call answers 409 and its body.",
+    "answers": ["409 conflict", "409 exists"]
+  },
+  {
+    "id": "A4",
+    "behaviour": "A revision given as 40 hexadecimal characters is kept as the version's revision; a named revision (such as main) is mapped to a computed 40-character hash.",
+    "basis": "invented",
+    "source": "The design fetches at the commit hash; how Artifactory treats a given revision is not documented",
+    "confirm_on_real": true,
+    "check": "Upload with revision set to a 40-character hash and fetch at that hash.",
+    "answers": []
+  },
+  {
+    "id": "A5",
+    "behaviour": "A version becomes visible only when its commit succeeds; files received earlier are hidden and a stopped upload leaves it absent.",
+    "basis": "inferred",
+    "source": "The design needs a repeat after a stop to find the version complete or absent",
+    "confirm_on_real": true,
+    "check": "Stop an upload between the object upload and the commit and list the version.",
+    "answers": []
+  },
+  {
+    "id": "A6",
+    "behaviour": "A checksum that does not match the uploaded content of a large object is refused with 422.",
+    "basis": "invented",
+    "source": "Not documented",
+    "confirm_on_real": false,
+    "check": "",
+    "answers": ["422 checksum_mismatch"]
+  },
+  {
+    "id": "A7",
+    "behaviour": "The large-object upload address carries a key in its query string instead of the token, because the client does not send the token there.",
+    "basis": "invented",
+    "source": "Git LFS upload addresses are usually pre-signed; Artifactory's form is not documented",
+    "confirm_on_real": true,
+    "check": "Read the upload address Artifactory returns from the large-file batch call and what headers it needs.",
+    "answers": []
+  },
+  {
+    "id": "A8",
+    "behaviour": "The storage-style listing GET /artifactory/api/storage/<repo>/<path>?list&deep=1 returns each file's uri, size and checksum (as sha2 and sha256).",
+    "basis": "inferred",
+    "source": "Artifactory's File List API; the Machine Learning layout's paths are not documented",
+    "confirm_on_real": true,
+    "check": "List a model version and read the paths and checksum field names.",
+    "answers": ["404 not_found"]
+  },
+  {
+    "id": "A9",
+    "behaviour": "Two invented layouts stand in for the real one: flat (<org>/<model>/<revision>/<file>) and nested (<org>/<model>/revisions/<revision>/files/<file>).",
+    "basis": "invented",
+    "source": "The Machine Learning layout is not documented on the pages read (open item X1)",
+    "confirm_on_real": true,
+    "check": "List a real version and record the real layout; the gateway must not depend on either invented one.",
+    "answers": []
+  },
+  {
+    "id": "A10",
+    "behaviour": "Deleting a version is DELETE /artifactory/<repo>/<version folder> and answers 204; deleting a version that is not there answers 404.",
+    "basis": "inferred",
+    "source": "Artifactory deletes artifacts and folders by path; the Machine Learning layout's version folder is not documented",
+    "confirm_on_real": true,
+    "check": "Delete a version folder and read the status; delete it again.",
+    "answers": ["204 deleted"]
+  },
+  {
+    "id": "A11",
+    "behaviour": "A token without write permission is answered 403 on every changing call; a wrong or missing token is answered 401.",
+    "basis": "inferred",
+    "source": "Standard Artifactory behaviour",
+    "confirm_on_real": false,
+    "check": "",
+    "answers": ["401 unauthorised", "403 forbidden"]
+  },
+  {
+    "id": "A12",
+    "behaviour": "A file path that is empty, absolute, contains '..' or a backslash is refused with 400.",
+    "basis": "invented",
+    "source": "Not documented",
+    "confirm_on_real": false,
+    "check": "",
+    "answers": ["400 unsafe_path"]
+  },
+  {
+    "id": "A13",
+    "behaviour": "An empty version (a commit with no files) is accepted and gives a complete version with no files; paths are compared exactly (case-sensitive).",
+    "basis": "invented",
+    "source": "Not documented",
+    "confirm_on_real": false,
+    "check": "",
+    "answers": []
+  },
+  {
+    "id": "A14",
+    "behaviour": "Test-only answers: 404 not_imitated for any call the stand-in does not imitate, 501 content_not_kept for a file whose content was not kept, and 500 server_error for an imitated failure.",
+    "basis": "invented",
+    "source": "Stand-in behaviour for tests",
+    "confirm_on_real": false,
+    "check": "",
+    "answers": [
+      "404 not_imitated",
+      "404 repo_not_found",
+      "501 content_not_kept",
+      "500 server_error"
+    ]
+  }
+]
