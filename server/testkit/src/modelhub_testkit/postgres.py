@@ -55,9 +55,8 @@ def postgres_admin_url():
     if not _docker_ready():
         pytest.skip(f"needs PostgreSQL: set {ADMIN_ENV} or start Docker")
     name = "modelhub-test-pg-" + uuid.uuid4().hex[:8]
-    subprocess.run(
+    started = _docker(
         [
-            "docker",
             "run",
             "-d",
             "--rm",
@@ -69,19 +68,42 @@ def postgres_admin_url():
             "127.0.0.1::5432",
             IMAGE,
         ],
-        check=True,
-        capture_output=True,
+        timeout=120,
     )
+    if started is None or started.returncode != 0:
+        pytest.skip("Docker did not start the PostgreSQL container")
     try:
-        out = subprocess.run(
-            ["docker", "port", name, "5432/tcp"], check=True, capture_output=True, text=True
-        ).stdout.splitlines()[0]
-        port = out.rsplit(":", 1)[1]
+        out = _docker(["port", name, "5432/tcp"], timeout=20)
+        if out is None or out.returncode != 0:
+            pytest.skip("Docker did not answer for the PostgreSQL container")
+        port = out.stdout.splitlines()[0].rsplit(":", 1)[1]
         url = f"postgresql://postgres:test@127.0.0.1:{port}/postgres"
         _wait_ready(url)
         yield url
     finally:
-        subprocess.run(["docker", "rm", "-f", name], capture_output=True, check=False)
+        _stop_postgres(name)
+
+
+def _docker(args: list[str], timeout: float):
+    """Run a docker command that cannot hang the tests; None when it times out."""
+    try:
+        return subprocess.run(
+            ["docker", *args], capture_output=True, text=True, timeout=timeout, check=False
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+
+
+def _stop_postgres(name: str) -> None:
+    """Kill PostgreSQL inside the container first, then stop the container.
+
+    PostgreSQL can hold on while Docker tears its container down (seen to leave OrbStack stuck).
+    SIGQUIT to the server process (PID 1 in this image) is an immediate shutdown that does not wait
+    for clients. The container was started with --rm, so Docker removes it once it has stopped; we
+    never ask for a second removal.
+    """
+    _docker(["exec", name, "sh", "-c", "kill -s QUIT 1"], timeout=20)
+    _docker(["stop", "-t", "2", name], timeout=30)
 
 
 @pytest.fixture
