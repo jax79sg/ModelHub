@@ -19,10 +19,10 @@ REPO = "acme/tiny-model"
 def make_folder(tmp_path, big=False):
     folder = tmp_path / "model"
     folder.mkdir()
-    (folder / "config.json").write_text(json.dumps({"hidden": 8}))
-    (folder / "README.md").write_text("# Tiny\n")
+    (folder / "config.json").write_bytes(json.dumps({"hidden": 8}).encode())
+    (folder / "README.md").write_bytes(b"# Tiny\n")  # bytes: no CRLF change on Windows
     (folder / "sub").mkdir()
-    (folder / "sub" / "tokenizer.json").write_text("{}")
+    (folder / "sub" / "tokenizer.json").write_bytes(b"{}")
     weights = b"W" * (4096 if not big else 3 * 1024 * 1024)
     (folder / "model.safetensors").write_bytes(weights)
     return folder, weights
@@ -85,7 +85,7 @@ def test_a_version_is_invisible_until_its_commit(api, stand_in, tmp_path):
 def test_a_repeat_of_a_complete_version_is_409_and_changes_nothing(api, stand_in, tmp_path):
     folder, _ = make_folder(tmp_path)
     upload(api, folder)
-    (folder / "README.md").write_text("changed")
+    (folder / "README.md").write_bytes(b"changed")
     with pytest.raises(HfHubHTTPError) as err:
         api.upload_folder(repo_id=REPO, folder_path=str(folder), revision=REV)
     assert err.value.response.status_code == 409
@@ -97,7 +97,7 @@ def test_overwrite_replaces_the_files_when_allowed(api, stand_in, tmp_path):
     stand_in.set_overwrite_allowed(True)
     folder, _ = make_folder(tmp_path)
     upload(api, folder)
-    (folder / "README.md").write_text("changed")
+    (folder / "README.md").write_bytes(b"changed")
     api.upload_folder(repo_id=REPO, folder_path=str(folder), revision=REV)
     readme = file_of(stand_in, "README.md")
     assert readme.sha256 == hashlib.sha256(b"changed").hexdigest()
