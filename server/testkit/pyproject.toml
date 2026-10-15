@@ -5,6 +5,9 @@ description = "Test helpers shared by the modelhub server units: a fake Keycloak
 requires-python = ">=3.10"
 dependencies = ["pytest>=8", "pyjwt[crypto]>=2.8", "psycopg[binary]>=3.2"]
 
+[project.entry-points.pytest11]
+modelhub_testkit = "modelhub_testkit.postgres"
+
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
