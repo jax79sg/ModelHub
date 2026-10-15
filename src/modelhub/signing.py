@@ -174,25 +174,42 @@ def export_public(key_id: str, out: Path) -> dict:
     return doc
 
 
-def read_public_doc(path: Path) -> dict:
-    """Read a public key file and check its fingerprint matches its key bytes."""
+def parse_public_doc(source: str | dict) -> dict:
+    """Check a public key document (text or already parsed) and its fingerprint."""
     try:
-        doc = json.loads(Path(path).read_text(encoding="utf-8"))
+        doc = json.loads(source) if isinstance(source, str) else dict(source)
         public_raw = base64.b64decode(doc["public_key"])
-    except (OSError, ValueError, KeyError) as error:
-        raise KeyError_(f"{path} is not a public key file") from error
+    except (ValueError, KeyError, TypeError) as error:
+        raise KeyError_("this is not a public key file") from error
     if doc.get("type") != "modelhub-public-key" or doc.get("algorithm") != ALGORITHM:
-        raise KeyError_(f"{path} is not a modelhub public key")
+        raise KeyError_("this is not a modelhub public key")
     if doc.get("fingerprint") != fingerprint_of(public_raw) or doc.get("key_id") != _key_id(
         public_raw
     ):
-        raise KeyError_(f"{path} has a fingerprint that does not match its key")
+        raise KeyError_("this key has a fingerprint that does not match its key bytes")
     return doc
+
+
+def fingerprints_match(typed: str, doc: dict) -> bool:
+    """True when a typed fingerprint equals the key's, ignoring case and separators."""
+    return _normalize(typed) == _normalize(doc["fingerprint"])
+
+
+def read_public_doc(path: Path) -> dict:
+    """Read a public key file and check its fingerprint matches its key bytes."""
+    try:
+        text = Path(path).read_text(encoding="utf-8")
+    except OSError as error:
+        raise KeyError_(f"{path} is not a public key file") from error
+    try:
+        return parse_public_doc(text)
+    except KeyError_ as error:
+        raise KeyError_(f"{path}: {error}") from error
 
 
 def trust_key(doc: dict, typed_fingerprint: str) -> None:
     """Trust a public key only when the person typed its fingerprint correctly (NFR2.7)."""
-    if _normalize(typed_fingerprint) != _normalize(doc["fingerprint"]):
+    if not fingerprints_match(typed_fingerprint, doc):
         raise KeyError_("the fingerprint you typed does not match this key; it was not trusted")
     trusted = _trusted_dir()
     trusted.mkdir(parents=True, exist_ok=True)
