@@ -1,7 +1,7 @@
 """The models list, search, versions, documents, removal and the trail (BR1.7 to BR1.13, BR1.20)."""
 
 import pytest
-from conftest import C1, C2, C3, make_docs, make_record
+from conftest import C1, C2, C3
 from modelhub_catalog.store import Document, DocumentGone, InvalidQuery
 
 
@@ -227,7 +227,7 @@ def test_a_model_lists_its_versions_and_refs(put, store):
 def test_a_version_record_has_files_and_a_document_list_without_content(put, store):
     put()
     v = store.get_version("acme/tiny", C1)
-    assert "content" not in str(v["documents"])
+    assert all("content" not in d for d in v["documents"])
     assert {d["kind"] for d in v["documents"]} == {"readme", "response"}
     assert store.get_version("acme/tiny", C2) is None
 

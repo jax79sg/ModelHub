@@ -215,7 +215,7 @@ class CatalogStore:
             )
             sets = ", ".join(f"{c} = %s" for c in cols)
             conn.execute(
-                f"update model_versions set state = 'imported', removed_at = null, "  # noqa: S608
+                f"update model_versions set state = 'imported', removed_at = null, "
                 f"removed_by = null, {sets}, has_readme = %s, card_text = %s, record_checksum = %s, "
                 "record_format = %s, imported_at = %s, imported_by_id = %s, imported_by_name = %s "
                 "where model_key = %s and commit = %s",
@@ -225,7 +225,7 @@ class CatalogStore:
             names = ", ".join(cols)
             marks = ", ".join(["%s"] * len(cols))
             conn.execute(
-                f"insert into model_versions (model_key, commit, {names}, has_readme, card_text, "  # noqa: S608
+                f"insert into model_versions (model_key, commit, {names}, has_readme, card_text, "
                 "record_checksum, record_format, imported_at, imported_by_id, imported_by_name) "
                 f"values (%s, %s, {marks}, %s, %s, %s, %s, %s, %s, %s)",
                 [key, v.commit, *values, *common],
@@ -432,7 +432,7 @@ class CatalogStore:
                 "parameter_count, downloads, likes, last_modified_at, created_at, imported_at, "
                 "imported_by_id, imported_by_name, tags "
                 + base
-                + f" order by {rank_sql}{SORTS[sort]}, model_key limit %s offset %s",  # noqa: S608
+                + f" order by {rank_sql}{SORTS[sort]}, model_key limit %s offset %s",
                 [*params, *rank_params, size, (page - 1) * size],
             ).fetchall()
             facets = self._facets(conn, base, params)
@@ -454,13 +454,13 @@ class CatalogStore:
             ("importedBy", "imported_by_name"),
         ):
             rows = conn.execute(
-                f"select {column} as v, count(*) as n from (select * {base}) s "  # noqa: S608
+                f"select {column} as v, count(*) as n from (select * {base}) s "
                 f"where {column} is not null group by {column} order by count(*) desc, {column}",
                 params,
             ).fetchall()
             out[name] = {r["v"]: r["n"] for r in rows}
         rows = conn.execute(
-            f"select l as v, count(*) as n from (select unnest(language) as l {base}) s "  # noqa: S608
+            f"select l as v, count(*) as n from (select unnest(language) as l {base}) s "
             "group by l order by count(*) desc, l",
             params,
         ).fetchall()
@@ -695,7 +695,7 @@ class CatalogStore:
         with self._pool.connection() as conn:
             rows = conn.execute(
                 "select token_id, owner_id, owner_name, name, prefix, created_at, expires_at, "
-                f"last_used_at, revoked_at from personal_tokens {where} "  # noqa: S608
+                f"last_used_at, revoked_at from personal_tokens {where} "
                 "order by created_at desc, token_id",
                 params,
             ).fetchall()

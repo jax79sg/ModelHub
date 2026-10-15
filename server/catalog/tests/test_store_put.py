@@ -11,7 +11,7 @@ from modelhub_catalog.store import Document, RecordConflict, StoreFailed
 
 def count(url, table):
     with psycopg.connect(url) as conn:
-        return conn.execute(f"select count(*) from {table}").fetchone()[0]  # noqa: S608
+        return conn.execute(f"select count(*) from {table}").fetchone()[0]
 
 
 def test_a_first_store_writes_everything_and_one_trail_row(store, put, fresh_database):
