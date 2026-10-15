@@ -233,13 +233,16 @@ def sign_bytes(key_id: str, data: bytes) -> dict:
     }
 
 
-def verify_signature(sig_doc: dict | None, data: bytes) -> dict:
+def verify_signature(sig_doc: dict | None, data: bytes, trusted: list[dict] | None = None) -> dict:
     """Return the trusted key's file if `data` carries a valid signature from it; otherwise say
-    exactly why not. Fails closed (NFR2.4)."""
+    exactly why not. Fails closed (NFR2.4).
+
+    `trusted` is a list of public key documents to trust instead of the keys kept on this
+    computer; the import service passes its own list (an empty list trusts nothing)."""
     if not sig_doc:
         raise SignatureProblem("signature-missing", "the bundle has no signature file")
     key_id = sig_doc.get("key_id", "")
-    trusted = {k["key_id"]: k for k in trusted_keys()}
+    trusted = {k["key_id"]: k for k in (trusted_keys() if trusted is None else trusted)}
     if key_id not in trusted:
         raise SignatureProblem(
             "key-untrusted",

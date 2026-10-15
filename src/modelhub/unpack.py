@@ -110,25 +110,44 @@ def _unpack_one(report: verify.BundleReport, store_dir: Path, progress) -> Unpac
 
     partial = paths.partial_dir(model["commit"])
     with fsutil.RunLock(paths.model_dir):
-        joined = JoinedPieces(report.piece_paths, on_read=progress.advance)
-        reader = io.BufferedReader(joined, 1 << 20)
         progress.start(f"Rebuilding {model['id']}", total_bytes=report.manifest["stream"]["size"])
         try:
             with progress.running():
-                requested = _extract(
-                    reader, partial, report.manifest, fsutil.case_matters_here(store_dir)
+                requested = rebuild_into(
+                    report, partial, progress, ignore_case=fsutil.case_matters_here(store_dir)
                 )
-                _finish_stream(reader, joined, report.manifest)
-        except (UnsafeArchive, IntegrityFailure, fsutil.UnsafePathError):
-            shutil.rmtree(partial, ignore_errors=True)  # a refused bundle leaves nothing behind
-            raise
         finally:
-            reader.close()
             progress.finish()
         os.replace(partial, final)
         store.update_pointers(paths, model["commit"], requested)
     logger.info("unpacked %s %s into %s", model["id"], model["commit"][:12], final)
     return UnpackResult(model["id"], model["commit"], final)
+
+
+def rebuild_into(
+    report: verify.BundleReport,
+    partial: Path,
+    progress=None,
+    joined_factory=JoinedPieces,
+    ignore_case: bool = False,
+) -> str:
+    """Rebuild one verified bundle into `partial` and check every file against the manifest.
+
+    `joined_factory` makes the reader that joins the pieces; the import service passes one that
+    deletes each piece once it has been read. Returns the revision the bundle was pulled at.
+    A refused bundle leaves nothing behind."""
+    progress = progress or NullReporter()
+    joined = joined_factory(report.piece_paths, on_read=progress.advance)
+    reader = io.BufferedReader(joined, 1 << 20)
+    try:
+        requested = _extract(reader, partial, report.manifest, ignore_case)
+        _finish_stream(reader, joined, report.manifest)
+    except (UnsafeArchive, IntegrityFailure, fsutil.UnsafePathError):
+        shutil.rmtree(partial, ignore_errors=True)
+        raise
+    finally:
+        reader.close()
+    return requested
 
 
 def _extract(reader, partial: Path, manifest: dict, ignore_case: bool = False) -> str:
