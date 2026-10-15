@@ -1,0 +1,13 @@
+[project]
+name = "modelhub-common"
+version = "0.1.0"
+description = "Shared code for the server units: token check, secrets, logging, health."
+requires-python = ">=3.10"
+dependencies = ["pyjwt[crypto]>=2.8", "httpx>=0.27"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

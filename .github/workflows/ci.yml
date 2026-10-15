@@ -148,3 +148,37 @@ jobs:
       - run: ruff check .
       - run: ruff format --check .
       - run: pytest -v
+
+  # The server units (server/): common, catalog, artifactory_service, stand_in, and the test helpers.
+  # Tests that need PostgreSQL use this service container (MODELHUB_TEST_POSTGRES_URL).
+  server:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.12"]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      MODELHUB_TEST_POSTGRES_URL: postgresql://postgres:test@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: >-
+          pip install pytest pytest-timeout
+          -e server/testkit -e server/common -e server/stand_in
+          -e server/catalog -e server/artifactory_service
+      - run: pytest server -v --timeout=240
