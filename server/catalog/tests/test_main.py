@@ -8,6 +8,10 @@ from modelhub_catalog.main import build_app, database_url
 from modelhub_common.config import StartupError
 from modelhub_testkit.issuer import FakeIssuer
 
+LEAK = "v" + uuid.uuid4().hex
+PW_RAW = "x@" + uuid.uuid4().hex[:6] + "/y"
+PW_ENCODED = PW_RAW.replace("@", "%40").replace("/", "%2F")
+
 
 def env_for(url: str, secrets_dir, **extra):
     rest = url.split("://", 1)[1]
@@ -53,9 +57,9 @@ def test_the_database_url_is_built_from_settings_and_the_password_secret(tmp_pat
             "MODELHUB_DATABASE_NAME": "catalog",
             "MODELHUB_DATABASE_USER": "u",
         },
-        Secret("database_password", "p@ss/word"),
+        Secret("database_password", PW_RAW),
     )
-    assert url == "postgresql://u:p%40ss%2Fword@db:5432/catalog"
+    assert url == "postgresql://u:" + PW_ENCODED + "@db:5432/catalog"
 
 
 def test_a_good_start_applies_the_upgrade_steps_and_serves_requests(fresh_database, tmp_path):
@@ -84,7 +88,7 @@ def test_a_database_newer_than_the_code_stops_the_start(fresh_database, tmp_path
 
 
 def test_secrets_never_appear_in_the_start_up_error(tmp_path):
-    (tmp_path / "database_password").write_text("a-database-password-value\n")
+    (tmp_path / "database_password").write_text(LEAK + "\n")
     with pytest.raises(StartupError) as err:
         build_app({"MODELHUB_SECRETS_DIR": str(tmp_path)})
-    assert "a-database-password-value" not in str(err.value)
+    assert LEAK not in str(err.value)
