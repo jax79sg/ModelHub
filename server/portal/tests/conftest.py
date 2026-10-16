@@ -6,6 +6,7 @@ from modelhub_common.tokens import TokenVerifier
 from modelhub_portal.app import Settings, create_app
 from modelhub_portal.catalog_client import Catalog
 from modelhub_portal.oidc import Oidc
+from modelhub_portal.service_client import RetentionService
 from modelhub_testkit.keycloak import FakeKeycloak
 
 BASE = "https://portal.test"
@@ -52,7 +53,7 @@ def catalog_http(fresh_database, keycloak):
     store.close()
 
 
-def make_portal(keycloak, catalog_http, clock, **settings):
+def make_portal(keycloak, catalog_http, clock, service_http=None, **settings):
     issuer = keycloak.issuer
     keys = KeySet(issuer.jwks)
     keys.load()
@@ -71,13 +72,23 @@ def make_portal(keycloak, catalog_http, clock, **settings):
         hf_repo_key="hf-local",
         **settings,
     )
-    app = create_app(cfg, oidc, Catalog(catalog_http), clock=clock)
+    service = RetentionService(service_http, "http://service") if service_http is not None else None
+    app = create_app(cfg, oidc, Catalog(catalog_http), clock=clock, service=service)
     return TestClient(app, base_url=BASE, follow_redirects=False)
 
 
 @pytest.fixture
-def portal(keycloak, catalog_http, clock):
-    return make_portal(keycloak, catalog_http, clock)
+def fake_service():
+    from fake_service import FakeService
+
+    return FakeService()
+
+
+@pytest.fixture
+def portal(keycloak, catalog_http, clock, fake_service):
+    return make_portal(
+        keycloak, catalog_http, clock, service_http=httpx.Client(transport=fake_service.transport())
+    )
 
 
 def sign_in(portal, keycloak, username="ada", admin=False):

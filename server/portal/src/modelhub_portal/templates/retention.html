@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container narrow">
+  <h1>Retention</h1>
+  {% if message %}<div class="banner warn" role="alert">{{ message }}</div>{% endif %}
+  <p>Imported versions older than <b>{{ period.periodDays }} days</b> are listed here for an administrator to decide, one version at a time.
+    {% if period.changedBy %}<span class="muted small">Changed by {{ period.changedBy }}{% if period.changedAt %} on {{ period.changedAt[:10] }}{% endif %}.</span>{% endif %}</p>
+
+  {% if session.is_admin %}
+  <form method="post" action="/admin/retention/period" class="stack">
+    <input type="hidden" name="_csrf" value="{{ session.csrf }}">
+    <label for="days">Retention period in days (1 to 3650)</label>
+    <input id="days" name="days" type="number" min="1" max="3650" value="{{ period.periodDays }}" required>
+    <button class="btn" type="submit">Change</button>
+  </form>
+
+  <h2>Versions past the period</h2>
+  <table class="files">
+    <thead><tr><th>Model</th><th>Commit</th><th>Imported</th><th>By</th><th>Age (days)</th><th></th></tr></thead>
+    <tbody>
+    {% for v in due %}
+      <tr><td><a href="/{{ v.modelId }}?rev={{ v.commit[:12] }}">{{ v.modelId }}</a></td><td class="mono">{{ v.commit[:12] }}</td>
+        <td>{{ v.importedAt[:10] }}</td><td>{{ v.importedBy }}</td><td>{{ v.ageDays }}</td>
+        <td>
+          <form method="post" action="/admin/retention/keep" style="display:inline">
+            <input type="hidden" name="_csrf" value="{{ session.csrf }}">
+            <input type="hidden" name="model" value="{{ v.modelId }}"><input type="hidden" name="commit" value="{{ v.commit }}">
+            <button class="btn small" type="submit">Keep</button></form>
+          <a class="btn small" href="/admin/retention/remove?model={{ q(v.modelId, '/') }}&amp;commit={{ v.commit }}">Remove</a>
+        </td></tr>
+    {% else %}
+      <tr><td colspan="6" class="muted">No versions are past the period.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Decisions</h2>
+  <table class="files">
+    <thead><tr><th>When</th><th>Model</th><th>Commit</th><th>Decision</th><th>By</th><th>Outcome</th></tr></thead>
+    <tbody>
+    {% for d in decisions %}
+      <tr><td>{{ d.decidedAt[:10] }}</td><td>{{ d.modelId }}</td><td class="mono">{{ d.commit[:12] }}</td><td>{{ d.decision }}</td><td>{{ d.decidedBy }}</td><td>{{ d.outcome }}</td></tr>
+    {% else %}
+      <tr><td colspan="6" class="muted">No decisions yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">Only administrators see the versions past the period and decide about them.</p>
+  {% endif %}
+</div>
+{% endblock %}

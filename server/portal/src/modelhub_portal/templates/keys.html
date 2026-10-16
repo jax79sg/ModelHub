@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container narrow">
+  <h1>Trusted signing keys</h1>
+  <p>The import service accepts a bundle only if it is signed by one of these keys. Bundles already imported stay when a key is removed.</p>
+  {% if message %}<div class="banner warn" role="alert">{{ message }}</div>{% endif %}
+  <table class="files">
+    <thead><tr><th>Name</th><th>Fingerprint</th><th>Added</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    {% for k in items %}
+      <tr><td>{{ k.name }}</td><td class="mono small">{{ k.fingerprint }}</td><td>{{ k.addedAt[:10] }} by {{ k.addedBy }}</td><td>{{ k.status }}</td>
+        <td>{% if k.status == 'active' %}<a class="btn small" href="/admin/keys/{{ k.keyId }}/remove">Stop trusting</a>{% endif %}</td></tr>
+    {% else %}
+      <tr><td colspan="5" class="muted">No keys are trusted yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <h2>Trust a new key</h2>
+  <form method="post" action="/admin/keys" class="stack">
+    <input type="hidden" name="_csrf" value="{{ session.csrf }}">
+    <label for="name">Name</label>
+    <input id="name" name="name" type="text" required maxlength="80">
+    <label for="public_key">Public key file (paste its whole contents)</label>
+    <textarea id="public_key" name="public_key" rows="6" required></textarea>
+    <label for="fingerprint">Fingerprint, as confirmed with the key's owner</label>
+    <input id="fingerprint" name="fingerprint" type="text" required autocomplete="off">
+    <button class="btn" type="submit">Trust this key</button>
+  </form>
+</div>
+{% endblock %}

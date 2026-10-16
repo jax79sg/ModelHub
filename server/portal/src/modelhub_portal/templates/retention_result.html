@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container narrow">
+  <h1>{{ model }} {{ commit[:12] }}</h1>
+  {% if outcome == 'removed' %}
+    <div class="banner" role="status">Done: the version was removed.</div>
+  {% elif outcome == 'removal_failed' %}
+    <div class="banner warn" role="alert">The removal did not finish: {{ message or 'no reason was given' }}.
+      The version stays listed. If its files were already deleted, trying again repeats only the last step.</div>
+    <form method="post" action="/admin/retention/remove">
+      <input type="hidden" name="_csrf" value="{{ session.csrf }}">
+      <input type="hidden" name="model" value="{{ model }}"><input type="hidden" name="commit" value="{{ commit }}">
+      <button class="btn" type="submit">Try again</button>
+    </form>
+  {% else %}
+    <div class="banner warn" role="alert">{{ message }}</div>
+  {% endif %}
+  <p><a href="/admin/retention">Back to retention</a></p>
+</div>
+{% endblock %}

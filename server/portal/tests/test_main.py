@@ -18,6 +18,7 @@ def env_for(secrets_dir, **extra):
         "MODELHUB_REALM_ISSUER": "https://keycloak.test/realms/modelhub",
         "MODELHUB_PUBLIC_URL": BASE,
         "MODELHUB_CATALOG_URL": "http://catalog:8000",
+        "MODELHUB_SERVICE_URL": "http://artifactory-service:8000",
         "MODELHUB_ARTIFACTORY_URL": "https://artifactory.test",
         "MODELHUB_HF_REPO_KEY": "hf-local",
         "MODELHUB_SECRETS_DIR": str(secrets_dir),

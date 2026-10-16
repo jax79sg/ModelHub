@@ -17,6 +17,7 @@ from modelhub_common.tokens import TokenVerifier
 from modelhub_portal.app import Settings, create_app
 from modelhub_portal.catalog_client import Catalog
 from modelhub_portal.oidc import Oidc
+from modelhub_portal.service_client import RetentionService
 
 SECRETS = ["keycloak_client_secret"]
 SETTINGS = [
@@ -24,6 +25,7 @@ SETTINGS = [
     Setting("MODELHUB_PORT", int, default=8000, minimum=1),
     Setting("MODELHUB_PUBLIC_URL", str, required=True),
     Setting("MODELHUB_CATALOG_URL", str, required=True),
+    Setting("MODELHUB_SERVICE_URL", str, required=True),
     Setting("MODELHUB_KEYCLOAK_CLIENT_ID", str, default="modelhub"),
     Setting("MODELHUB_ARTIFACTORY_URL", str, required=True),
     Setting("MODELHUB_HF_REPO_KEY", str, required=True),
@@ -60,14 +62,16 @@ def build_app(
         transport=oidc_transport,
         timeout=timeouts,
     )
-    catalog = Catalog(catalog_http or httpx.Client(timeout=timeouts), cfg["MODELHUB_CATALOG_URL"])
+    http = catalog_http or httpx.Client(timeout=timeouts)
+    catalog = Catalog(http, cfg["MODELHUB_CATALOG_URL"])
     settings = Settings(
         base_url=public,
         artifactory_url=cfg["MODELHUB_ARTIFACTORY_URL"],
         hf_repo_key=cfg["MODELHUB_HF_REPO_KEY"],
         session_idle_hours=cfg["MODELHUB_SESSION_IDLE_HOURS"],
     )
-    app = create_app(settings, oidc, catalog)
+    service = RetentionService(http, cfg["MODELHUB_SERVICE_URL"])
+    app = create_app(settings, oidc, catalog, service=service)
     app.state.settings = cfg
     return app
 
