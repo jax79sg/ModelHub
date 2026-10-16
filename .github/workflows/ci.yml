@@ -248,15 +248,8 @@ jobs:
             test "$(docker run --rm --entrypoint id modelhub/$name:$RELEASE -u)" = "10001"
           done
       - name: Scan (fails on a critical finding that has a fix)
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: modelhub/portal:${{ env.RELEASE }}
-          severity: CRITICAL
-          ignore-unfixed: true
-          exit-code: "1"
-      - name: Scan the other images
         run: |
-          for name in catalog artifactory-service proxy; do
+          for name in catalog artifactory-service portal proxy; do
             docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.57.1 image \
               --severity CRITICAL --ignore-unfixed --exit-code 1 modelhub/$name:$RELEASE
           done
