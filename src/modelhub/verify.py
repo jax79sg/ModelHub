@@ -100,12 +100,18 @@ def _check_pieces(report: BundleReport, dirs: list[Path], progress) -> None:
 
 
 def verify_bundle(
-    dirs: list[Path], progress=None, trusted: list[dict] | None = None
+    dirs: list[Path],
+    progress=None,
+    trusted: list[dict] | None = None,
+    only: set[str] | None = None,
 ) -> list[BundleReport]:
+    """Check the bundles found in `dirs` (only those named in `only`, when given)."""
     dirs = [Path(d) for d in dirs]
     progress = progress or NullReporter()
     reports = []
     for stem, paths in sorted(_find_manifests(dirs).items()):
+        if only is not None and stem not in only:
+            continue
         report = BundleReport(stem)
         reports.append(report)
         final = _pick_final(paths)

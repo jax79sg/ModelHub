@@ -236,6 +236,26 @@ python -m hubsite --store /srv/models --port 8765    # then open http://127.0.0.
 
 Search from the header, filter on the left, open a model, then try **Files and versions** and the revision menu. The site only reads the store; it never changes it. `web/README.md` has the page list and details. A store built from four small public models is in `store/` after the steps above are run on those models (it is not committed: it is about 100 MB).
 
+### 7. Send bundles to the shared server (air-gapped, enterprise setup)
+
+When a shared ModelHub server is running, you can send bundles to it instead of unpacking them
+yourself. Make a personal token on the portal's **Tokens** page, then:
+
+```bash
+modelhub login                       # asks for the server address and the token (typed with no echo)
+modelhub import /path/to/bundles     # a folder, a .bundle.json file, or the first piece of a bundle
+modelhub logout                      # deletes the saved settings
+```
+
+`import` checks each bundle here first (signature by a key you trust, every piece), sends the
+pieces the server is missing, one at a time, starts the import and shows its progress. It prints
+one line per model (`IMPORTED`, `SKIPPED`, `COMPLETED` or `FAILED` with the reason) and exits 0
+when none failed, 1 when at least one failed and 2 when it could not run (not signed in, program
+too old, nothing to import). Stopping with Ctrl-C leaves the import on the server; run the same
+command again to carry on. The settings are kept in `~/.config/modelhub` (Linux and macOS) or
+`%APPDATA%\modelhub` (Windows), readable only by you; `MODELHUB_SERVER` and `MODELHUB_TOKEN`
+override them for one run. The token cannot be given on the command line.
+
 ### Recovering by hand
 
 Pieces are plain slices of one tar file; the signature file lists their names and checksums.
