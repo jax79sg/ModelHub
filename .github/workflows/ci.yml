@@ -183,7 +183,7 @@ jobs:
           -e web -e server/catalog -e server/artifactory_service -e server/portal
       # one run per unit: the units share test file names
       - run: |
-          for unit in common catalog artifactory_service portal stand_in testkit; do
+          for unit in common catalog artifactory_service portal e2e stand_in testkit; do
             pytest server/$unit -v --timeout=240 || exit 1
           done
 
