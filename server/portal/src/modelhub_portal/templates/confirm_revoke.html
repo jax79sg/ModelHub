@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container narrow">
+  <h1>Revoke this token?</h1>
+  <p>Programs using it will be refused from now on. This cannot be undone.</p>
+  <form method="post" action="/account/tokens/{{ token_id }}/revoke">
+    <input type="hidden" name="_csrf" value="{{ session.csrf }}">
+    <button class="btn" type="submit">Revoke</button>
+    <a class="btn" href="/account/tokens">Cancel</a>
+  </form>
+</div>
+{% endblock %}

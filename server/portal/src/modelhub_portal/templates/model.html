@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block body %}
+<div class="model-header"><div class="container">
+  <h1 class="repo-title">{{ model.model_id }}
+    {% if version.state == 'removed' %}<span class="tag plain">removed</span>{% endif %}</h1>
+  <div class="tag-row">
+    {% if version.task %}<span class="tag">{{ version.task }}</span>{% endif %}
+    {% if version.library %}<span class="tag">{{ version.library }}</span>{% endif %}
+    {% for lang in (version.language or [])[:3] %}<span class="tag">{{ lang }}</span>{% endfor %}
+    <span class="tag">License: <b>{{ version.license or 'no licence given' }}</b></span>
+  </div>
+  <details class="menu rev-menu">
+    <summary class="btn small">{{ rev if rev|length < 20 else rev[:7] }}</summary>
+    <div class="menu-panel">
+      {% for r in revisions %}<a href="/{{ model.model_id }}?rev={{ q(r.name) }}">{{ r.name }} <span class="muted mono">{{ r.commit[:7] }}</span></a>{% endfor %}
+    </div>
+  </details>
+</div></div>
+
+<div class="container">
+  {% if version.state == 'removed' %}
+  <div class="banner warn" role="status">This version was removed on {{ (version.removed_at or '')[:10] }} by {{ version.removed_by or 'unknown' }}; the README is no longer stored.</div>
+  {% endif %}
+
+  <div class="two-col">
+    <article class="card">
+      {% if readme %}<div class="md">{{ readme.html|safe }}</div>
+      {% elif version.state != 'removed' %}<p class="muted">No README stored.</p>{% endif %}
+    </article>
+
+    <aside class="side">
+      <section><h3>Facts</h3>
+        <dl class="facts">
+          <dt>Commit</dt><dd class="mono">{{ commit }}</dd>
+          <dt>Downloads</dt><dd>{{ fmt.count(version.downloads) if version.downloads is not none else 'unknown' }}{% if version.counts_captured_at %} <span class="muted small">(on {{ version.counts_captured_at[:10] }})</span>{% endif %}</dd>
+          <dt>Likes</dt><dd>{{ fmt.count(version.likes) if version.likes is not none else 'unknown' }}</dd>
+          <dt>Parameters</dt><dd>{{ fmt.params(version.parameter_count) if version.parameter_count is not none else 'unknown' }}</dd>
+          <dt>Created</dt><dd>{{ (version.created_at or 'unknown')[:10] }}</dd>
+          <dt>Imported</dt><dd>{{ (version.imported_at or '')[:10] }} by {{ version.imported_by_name }}</dd>
+        </dl>
+      </section>
+
+      <section><h3>Fetch from Artifactory</h3>
+        <p class="small">Repository <span class="mono">{{ snippets.repository }}</span><br>Model <span class="mono">{{ model.model_id }}</span> · commit <span class="mono">{{ commit[:12] }}</span></p>
+        <p class="small muted">Replace <span class="mono">&lt;your-token&gt;</span> with your own Artifactory token.</p>
+        <h4>JFrog command</h4><pre class="snippet"><code>{{ snippets.jf }}</code></pre>
+        <h4>Python</h4><pre class="snippet"><code>{{ snippets.python }}</code></pre>
+        <h4>Environment</h4><pre class="snippet"><code>{{ snippets.env }}</code></pre>
+      </section>
+    </aside>
+  </div>
+
+  <section><h2>Files</h2>
+    <table class="files">
+      <thead><tr><th>Path</th><th>Size</th><th>SHA-256</th><th>Scan</th></tr></thead>
+      <tbody>
+      {% for f in version.files %}
+        <tr><td class="mono">{{ f.path }}{% if not f.downloaded %} <span class="tag plain">not in store</span>{% endif %}</td>
+          <td>{{ fmt.size(f.size_bytes) }}</td>
+          <td class="mono small">{{ (f.sha256 or 'unknown')[:16] }}{{ '…' if f.sha256 }}</td>
+          <td>{{ f.safety_scan or 'unknown' }}</td></tr>
+      {% else %}
+        <tr><td colspan="4" class="muted">No files recorded.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

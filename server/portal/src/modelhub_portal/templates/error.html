@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container narrow">
+  <h1>{{ title }}</h1>
+  <p>{{ message }}</p>
+  {% if retry %}<p><a class="btn" href="{{ retry }}">Try again</a></p>{% endif %}
+  {% if signin %}<p><a class="btn" href="/auth/login">Sign in again</a></p>{% endif %}
+  {% if request_id %}<p class="muted small">Reference: <span class="mono">{{ request_id }}</span></p>{% endif %}
+</div>
+{% endblock %}

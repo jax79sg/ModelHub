@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container narrow">
+  <h1>Personal tokens</h1>
+  <p>A personal token lets the <span class="mono">modelhub</span> program import models for you. It works for imports only.</p>
+  {% if message %}<div class="banner warn" role="alert">{{ message }}</div>{% endif %}
+  <form method="post" action="/account/tokens" class="stack">
+    <input type="hidden" name="_csrf" value="{{ session.csrf }}">
+    <label for="name">Name for the new token</label>
+    <input id="name" name="name" type="text" required minlength="1" maxlength="60" autocomplete="off">
+    <button class="btn" type="submit">Make token</button>
+  </form>
+  {% if session.is_admin %}<p><a href="/account/tokens{{ '' if everyone else '?all=1' }}">{{ 'Show only mine' if everyone else 'Show all tokens' }}</a></p>{% endif %}
+  <table class="files">
+    <thead><tr><th>Name</th>{% if everyone %}<th>Owner</th>{% endif %}<th>Starts with</th><th>Created</th><th>Expires</th><th>Last used</th><th></th></tr></thead>
+    <tbody>
+    {% for t in items %}
+      <tr><td>{{ t.name }}</td>{% if everyone %}<td>{{ t.owner_name }}</td>{% endif %}
+        <td class="mono">{{ t.prefix }}…</td><td>{{ t.created_at[:10] }}</td><td>{{ t.expires_at[:10] }}</td>
+        <td>{{ t.last_used_at[:10] if t.last_used_at else 'never' }}</td>
+        <td>{% if t.revoked_at %}<span class="tag plain">revoked</span>{% else %}<a class="btn small" href="/account/tokens/{{ t.token_id }}/revoke">Revoke</a>{% endif %}</td></tr>
+    {% else %}
+      <tr><td colspan="6" class="muted">You have no tokens.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
