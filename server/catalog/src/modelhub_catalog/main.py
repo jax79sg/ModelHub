@@ -8,13 +8,19 @@ from collections.abc import Callable, Mapping
 from urllib.parse import quote
 
 from fastapi import FastAPI
-from modelhub_common.config import SHARED_SETTINGS, Setting, StartupError, load_config
+from modelhub_common.config import (
+    SHARED_SETTINGS,
+    Setting,
+    StartupError,
+    load_config,
+    load_secrets,
+)
 from modelhub_common.keys import http_fetcher
 from modelhub_common.logs import configure_logging
 from modelhub_common.secrets import Secret
 
 from .app import create_app
-from .db import migrate
+from .db import apply_grants, migrate
 from .store import CatalogStore
 
 SECRETS = ["database_password", "token_hash_pepper"]
@@ -24,14 +30,15 @@ SETTINGS = [
     Setting("MODELHUB_DATABASE_PORT", int, default=5432, minimum=1),
     Setting("MODELHUB_DATABASE_NAME", str, required=True),
     Setting("MODELHUB_DATABASE_USER", str, required=True),
+    Setting("MODELHUB_MIGRATION_USER", str, default=""),
     Setting("MODELHUB_DB_POOL_SIZE", int, default=10, minimum=1),
     Setting("MODELHUB_PORT", int, default=8000, minimum=1),
 ]
 
 
-def database_url(cfg: Mapping, password: Secret) -> str:
+def database_url(cfg: Mapping, password: Secret, user: str | None = None) -> str:
     return (
-        f"postgresql://{quote(cfg['MODELHUB_DATABASE_USER'], safe='')}:"
+        f"postgresql://{quote(user or cfg['MODELHUB_DATABASE_USER'], safe='')}:"
         f"{quote(password.reveal(), safe='')}@{cfg['MODELHUB_DATABASE_HOST']}:"
         f"{cfg['MODELHUB_DATABASE_PORT']}/{cfg['MODELHUB_DATABASE_NAME']}"
     )
@@ -44,7 +51,19 @@ def build_app(
     env = environ if environ is not None else os.environ
     cfg, secrets = load_config(SETTINGS, SECRETS, environ=env)
     url = database_url(cfg, secrets["database_password"])
-    migrate(url)
+    if cfg["MODELHUB_MIGRATION_USER"]:
+        # The upgrade steps and the running role's rights are made by a separate migration role;
+        # the service itself then runs as a role that cannot create or change objects (NFR5.5).
+        extra = load_secrets(["database_migration_password"], environ=env)
+        migration_url = database_url(
+            cfg, extra["database_migration_password"], cfg["MODELHUB_MIGRATION_USER"]
+        )
+        migrate(migration_url)
+        apply_grants(
+            migration_url, cfg["MODELHUB_DATABASE_USER"], secrets["database_password"].reveal()
+        )
+    else:
+        migrate(url)
     store = CatalogStore(
         url,
         pepper=secrets["token_hash_pepper"].reveal().encode(),

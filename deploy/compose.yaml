@@ -1,0 +1,156 @@
+# The whole server stack: proxy, portal, catalog, artifactory-service and the database.
+# Images are named by release (and digest, in release.env made by the server pack); never latest.
+# Secrets are files under ./secrets, mounted at /run/secrets; none is in an image or variable.
+name: modelhub
+
+x-service: &service
+  restart: on-failure
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  user: "10001:10001"
+  tmpfs: ["/tmp:size=64m"]
+  networks: [internal]
+  logging:
+    driver: json-file
+    options: {max-size: "20m", max-file: "5"}
+
+x-python-health: &python-health
+  test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz', timeout=4)"]
+  interval: 15s
+  timeout: 5s
+  retries: 5
+  start_period: 40s
+
+services:
+  database:
+    image: ${POSTGRES_IMAGE:?set POSTGRES_IMAGE (release.env)}
+    restart: on-failure
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, SETGID, SETUID]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/tmp:size=64m", "/run/postgresql:size=8m"]
+    networks: [internal]
+    environment:
+      POSTGRES_USER: modelhub_admin
+      POSTGRES_DB: modelhub
+      POSTGRES_PASSWORD_FILE: /run/secrets/database_migration_password
+    secrets: [database_migration_password]
+    volumes: ["catalog-db:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U modelhub_admin -d modelhub"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    stop_grace_period: 60s
+    mem_limit: 4g
+    logging:
+      driver: json-file
+      options: {max-size: "20m", max-file: "5"}
+
+  catalog:
+    <<: *service
+    image: modelhub/catalog:${MODELHUB_VERSION:?set MODELHUB_VERSION}
+    command: ["modelhub_catalog.main"]
+    environment:
+      MODELHUB_REALM_ISSUER: ${KEYCLOAK_ISSUER:?}
+      MODELHUB_DATABASE_HOST: database
+      MODELHUB_DATABASE_NAME: modelhub
+      MODELHUB_DATABASE_USER: catalog
+      MODELHUB_MIGRATION_USER: modelhub_admin
+    secrets:
+      - {source: catalog_db_password, target: database_password}
+      - database_migration_password
+      - token_hash_pepper
+    depends_on:
+      database: {condition: service_healthy}
+    healthcheck: *python-health
+    mem_limit: 1g
+
+  artifactory-service:
+    <<: *service
+    image: modelhub/artifactory-service:${MODELHUB_VERSION:?set MODELHUB_VERSION}
+    command: ["modelhub_artifactory_service.main"]
+    environment:
+      MODELHUB_REALM_ISSUER: ${KEYCLOAK_ISSUER:?}
+      MODELHUB_DATABASE_HOST: database
+      MODELHUB_DATABASE_NAME: modelhub
+      MODELHUB_DATABASE_USER: artifactory_service
+      MODELHUB_MIGRATION_USER: modelhub_admin
+      MODELHUB_CATALOG_URL: http://catalog:8000
+      MODELHUB_ARTIFACTORY_URL: ${ARTIFACTORY_URL:?}
+      MODELHUB_ARTIFACTORY_REPO: ${ARTIFACTORY_REPO:?}
+      MODELHUB_WORK_DIR: /import-work
+      MODELHUB_MIN_CLIENT_VERSION: ${MIN_CLIENT_VERSION:-0.0.0}
+    secrets:
+      - {source: service_db_password, target: database_password}
+      - database_migration_password
+      - artifactory_token
+      - {source: keycloak_client_secret_service, target: service_client_secret}
+    volumes: ["import-work:/import-work"]
+    depends_on:
+      database: {condition: service_healthy}
+      catalog: {condition: service_healthy}
+    healthcheck: *python-health
+    mem_limit: 2g
+
+  portal:
+    <<: *service
+    image: modelhub/portal:${MODELHUB_VERSION:?set MODELHUB_VERSION}
+    command: ["modelhub_portal.main"]
+    environment:
+      MODELHUB_REALM_ISSUER: ${KEYCLOAK_ISSUER:?}
+      MODELHUB_PUBLIC_URL: ${PUBLIC_URL:?}
+      MODELHUB_CATALOG_URL: http://catalog:8000
+      MODELHUB_ARTIFACTORY_URL: ${ARTIFACTORY_URL:?}
+      MODELHUB_HF_REPO_KEY: ${ARTIFACTORY_REPO:?}
+    secrets:
+      - {source: keycloak_client_secret_portal, target: keycloak_client_secret}
+    depends_on:
+      catalog: {condition: service_healthy}
+    healthcheck: *python-health
+    mem_limit: 1g
+
+  proxy:
+    image: modelhub/proxy:${MODELHUB_VERSION:?set MODELHUB_VERSION}
+    restart: on-failure
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/tmp:size=64m"]
+    networks: [internal]
+    ports: ["443:8443"]
+    secrets: [tls_certificate, tls_key]
+    depends_on:
+      portal: {condition: service_healthy}
+      artifactory-service: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--insecure", "https://127.0.0.1:8443/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    mem_limit: 256m
+    logging:
+      driver: json-file
+      options: {max-size: "20m", max-file: "5"}
+
+networks:
+  internal:
+    name: modelhub-internal
+
+volumes:
+  catalog-db: {}
+  import-work: {}
+
+secrets:
+  database_migration_password: {file: ./secrets/database_migration_password}
+  catalog_db_password: {file: ./secrets/catalog_db_password}
+  service_db_password: {file: ./secrets/service_db_password}
+  token_hash_pepper: {file: ./secrets/token_hash_pepper}
+  artifactory_token: {file: ./secrets/artifactory_token}
+  keycloak_client_secret_portal: {file: ./secrets/keycloak_client_secret_portal}
+  keycloak_client_secret_service: {file: ./secrets/keycloak_client_secret_service}
+  tls_certificate: {file: ./secrets/tls_certificate}
+  tls_key: {file: ./secrets/tls_key}

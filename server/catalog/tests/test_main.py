@@ -92,3 +92,42 @@ def test_secrets_never_appear_in_the_start_up_error(tmp_path):
     with pytest.raises(StartupError) as err:
         build_app({"MODELHUB_SECRETS_DIR": str(tmp_path)})
     assert LEAK not in str(err.value)
+
+
+def test_with_a_migration_role_the_steps_run_as_it_and_the_service_runs_as_a_limited_one(
+    fresh_database, tmp_path
+):
+    """Rule BR1.21, NFR5.5: the running role cannot create objects; the migration role did."""
+    import psycopg
+
+    env = env_for(fresh_database, tmp_path)
+    admin_password = (tmp_path / "database_password").read_text().strip()
+    admin_user = env["MODELHUB_DATABASE_USER"]
+    runtime_password = "r" + uuid.uuid4().hex
+    (tmp_path / "database_migration_password").write_text(admin_password + "\n")
+    (tmp_path / "database_password").write_text(runtime_password + "\n")
+    env.update(
+        MODELHUB_MIGRATION_USER=admin_user,
+        MODELHUB_DATABASE_USER="catalog_rt",
+    )
+    issuer = FakeIssuer()
+    app = build_app(env, jwks_fetch=issuer.jwks)
+    client = TestClient(app)
+    assert client.get("/readyz").status_code == 200
+    ok = {"Authorization": f"Bearer {issuer.token()}"}
+    assert client.get("/v1/models", headers=ok).json()["total"] == 0
+    runtime_url = (
+        f"postgresql://catalog_rt:{runtime_password}@{env['MODELHUB_DATABASE_HOST']}:"
+        f"{env['MODELHUB_DATABASE_PORT']}/{env['MODELHUB_DATABASE_NAME']}"
+    )
+    with psycopg.connect(runtime_url, autocommit=True) as conn:
+        with pytest.raises(psycopg.errors.InsufficientPrivilege):
+            conn.execute("create table sneaky (a int)")
+        assert conn.execute("select count(*) from models").fetchone()[0] == 0
+
+
+def test_a_migration_user_without_its_secret_stops_the_start(fresh_database, tmp_path):
+    env = env_for(fresh_database, tmp_path, MODELHUB_MIGRATION_USER="admin")
+    with pytest.raises(StartupError) as err:
+        build_app(env, jwks_fetch=FakeIssuer().jwks)
+    assert "database_migration_password" in str(err.value)

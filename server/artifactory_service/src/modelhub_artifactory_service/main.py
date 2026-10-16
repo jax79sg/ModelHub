@@ -11,14 +11,20 @@ from urllib.parse import quote
 
 import httpx
 from fastapi import FastAPI
-from modelhub_common.config import SHARED_SETTINGS, Setting, StartupError, load_config
+from modelhub_common.config import (
+    SHARED_SETTINGS,
+    Setting,
+    StartupError,
+    load_config,
+    load_secrets,
+)
 from modelhub_common.keys import http_fetcher
 from modelhub_common.logs import configure_logging
 from modelhub_common.secrets import Secret
 
 from modelhub_artifactory_service.app import create_app
 from modelhub_artifactory_service.catalog_client import CatalogClient, ServiceTokenProvider
-from modelhub_artifactory_service.db import make_pool, migrate
+from modelhub_artifactory_service.db import apply_grants, make_pool, migrate
 from modelhub_artifactory_service.gateway import Gateway, JfUploader
 from modelhub_artifactory_service.importer import Importer
 from modelhub_artifactory_service.keys import TrustedKeys
@@ -31,6 +37,7 @@ SETTINGS = [
     Setting("MODELHUB_DATABASE_PORT", int, default=5432, minimum=1),
     Setting("MODELHUB_DATABASE_NAME", str, required=True),
     Setting("MODELHUB_DATABASE_USER", str, required=True),
+    Setting("MODELHUB_MIGRATION_USER", str, default=""),
     Setting("MODELHUB_DB_POOL_SIZE", int, default=10, minimum=1),
     Setting("MODELHUB_PORT", int, default=8000, minimum=1),
     Setting("MODELHUB_ARTIFACTORY_URL", str, required=True),
@@ -45,9 +52,9 @@ SETTINGS = [
 IDLE_SWEEP_SECONDS = 600
 
 
-def database_url(cfg: Mapping, password: Secret) -> str:
+def database_url(cfg: Mapping, password: Secret, user: str | None = None) -> str:
     return (
-        f"postgresql://{quote(cfg['MODELHUB_DATABASE_USER'], safe='')}:"
+        f"postgresql://{quote(user or cfg['MODELHUB_DATABASE_USER'], safe='')}:"
         f"{quote(password.reveal(), safe='')}@{cfg['MODELHUB_DATABASE_HOST']}:"
         f"{cfg['MODELHUB_DATABASE_PORT']}/{cfg['MODELHUB_DATABASE_NAME']}"
     )
@@ -62,7 +69,18 @@ def build_app(
     env = environ if environ is not None else os.environ
     cfg, secrets = load_config(SETTINGS, SECRETS, environ=env)
     url = database_url(cfg, secrets["database_password"])
-    migrate(url)
+    if cfg["MODELHUB_MIGRATION_USER"]:
+        # Steps and the running role's rights are made by a separate migration role (NFR5.5).
+        extra = load_secrets(["database_migration_password"], environ=env)
+        migration_url = database_url(
+            cfg, extra["database_migration_password"], cfg["MODELHUB_MIGRATION_USER"]
+        )
+        migrate(migration_url)
+        apply_grants(
+            migration_url, cfg["MODELHUB_DATABASE_USER"], secrets["database_password"].reveal()
+        )
+    else:
+        migrate(url)
     pool = make_pool(url, cfg["MODELHUB_DB_POOL_SIZE"])
     issuer = cfg["MODELHUB_REALM_ISSUER"]
     timeouts = httpx.Timeout(cfg["MODELHUB_READ_TIMEOUT"], connect=cfg["MODELHUB_CONNECT_TIMEOUT"])

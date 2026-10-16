@@ -62,3 +62,34 @@ def test_a_start_migrates_sweeps_interrupted_jobs_and_serves(fresh_database, tmp
     ok = {"Authorization": f"Bearer {issuer.token(username='ada', sub='u1')}"}
     assert client.get("/v1/retention/settings", headers=ok).json()["periodDays"] == 365
     assert (tmp_path / "work").is_dir()
+
+
+def test_with_a_migration_role_the_service_runs_as_a_limited_one_that_sees_only_its_schema(
+    fresh_database, tmp_path
+):
+    """NFR5.5: the running role cannot create objects, and cannot read other schemas."""
+    import psycopg
+
+    env = env_for(fresh_database, tmp_path, tmp_path / "work")
+    admin_password = (tmp_path / "database_password").read_text().strip()
+    admin_user = env["MODELHUB_DATABASE_USER"]
+    runtime_password = "r" + uuid.uuid4().hex
+    (tmp_path / "database_migration_password").write_text(admin_password + "\n")
+    (tmp_path / "database_password").write_text(runtime_password + "\n")
+    env.update(MODELHUB_MIGRATION_USER=admin_user, MODELHUB_DATABASE_USER="service_rt")
+    issuer = FakeIssuer()
+    app = build_app(env, jwks_fetch=issuer.jwks)
+    client = TestClient(app)
+    ok = {"Authorization": f"Bearer {issuer.token(username='ada', sub='u1')}"}
+    assert client.get("/v1/retention/settings", headers=ok).json()["periodDays"] == 365
+    with psycopg.connect(fresh_database, autocommit=True) as admin:
+        admin.execute("create table public.secret_stuff (a int)")
+    runtime_url = (
+        f"postgresql://service_rt:{runtime_password}@{env['MODELHUB_DATABASE_HOST']}:"
+        f"{env['MODELHUB_DATABASE_PORT']}/{env['MODELHUB_DATABASE_NAME']}"
+    )
+    with psycopg.connect(runtime_url, autocommit=True) as conn:
+        with pytest.raises(psycopg.errors.InsufficientPrivilege):
+            conn.execute("create table artifactory_service.sneaky (a int)")
+        with pytest.raises(psycopg.errors.InsufficientPrivilege):
+            conn.execute("select * from public.secret_stuff")

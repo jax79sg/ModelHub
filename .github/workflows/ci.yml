@@ -203,3 +203,60 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: pip install pytest pytest-timeout -e server/testkit -e "server/stand_in[test]"
       - run: pytest server/stand_in -v --timeout=240
+
+  # The server images (deploy/): built, checked and scanned on every change (NFR5.1, NFR5.6, NFR5.7).
+  images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RELEASE: ci-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the Compose file reads with example values
+        run: |
+          cp deploy/env.example deploy/.env
+          mkdir -p deploy/secrets
+          for s in database_migration_password catalog_db_password service_db_password token_hash_pepper artifactory_token keycloak_client_secret_portal keycloak_client_secret_service tls_certificate tls_key; do echo x > deploy/secrets/$s; done
+          cd deploy
+          MODELHUB_VERSION=$RELEASE POSTGRES_IMAGE=postgres:16 KEYCLOAK_ISSUER=https://kc.example/realms/m \
+            docker compose --env-file .env config --quiet
+      - name: Build the images
+        run: |
+          for unit in catalog artifactory_service portal; do
+            name=${unit//_/-}
+            docker build -f deploy/Dockerfile --build-arg UNIT=$unit --build-arg RELEASE=$RELEASE -t modelhub/$name:$RELEASE .
+          done
+          docker build -f deploy/proxy/Dockerfile -t modelhub/proxy:$RELEASE .
+      - name: The stand-ins and test helpers are in no image
+        run: |
+          for name in catalog artifactory-service portal; do
+            docker run --rm --entrypoint python modelhub/$name:$RELEASE -c "
+          import importlib.util, sys
+          bad = [m for m in ('modelhub_stand_in', 'modelhub_testkit') if importlib.util.find_spec(m)]
+          sys.exit('found ' + ', '.join(bad) if bad else 0)"
+          done
+      - name: No image carries a secret-looking environment value
+        run: |
+          for name in catalog artifactory-service portal proxy; do
+            if docker inspect modelhub/$name:$RELEASE --format '{{range .Config.Env}}{{println .}}{{end}}' | grep -Ei '(password|secret|token|pepper)='; then
+              echo "secret-looking variable in $name"; exit 1
+            fi
+          done
+      - name: Each app image starts as a non-root user
+        run: |
+          for name in catalog artifactory-service portal; do
+            test "$(docker run --rm --entrypoint id modelhub/$name:$RELEASE -u)" = "10001"
+          done
+      - name: Scan (fails on a critical finding that has a fix)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: modelhub/portal:${{ env.RELEASE }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+      - name: Scan the other images
+        run: |
+          for name in catalog artifactory-service proxy; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.57.1 image \
+              --severity CRITICAL --ignore-unfixed --exit-code 1 modelhub/$name:$RELEASE
+          done
