@@ -256,6 +256,9 @@ command again to carry on. The settings are kept in `~/.config/modelhub` (Linux 
 `%APPDATA%\modelhub` (Windows), readable only by you; `MODELHUB_SERVER` and `MODELHUB_TOKEN`
 override them for one run. The token cannot be given on the command line.
 
+> Running the shared server itself (five containers under Docker Compose) is described in
+> [`deploy/README.md`](deploy/README.md).
+
 ### Recovering by hand
 
 Pieces are plain slices of one tar file; the signature file lists their names and checksums.
