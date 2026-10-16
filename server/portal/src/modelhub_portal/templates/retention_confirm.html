@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container narrow">
+  <h1>Remove {{ model }} {{ commit[:12] }}?</h1>
+  <p>This deletes its files from Artifactory and cannot be undone. The version stays in the trail marked as removed.</p>
+  <form method="post" action="/admin/retention/remove">
+    <input type="hidden" name="_csrf" value="{{ session.csrf }}">
+    <input type="hidden" name="model" value="{{ model }}"><input type="hidden" name="commit" value="{{ commit }}">
+    <button class="btn" type="submit">Confirm remove</button>
+    <a class="btn" href="/admin/retention">Cancel</a>
+  </form>
+</div>
+{% endblock %}

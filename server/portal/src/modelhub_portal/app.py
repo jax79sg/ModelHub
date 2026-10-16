@@ -35,6 +35,7 @@ from modelhub_portal.catalog_client import (
     TokenRejected,
 )
 from modelhub_portal.oidc import AuthDown, AuthRefused, Oidc
+from modelhub_portal.service_client import RetentionService, ServiceDown, ServiceRefused
 from modelhub_portal.sessions import Session, SessionStore
 
 log = logging.getLogger("modelhub.portal")
@@ -105,6 +106,7 @@ def create_app(
     oidc: Oidc,
     catalog: Catalog,
     clock: Callable[[], float] = time.time,
+    service: RetentionService | None = None,
 ) -> FastAPI:
     sessions = SessionStore(settings.session_idle_hours * 3600, clock)
     pending: dict[str, tuple[str, str, float]] = {}
@@ -252,6 +254,28 @@ def create_app(
             503,
             "Cannot reach the model database",
             "The model database cannot be reached. Nothing is shown until it is back.",
+            retry=request.url.path + (f"?{request.url.query}" if request.url.query else ""),
+        )
+
+    class _NotAdmin(Exception):
+        pass
+
+    @app.exception_handler(_NotAdmin)
+    async def not_admin(request: Request, exc: _NotAdmin):
+        return error_page(
+            request,
+            403,
+            "Administrator needed",
+            "This needs an administrator. Nothing was changed.",
+        )
+
+    @app.exception_handler(ServiceDown)
+    async def service_down(request: Request, exc: ServiceDown):
+        return error_page(
+            request,
+            503,
+            "Cannot reach the retention service",
+            "The retention service cannot be reached. Nothing was changed.",
             retry=request.url.path + (f"?{request.url.query}" if request.url.query else ""),
         )
 
@@ -454,6 +478,159 @@ def create_app(
     async def revoke(request: Request, token_id: str, form=Depends(checked_form)):
         await run_in_threadpool(catalog.revoke_token, token_of(request), token_id, rid(request))
         return RedirectResponse("/account/tokens", 303)
+
+    # ------------------------------------------------------- retention and keys ---
+    def svc() -> RetentionService:
+        if service is None:
+            raise ServiceDown("not configured")
+        return service
+
+    def admin_only(request: Request) -> None:
+        if not request.state.session.is_admin:
+            raise _NotAdmin()
+
+    async def admin_form(request: Request):
+        admin_only(request)
+        return await checked_form(request)
+
+    def retention_page(request: Request, status: int = 200, message: str | None = None):
+        session = request.state.session
+        token = token_of(request)
+        settings_ = svc().settings(token, rid(request))
+        due = decisions = None
+        if session.is_admin:
+            due = svc().due(token, rid(request))
+            decisions = svc().decisions(token, rid(request))
+        return page(
+            request,
+            "retention.html",
+            status,
+            title="Retention",
+            period=settings_,
+            due=due,
+            decisions=decisions,
+            message=message,
+        )
+
+    @app.get("/admin/retention", response_class=HTMLResponse)
+    def retention(request: Request):
+        return retention_page(request)
+
+    @app.post("/admin/retention/period", response_class=HTMLResponse)
+    async def set_period(request: Request, form=Depends(admin_form)):
+        try:
+            days = int(str(form.get("days", "")).strip())
+        except ValueError:
+            return await run_in_threadpool(
+                retention_page, request, 422, "The period is a whole number of days, 1 to 3650."
+            )
+        try:
+            await run_in_threadpool(svc().set_period, token_of(request), days, rid(request))
+        except ServiceRefused as exc:
+            return await run_in_threadpool(retention_page, request, 422, exc.message)
+        return RedirectResponse("/admin/retention", 303)
+
+    def decide_result(request: Request, model: str, commit: str, decision: str):
+        try:
+            return svc().decide(token_of(request), model, commit, decision, rid(request)), None
+        except ServiceRefused as exc:
+            return None, exc
+
+    @app.post("/admin/retention/keep", response_class=HTMLResponse)
+    async def keep(request: Request, form=Depends(admin_form)):
+        model, commit = str(form.get("model", "")), str(form.get("commit", ""))
+        _, refused = await run_in_threadpool(decide_result, request, model, commit, "keep")
+        if refused:
+            status = 409 if refused.status == 409 else 422
+            return page(
+                request,
+                "retention_result.html",
+                status,
+                title="Retention",
+                model=model,
+                commit=commit,
+                outcome="refused",
+                message=_decided_text(refused),
+            )
+        return RedirectResponse("/admin/retention", 303)
+
+    def _decided_text(refused: ServiceRefused) -> str:
+        if refused.status == 409:
+            return "This version was already decided, or is not an imported version."
+        return refused.message or "The decision was refused."
+
+    @app.get("/admin/retention/remove", response_class=HTMLResponse)
+    def confirm_remove(request: Request, model: str = "", commit: str = ""):
+        admin_only(request)
+        return page(
+            request, "retention_confirm.html", title="Remove version", model=model, commit=commit
+        )
+
+    @app.post("/admin/retention/remove", response_class=HTMLResponse)
+    async def remove(request: Request, form=Depends(admin_form)):
+        model, commit = str(form.get("model", "")), str(form.get("commit", ""))
+        result, refused = await run_in_threadpool(decide_result, request, model, commit, "remove")
+        if refused:
+            status = 409 if refused.status == 409 else 422
+            return page(
+                request,
+                "retention_result.html",
+                status,
+                title="Retention",
+                model=model,
+                commit=commit,
+                outcome="refused",
+                message=_decided_text(refused),
+            )
+        return page(
+            request,
+            "retention_result.html",
+            title="Retention",
+            model=model,
+            commit=commit,
+            outcome=result.get("outcome"),
+            message=result.get("message"),
+        )
+
+    def keys_page(request: Request, status: int = 200, message: str | None = None):
+        items = svc().keys(token_of(request), rid(request))
+        return page(
+            request, "keys.html", status, title="Trusted keys", items=items, message=message
+        )
+
+    @app.get("/admin/keys", response_class=HTMLResponse)
+    def keys(request: Request):
+        admin_only(request)
+        return keys_page(request)
+
+    @app.post("/admin/keys", response_class=HTMLResponse)
+    async def add_key(request: Request, form=Depends(admin_form)):
+        try:
+            await run_in_threadpool(
+                svc().add_key,
+                token_of(request),
+                str(form.get("public_key", "")),
+                str(form.get("fingerprint", "")),
+                str(form.get("name", "")),
+                rid(request),
+            )
+        except ServiceRefused as exc:
+            text = {
+                "fingerprint_mismatch": "The fingerprint you typed does not match this key. Nothing was added.",
+                "key_exists": "This key is already trusted.",
+            }.get(exc.code, exc.message or "The key was not added.")
+            return await run_in_threadpool(keys_page, request, 422, text)
+        return RedirectResponse("/admin/keys", 303)
+
+    @app.get("/admin/keys/{key_id}/remove", response_class=HTMLResponse)
+    def confirm_key_remove(request: Request, key_id: str):
+        admin_only(request)
+        return page(request, "keys_confirm.html", title="Stop trusting a key", key_id=key_id)
+
+    @app.post("/admin/keys/{key_id}/remove")
+    async def remove_key(request: Request, key_id: str, form=Depends(admin_form)):
+        await run_in_threadpool(svc().remove_key, token_of(request), key_id, rid(request))
+        return RedirectResponse("/admin/keys", 303)
 
     # --------------------------------------------------------------- model pages ---
     def pick_commit(model: dict, rev: str | None) -> tuple[str | None, str | None]:

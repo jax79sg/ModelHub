@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container narrow">
+  <h1>Stop trusting this key?</h1>
+  <p>New bundles signed with it will be refused. Bundles already imported stay.</p>
+  <form method="post" action="/admin/keys/{{ key_id }}/remove">
+    <input type="hidden" name="_csrf" value="{{ session.csrf }}">
+    <button class="btn" type="submit">Stop trusting</button>
+    <a class="btn" href="/admin/keys">Cancel</a>
+  </form>
+</div>
+{% endblock %}

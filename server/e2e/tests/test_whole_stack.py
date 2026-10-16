@@ -127,6 +127,7 @@ def stack(fresh_database, tmp_path):
                     **common,
                     "MODELHUB_PUBLIC_URL": portal_url,
                     "MODELHUB_CATALOG_URL": catalog.url,
+                    "MODELHUB_SERVICE_URL": f"http://{LOCAL}:{ports['service']}",
                     "MODELHUB_ARTIFACTORY_URL": art.url,
                     "MODELHUB_HF_REPO_KEY": "hf-local",
                     "MODELHUB_SECRETS_DIR": secrets("portal", keycloak_client_secret=portal_secret),
@@ -165,20 +166,25 @@ def browser_sign_in(portal_url: str, who: str = "ada", admin: bool = False) -> h
 def test_the_whole_path_from_sign_in_to_a_model_in_the_portal(stack, tmp_path, monkeypatch):
     portal = stack["portal"].url
     service = stack["service"].url
-    # an administrator trusts the signing key; a person makes a token on the portal
     bundle = make_bundle(tmp_path / "b")
-    keycloak = stack["keycloak"]
-    admin_token = keycloak.issuer.token(username="root", sub="u0", admin=True)
-    added = httpx.post(
-        service + "/v1/trusted-keys",
-        json={
-            "publicKey": json.dumps(bundle.public_key),
-            "typedFingerprint": bundle.public_key["fingerprint"],
+    # an administrator trusts the signing key on the portal's keys screen
+    root = browser_sign_in(portal, who="root", admin=True)
+    keys_page = root.get(portal + "/admin/keys")
+    assert keys_page.status_code == 200
+    root_csrf = re.search(r'name="_csrf" value="([^"]+)"', keys_page.text).group(1)
+    added = root.post(
+        portal + "/admin/keys",
+        data={
             "name": "release key",
+            "public_key": json.dumps(bundle.public_key),
+            "fingerprint": bundle.public_key["fingerprint"],
+            "_csrf": root_csrf,
         },
-        headers={"Authorization": f"Bearer {admin_token}"},
+        headers={"Origin": portal},
     )
-    assert added.status_code == 201, added.text
+    assert added.status_code == 303, added.text
+    assert "release key" in root.get(portal + "/admin/keys").text
+    assert "365 days" in root.get(portal + "/admin/retention").text
 
     ada = browser_sign_in(portal)
     page = ada.get(portal + "/account/tokens")

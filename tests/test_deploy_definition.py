@@ -101,7 +101,7 @@ def test_start_order_follows_health():
 
     assert waits("catalog") == {"database"}
     assert waits("artifactory-service") == {"database", "catalog"}
-    assert waits("portal") == {"catalog"}
+    assert waits("portal") == {"catalog", "artifactory-service"}
     assert waits("proxy") == {"portal", "artifactory-service"}
 
 

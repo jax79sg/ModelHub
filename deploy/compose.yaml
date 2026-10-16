@@ -104,12 +104,14 @@ services:
       MODELHUB_REALM_ISSUER: ${KEYCLOAK_ISSUER:?}
       MODELHUB_PUBLIC_URL: ${PUBLIC_URL:?}
       MODELHUB_CATALOG_URL: http://catalog:8000
+      MODELHUB_SERVICE_URL: http://artifactory-service:8000
       MODELHUB_ARTIFACTORY_URL: ${ARTIFACTORY_URL:?}
       MODELHUB_HF_REPO_KEY: ${ARTIFACTORY_REPO:?}
     secrets:
       - {source: keycloak_client_secret_portal, target: keycloak_client_secret}
     depends_on:
       catalog: {condition: service_healthy}
+      artifactory-service: {condition: service_healthy}
     healthcheck: *python-health
     mem_limit: 1g
 
