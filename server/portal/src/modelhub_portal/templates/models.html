@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% macro chips(name, values, key) %}
+  <div class="chips">
+  {% for value, count in values.items() %}
+    {% set on = keep.get(key) == value %}
+    <a class="chip {{ 'active' if on }}" href="{{ link(**{key: None if on else value, 'p': None}) }}" title="{{ count }} model{{ 's' if count != 1 }}">{{ value }} <span class="chip-count">{{ count }}</span></a>
+  {% endfor %}
+  </div>
+{% endmacro %}
+{% block body %}
+<div class="container list-layout">
+  <aside class="filters" aria-label="Filters">
+    {% for key, label in [('task', 'Tasks'), ('library', 'Libraries'), ('license', 'Licenses'), ('language', 'Languages')] %}
+      {% if result.facets.get(key) %}<section><h3>{{ label }}</h3>{{ chips(label, result.facets[key], key) }}</section>{% endif %}
+    {% endfor %}
+    <section><h3>Parameters</h3>
+      <div class="chips">
+      {% for band, label in bands %}
+        {% set on = keep.get('parameters') == band %}
+        <a class="chip {{ 'active' if on }}" href="{{ link(parameters=None if on else band, p=None) }}">{{ label }}</a>
+      {% endfor %}
+      </div>
+    </section>
+    <section><h3>Imported</h3>
+      <form method="get" action="/models" class="date-form">
+        {% for k, v in keep.items() if k not in ('importedFrom', 'importedTo') %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+        <label>From <input type="date" name="importedFrom" value="{{ keep.get('importedFrom', '')[:10] }}"></label>
+        <label>To <input type="date" name="importedTo" value="{{ keep.get('importedTo', '')[:10] }}"></label>
+        <button class="btn small" type="submit">Apply</button>
+      </form>
+    </section>
+    <section>
+      <a class="chip {{ 'active' if keep.get('showRemoved') }}" href="{{ link(showRemoved=None if keep.get('showRemoved') else '1', p=None) }}">Show removed</a>
+    </section>
+  </aside>
+
+  <section class="results" aria-label="Models">
+    {% if notice %}<div class="banner warn" role="status">{{ notice }}</div>{% endif %}
+    <div class="results-head">
+      <h1>Models <span class="count">{{ '{:,}'.format(result.total) }}</span></h1>
+      <form class="sort-form" action="/models" method="get">
+        {% for k, v in keep.items() if k != 'sort' %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+        <label class="sort">Sort
+          <select name="sort" aria-label="Sort by" onchange="this.form.submit()">{% for key, label in sorts %}<option value="{{ key }}" {{ 'selected' if key == keep.get('sort', 'downloads') }}>{{ label }}</option>{% endfor %}</select>
+        </label>
+        <noscript><button class="btn small" type="submit">Apply</button></noscript>
+      </form>
+    </div>
+    {% if keep %}<p><a class="chip clear" href="/models">Clear all choices</a></p>{% endif %}
+
+    {% if result['items'] %}
+      <div class="model-list">
+      {% for m in result['items'] %}
+        <a class="model-row" href="/{{ m.model_id }}">
+          <span class="model-id">{{ m.model_id }}</span>
+          {% if m.state == 'removed' %}<span class="tag plain">removed</span>{% endif %}
+          <span class="muted small">
+            {{ m.task or 'task unknown' }} · {{ m.library or 'library unknown' }} · {{ m.license or 'no licence given' }}
+            · downloads {{ fmt.count(m.downloads) if m.downloads is not none else 'unknown' }}
+            · likes {{ fmt.count(m.likes) if m.likes is not none else 'unknown' }}
+            · imported {{ (m.imported_at or '')[:10] }} by {{ m.imported_by_name }}
+          </span>
+        </a>
+      {% endfor %}
+      </div>
+      {% if pages > 1 %}
+      <nav class="pagination" aria-label="Pagination">
+        {% if current > 1 %}<a href="{{ link(p=current - 1) }}" rel="prev">‹ Previous</a>{% endif %}
+        <span class="muted">Page {{ current }} of {{ pages }}</span>
+        {% if current < pages %}<a href="{{ link(p=current + 1) }}" rel="next">Next ›</a>{% endif %}
+      </nav>
+      {% endif %}
+    {% else %}
+      <p class="empty">No models match.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

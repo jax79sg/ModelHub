@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container narrow">
+  <h1>Your new token</h1>
+  <div class="banner warn" role="alert">Copy this token now. It is shown only once and cannot be shown again.</div>
+  <p>Name: {{ name }}</p>
+  <pre class="snippet"><code id="new-token">{{ made.token }}</code></pre>
+  <p class="muted small">Expires {{ made.expiresAt[:10] }}. Use it with <span class="mono">modelhub login</span>.</p>
+  <p><a class="btn" href="/account/tokens">Back to my tokens</a></p>
+</div>
+{% endblock %}

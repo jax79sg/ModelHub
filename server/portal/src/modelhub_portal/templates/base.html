@@ -1,0 +1,48 @@
+{% from "_icons.html" import icon %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }} – ModelHub</title>
+<meta name="color-scheme" content="dark light">
+<script src="/static/theme.js"></script>
+<link rel="stylesheet" href="/static/app.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" href="/models" aria-label="ModelHub home">{{ icon('cube', 26, 'brand-icon') }}<span>ModelHub</span></a>
+    {% if session %}
+    <form class="header-search" action="/models" method="get" role="search">
+      {{ icon('search', 16) }}
+      <input type="search" name="search" placeholder="Search models…" value="{{ request.query_params.get('search', '') if request.url.path == '/models' else '' }}" aria-label="Search models" autocomplete="off" maxlength="200">
+    </form>
+    <nav class="header-nav" aria-label="Main">
+      <a href="/models" class="{{ 'active' if request.url.path == '/models' }}">{{ icon('cube', 15) }} Models</a>
+      <a href="/account/tokens" class="{{ 'active' if request.url.path.startswith('/account') }}">Tokens</a>
+      {% if session.is_admin %}
+      <a href="/admin/retention">Retention</a>
+      <a href="/admin/keys">Trusted keys</a>
+      {% endif %}
+    </nav>
+    <form method="post" action="/auth/logout" class="signout">
+      <input type="hidden" name="_csrf" value="{{ session.csrf }}">
+      <span class="muted small">{{ session.person_name }}</span>
+      <button class="btn small" type="submit">Sign out</button>
+    </form>
+    {% endif %}
+    <button class="icon-btn theme-toggle" type="button" data-theme-toggle title="Toggle light/dark theme" aria-label="Toggle theme">
+      <span class="when-dark">{{ icon('sun', 18) }}</span><span class="when-light">{{ icon('moon', 18) }}</span>
+    </button>
+  </div>
+</header>
+<main>
+{% block body %}{% endblock %}
+</main>
+<footer class="site-footer"><div class="container">
+  ModelHub portal {{ version }}. Numbers such as downloads and likes are a snapshot taken when each model was pulled.
+</div></footer>
+</body>
+</html>
