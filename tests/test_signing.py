@@ -206,3 +206,37 @@ def test_cli_fingerprint_and_untrust_accept_the_fingerprint_too(run, home, tmp_p
     run("key", "trust", out, input=fingerprint + "\n")
     removed = run("key", "untrust", fingerprint)
     assert removed.exit_code == 0 and "Removed" in removed.output
+
+
+def test_a_public_key_document_can_be_checked_from_text_without_a_file(key_id, tmp_path):
+    import json
+
+    from modelhub import signing
+
+    doc = signing.export_public(key_id, tmp_path / "k.json")
+    assert signing.parse_public_doc(json.dumps(doc)) == doc
+    assert signing.parse_public_doc(doc) == doc
+
+
+def test_a_public_key_document_with_a_wrong_fingerprint_is_refused_from_text(key_id, tmp_path):
+    import json
+
+    import pytest
+
+    from modelhub import signing
+
+    doc = dict(signing.export_public(key_id, tmp_path / "k.json"))
+    doc["fingerprint"] = "0000-0000-0000-0000-0000-0000-0000-0000"
+    with pytest.raises(signing.KeyError_):
+        signing.parse_public_doc(json.dumps(doc))
+    with pytest.raises(signing.KeyError_):
+        signing.parse_public_doc("not json")
+
+
+def test_typed_fingerprints_match_ignoring_case_and_separators(key_id, tmp_path):
+    from modelhub import signing
+
+    doc = signing.export_public(key_id, tmp_path / "k.json")
+    typed = doc["fingerprint"].replace("-", " ").upper()
+    assert signing.fingerprints_match(typed, doc)
+    assert not signing.fingerprints_match("1234", doc)

@@ -172,7 +172,16 @@ def create_app(state: State) -> FastAPI:
             return error(400, "name_rule_broken", problem)
         with store.lock:
             if (org, name) in store.repos:
-                return error(409, "exists", "Repository already exists.")
+                # the real Hub puts the repository's address in this answer, and the client
+                # reads it when asked to accept an existing repository (exist_ok)
+                return JSONResponse(
+                    {
+                        "code": "exists",
+                        "message": "Repository already exists.",
+                        "url": f"{state.base_url}/{org}/{name}",
+                    },
+                    status_code=409,
+                )
             store.repos.add((org, name))
         return {"url": f"{state.base_url}/{org}/{name}", "name": name, "id": f"{org}/{name}"}
 
@@ -437,6 +446,7 @@ def create_app(state: State) -> FastAPI:
         return await _serve(repo_key, org, model, revision, path, True, request)
 
     # --- Artifactory's own storage-style listing and delete ----------------------------------
+    @app.get("/artifactory/api/storage/{repo_key}")
     @app.get("/artifactory/api/storage/{repo_key}/{path:path}")
     async def storage_list(repo_key: str, path: str = ""):
         if (bad := check_repo(repo_key)) is not None:

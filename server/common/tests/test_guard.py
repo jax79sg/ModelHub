@@ -41,7 +41,9 @@ def client(issuer, logbuf):
     verifier = TokenVerifier(keys, issuer=issuer.issuer, audience=issuer.audience)
     app = FastAPI()
     registry = HealthRegistry([HealthCheck("database", lambda: True, critical=True)])
-    install_guard(app, verifier, "svc", registry, keys, open_paths=("/public",))
+    install_guard(
+        app, verifier, "svc", registry, keys, open_paths=("/public",), open_prefixes=("/own/",)
+    )
 
     @app.get("/thing")
     def thing(person=Depends(current_person)):
@@ -54,6 +56,10 @@ def client(issuer, logbuf):
     @app.get("/public/more")
     def public_more():
         return {"open": True}
+
+    @app.get("/own/thing")
+    def own():
+        return {"own": True}
 
     @app.get("/admin")
     def admin(person=Depends(require_admin)):
@@ -173,3 +179,8 @@ def test_ready_is_503_when_the_key_set_is_empty(issuer, logbuf):
     c = TestClient(app)
     assert c.get("/healthz").status_code == 200
     assert c.get("/readyz").status_code == 503
+
+
+def test_a_path_under_an_open_prefix_skips_the_token_check_but_others_do_not(client):
+    assert client.get("/own/thing").json() == {"own": True}
+    assert client.get("/thing").status_code == 401

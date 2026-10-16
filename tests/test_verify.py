@@ -107,3 +107,26 @@ def test_cli_verify_ends_two_when_there_is_no_bundle_to_check(run, tmp_path):
     result = run("verify", tmp_path / "empty")
     assert result.exit_code == 2
     assert "no bundle found" in result.output
+
+
+def _public_doc(key_id):
+    return next(k for k in signing.trusted_keys() if k["key_id"] == key_id)
+
+
+def test_trusted_keys_can_be_given_instead_of_read_from_this_computer(bundle_dir, key_id):
+    doc = _public_doc(key_id)
+    signing.untrust_key(key_id)  # this computer trusts nothing now
+    assert not verify.verify_bundle([bundle_dir])[0].ok
+    assert verify.verify_bundle([bundle_dir], trusted=[doc])[0].ok
+
+
+def test_an_empty_list_of_trusted_keys_refuses_every_bundle(bundle_dir):
+    report = verify.verify_bundle([bundle_dir], trusted=[])[0]
+    assert [p.code for p in report.problems] == ["key-untrusted"]
+
+
+def test_a_given_list_without_the_signer_refuses_even_if_this_computer_trusts_the_signer(
+    bundle_dir,
+):
+    report = verify.verify_bundle([bundle_dir], trusted=[{"key_id": "x", "public_key": ""}])[0]
+    assert [p.code for p in report.problems] == ["key-untrusted"]

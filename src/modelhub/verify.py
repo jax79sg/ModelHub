@@ -59,7 +59,9 @@ def _pick_final(paths: list[Path]) -> Path | None:
     return None
 
 
-def _check_signature(report: BundleReport, manifest_path: Path) -> None:
+def _check_signature(
+    report: BundleReport, manifest_path: Path, trusted: list[dict] | None = None
+) -> None:
     sig_path = manifest_path.with_name(manifest_path.name[: -len(".json")] + ".sig")
     sig_doc = None
     if sig_path.is_file():
@@ -68,7 +70,7 @@ def _check_signature(report: BundleReport, manifest_path: Path) -> None:
         except ValueError:
             sig_doc = {}
     try:
-        signing.verify_signature(sig_doc, report.manifest_bytes)
+        signing.verify_signature(sig_doc, report.manifest_bytes, trusted)
     except signing.SignatureProblem as problem:
         report.problems.append(Problem(problem.code, str(problem)))
 
@@ -97,7 +99,9 @@ def _check_pieces(report: BundleReport, dirs: list[Path], progress) -> None:
         report.piece_paths.append(located)
 
 
-def verify_bundle(dirs: list[Path], progress=None) -> list[BundleReport]:
+def verify_bundle(
+    dirs: list[Path], progress=None, trusted: list[dict] | None = None
+) -> list[BundleReport]:
     dirs = [Path(d) for d in dirs]
     progress = progress or NullReporter()
     reports = []
@@ -115,7 +119,7 @@ def verify_bundle(dirs: list[Path], progress=None) -> list[BundleReport]:
             continue
         report.manifest_bytes = final.read_bytes()
         # The signature comes first: nothing in a manifest is acted on until it is proved genuine.
-        _check_signature(report, final)
+        _check_signature(report, final, trusted)
         if report.problems:
             continue
         try:

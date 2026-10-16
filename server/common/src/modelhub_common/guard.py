@@ -48,10 +48,17 @@ def _bearer(request: Request) -> str | None:
 
 
 class GuardMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app, verifier: TokenVerifier, open_paths: Iterable[str]) -> None:
+    def __init__(
+        self,
+        app,
+        verifier: TokenVerifier,
+        open_paths: Iterable[str],
+        open_prefixes: Iterable[str] = (),
+    ) -> None:
         super().__init__(app)
         self._verifier = verifier
         self._open = frozenset(HEALTH_PATHS) | frozenset(open_paths)
+        self._open_prefixes = tuple(open_prefixes)
 
     async def dispatch(self, request: Request, call_next: Callable):
         started = time.monotonic()
@@ -61,7 +68,8 @@ class GuardMiddleware(BaseHTTPMiddleware):
         request.state.request_id = rid
         request.state.person = None
         response = None
-        if request.url.path not in self._open:
+        path = request.url.path
+        if path not in self._open and not path.startswith(self._open_prefixes):
             verdict = self._verifier.verify(_bearer(request))
             if not verdict.valid:
                 log.warning(
@@ -107,8 +115,12 @@ def install_guard(
     registry: HealthRegistry,
     keys: KeySet,
     open_paths: Iterable[str] = (),
+    open_prefixes: Iterable[str] = (),
 ) -> None:
-    """Add the guard, /healthz and /readyz to a service's app."""
+    """Add the guard, /healthz and /readyz to a service's app.
+
+    Paths under ``open_prefixes`` skip the Keycloak check; the route itself must check whatever
+    credential it takes (the import routes check a personal token with the Catalog)."""
 
     @app.get("/healthz", include_in_schema=False)
     def healthz():
@@ -123,7 +135,12 @@ def install_guard(
     async def api_error(_request: Request, exc: ApiError):
         return JSONResponse(exc.body, status_code=exc.status)
 
-    app.add_middleware(GuardMiddleware, verifier=verifier, open_paths=tuple(open_paths))
+    app.add_middleware(
+        GuardMiddleware,
+        verifier=verifier,
+        open_paths=tuple(open_paths),
+        open_prefixes=tuple(open_prefixes),
+    )
     app.state.service = service
 
 

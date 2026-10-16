@@ -135,3 +135,22 @@ def test_the_default_check_is_all_files_present(bundle_dir, tmp_path):
     for entry in manifest["files"]:
         path = rebuilt(tmp_path) / "commits" / COMMIT / "files" / entry["path"]
         assert os.path.getsize(path) == entry["size"]
+
+
+def test_rebuild_into_reads_the_pieces_through_a_reader_the_caller_chooses(bundle_dir, tmp_path):
+    from modelhub import unpack, verify
+
+    report = verify.verify_bundle([bundle_dir])[0]
+    opened = []
+
+    class Recording(unpack.JoinedPieces):
+        def __init__(self, paths, on_read=None):
+            super().__init__(paths, on_read)
+            opened.append(list(paths))
+
+    partial = tmp_path / "partial"
+    requested = unpack.rebuild_into(report, partial, joined_factory=Recording)
+    assert requested == "main"
+    assert opened == [report.piece_paths]
+    assert (partial / "manifest.json").is_file()
+    assert (partial / "files" / "config.json").is_file()
