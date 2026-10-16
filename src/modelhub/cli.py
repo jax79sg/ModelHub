@@ -18,12 +18,14 @@ from modelhub import (
     filetypes,
     fsutil,
     hubclient,
+    importer,
     logsetup,
     pieces,
     progress,
     record,
     redact,
     runrecord,
+    settings,
     signing,
     store,
 )
@@ -299,6 +301,97 @@ def _ask_drive(default: Path):
         return Path(folder), size
 
     return ask
+
+
+# --- login, logout, import -------------------------------------------------------------
+
+
+def make_service_client(client_settings: settings.ClientSettings):
+    return importer.ServiceClient(client_settings.server, client_settings.token)
+
+
+def _refuse_token_option(token: str | None) -> None:
+    if token is not None:
+        typer.echo(
+            "Error: a token cannot be given on the command line. Run: modelhub login", err=True
+        )
+        raise typer.Exit(2)
+
+
+_TOKEN_OPTION = typer.Option(None, "--token", hidden=True)
+
+
+@app.command()
+def login(token: str | None = _TOKEN_OPTION) -> None:
+    """Save the server address and your personal token (made in the portal) for this person."""
+    _refuse_token_option(token)
+    server = typer.prompt("Server address (for example https://modelhub.example.org)")
+    typed = typer.prompt("Personal token", hide_input=True)
+    redact.remember(typed.strip())
+    try:
+        path = settings.save(server, typed)
+    except settings.SettingsError as error:
+        typer.echo(redact.redact(f"Error: {error}"), err=True)
+        raise typer.Exit(2) from None
+    typer.echo(f"Saved to {path}")
+
+
+@app.command()
+def logout() -> None:
+    """Delete the saved server address and token."""
+    gone = settings.forget()
+    typer.echo("Settings deleted." if gone else "No saved settings were found.")
+
+
+@app.command(name="import")
+def import_(
+    bundles: list[Path] = typer.Argument(
+        None, help="Bundle descriptions (.bundle.json), a piece of one, or folders holding them."
+    ),
+    from_store: Path | None = typer.Option(
+        None, "--from-store", help="Reserved: import an old model-store folder (not yet available)."
+    ),
+    token: str | None = _TOKEN_OPTION,
+) -> None:
+    """Check bundles here, send them to the import service and report each model."""
+    _refuse_token_option(token)
+    if from_store is not None:
+        typer.echo(
+            "Error: importing an old model-store folder is not available in this version.", err=True
+        )
+        raise typer.Exit(2)
+    try:
+        client_settings = settings.load()
+    except settings.SettingsError as error:
+        typer.echo(redact.redact(f"Error: {error}"), err=True)
+        raise typer.Exit(2) from None
+    descriptions = importer.find_descriptions(bundles or [])
+    if not descriptions:
+        typer.echo(
+            "Error: no bundle was given or found. Name a .bundle.json file or a folder.", err=True
+        )
+        raise typer.Exit(2)
+    client = make_service_client(client_settings)
+    shown = progress.Reporter()
+    try:
+        report = importer.run(client, descriptions, shown)
+    except importer.RunStopped as error:
+        typer.echo(redact.redact(f"Error: {error}"), err=True)
+        raise typer.Exit(2) from None
+    except importer.Interrupted as stop:
+        shown.finish()
+        for entry in stop.report.entries:
+            typer.echo(redact.redact(entry.line()))
+        typer.echo(
+            "Stopped. Not finished: " + ", ".join(stop.unfinished) + ". Run the same command "
+            "again to carry on; what was already sent is kept.",
+            err=True,
+        )
+        raise typer.Exit(130) from None
+    for entry in report.entries:
+        typer.echo(redact.redact(entry.line()))
+    typer.echo(report.summary())
+    raise typer.Exit(report.exit_status)
 
 
 # --- verify, unpack, list -------------------------------------------------------------

@@ -72,6 +72,8 @@ def _shape(view: dict) -> dict:
     }
     if view["outcome"]:
         out["outcome"] = view["outcome"]
+    if view["plan"] and view["plan"] != "pending":
+        out["plan"] = view["plan"]
     if "missingPieces" in view:
         out["missingPieces"] = view["missingPieces"]
     if view["error"]:
