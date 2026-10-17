@@ -27,6 +27,8 @@ class FakeKeycloak:
         self.base = self.issuer.issuer
         self.down = False  # every call fails as if Keycloak could not be reached
         self.refuse_refresh = False
+        self.wrong_nonce = False  # give an id token for some other sign-in
+        self.no_id_token = False
         self.access_lifetime = 300
         self.calls: list[tuple[str, str]] = []
         self._codes: dict[str, dict] = {}
@@ -47,6 +49,7 @@ class FakeKeycloak:
             "challenge": q["code_challenge"],
             "redirect_uri": q["redirect_uri"],
             "user": {"username": username, "sub": sub or "sub-" + username, "admin": admin},
+            "nonce": q.get("nonce"),
         }
         return q["redirect_uri"] + "?" + urlencode({"code": code, "state": q["state"]})
 
@@ -81,10 +84,10 @@ class FakeKeycloak:
             return httpx.Response(204)
         return httpx.Response(404)
 
-    def _issue(self, user: dict) -> dict:
+    def _issue(self, user: dict, nonce: str | None = None) -> dict:
         refresh = uuid.uuid4().hex
         self._refresh[refresh] = user
-        return {
+        answer = {
             "access_token": self.issuer.token(
                 sub=user["sub"],
                 username=user["username"],
@@ -95,6 +98,15 @@ class FakeKeycloak:
             "expires_in": self.access_lifetime,
             "token_type": "Bearer",
         }
+        if nonce is not None and not self.no_id_token:
+            answer["id_token"] = self.issuer.token(
+                sub=user["sub"],
+                username=user["username"],
+                audience=self.client_id,
+                expires_in=self.access_lifetime,
+                extra={"nonce": "other" if self.wrong_nonce else nonce},
+            )
+        return answer
 
     def _token(self, form: dict) -> httpx.Response:
         grant = form["grant_type"][0]
@@ -104,7 +116,7 @@ class FakeKeycloak:
             digest = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest())
             if code is None or digest.rstrip(b"=").decode() != code["challenge"]:
                 return httpx.Response(400, json={"error": "invalid_grant"})
-            return httpx.Response(200, json=self._issue(code["user"]))
+            return httpx.Response(200, json=self._issue(code["user"], code.get("nonce")))
         if grant == "client_credentials":
             return httpx.Response(
                 200,

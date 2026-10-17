@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block body %}
+<div class="model-header"><div class="container">
+  <h1 class="repo-title">{{ model.model_id }}
+    {% if version.state == 'removed' %}<span class="tag plain">removed</span>{% endif %}</h1>
+  <div class="tag-row">
+    {% if version.task %}<span class="tag">{{ version.task }}</span>{% endif %}
+    {% if version.library %}<span class="tag">{{ version.library }}</span>{% endif %}
+    {% for lang in (version.language or [])[:3] %}<span class="tag">{{ lang }}</span>{% endfor %}
+    <span class="tag">License: <b>{{ version.license or 'no licence given' }}</b></span>
+  </div>
+  <div class="tab-row">
+    <nav class="tabs" aria-label="Model">
+      <a href="/{{ model.model_id }}?rev={{ q(rev) }}" class="{{ 'active' if active_tab == 'card' }}">Model card</a>
+      <a href="/{{ model.model_id }}/tree/{{ q(rev) }}" class="{{ 'active' if active_tab == 'files' }}">Files and versions</a>
+      <a href="/{{ model.model_id }}/commits/{{ q(rev) }}" class="{{ 'active' if active_tab == 'commits' }}">Commits</a>
+      <a href="/{{ model.model_id }}/trail">Trail</a>
+    </nav>
+    <details class="menu rev-menu">
+      <summary class="btn small">{{ rev if rev|length < 20 else rev[:7] }}</summary>
+      <div class="menu-panel">
+        {% for r in revisions %}<a href="/{{ model.model_id }}?rev={{ q(r.name) }}">{{ r.name }} <span class="muted mono">{{ r.commit[:7] }}</span></a>{% endfor %}
+      </div>
+    </details>
+  </div>
+</div></div>
+
+<div class="container">
+  {% if version.state == 'removed' %}
+  <div class="banner warn" role="status">This version was removed on {{ (version.removed_at or '')[:10] }} by {{ version.removed_by or 'unknown' }}; the README is no longer stored.</div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</div>
+{% endblock %}

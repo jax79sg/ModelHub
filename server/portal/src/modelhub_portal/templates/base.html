@@ -21,6 +21,7 @@
     </form>
     <nav class="header-nav" aria-label="Main">
       <a href="/models" class="{{ 'active' if request.url.path == '/models' }}">{{ icon('cube', 15) }} Models</a>
+      <a href="/trail" class="{{ 'active' if request.url.path == '/trail' }}">Trail</a>
       <a href="/account/tokens" class="{{ 'active' if request.url.path.startswith('/account') }}">Tokens</a>
       {% if session.is_admin %}
       <a href="/admin/retention">Retention</a>
@@ -42,7 +43,7 @@
 {% block body %}{% endblock %}
 </main>
 <footer class="site-footer"><div class="container">
-  ModelHub portal {{ version }}. Numbers such as downloads and likes are a snapshot taken when each model was pulled.
+  ModelHub portal {{ portal_version }}. Numbers such as downloads and likes are a snapshot taken when each model was pulled.
 </div></footer>
 </body>
 </html>
