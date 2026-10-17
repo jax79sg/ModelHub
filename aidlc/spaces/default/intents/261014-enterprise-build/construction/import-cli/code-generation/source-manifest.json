@@ -1,0 +1,31 @@
+{
+  "stage": "code-generation",
+  "unit": "import-cli",
+  "version": 1,
+  "writes": [
+    {
+      "path": "src/modelhub/importer.py"
+    },
+    {
+      "path": "src/modelhub/settings.py"
+    },
+    {
+      "path": "src/modelhub/cli.py"
+    },
+    {
+      "path": "src/modelhub/verify.py"
+    },
+    {
+      "path": "tests/test_import_cli.py"
+    },
+    {
+      "path": "tests/fake_import_service.py"
+    },
+    {
+      "path": "pyproject.toml"
+    },
+    {
+      "path": "README.md"
+    }
+  ]
+}

@@ -120,6 +120,14 @@ def test_parameter_size_bands(put, store, band, expected):
     assert ids(store.list_models({"parameters": band})) == expected
 
 
+def test_filter_by_the_importer_name_the_facet_counts_by(put, store):
+    seed(put)
+    facet = store.list_models({})["facets"]["importedBy"]
+    assert facet == {"ada": 2, "bob": 1}
+    assert ids(store.list_models({"importedByName": "bob"})) == ["acme/beta"]
+    assert store.list_models({"importedByName": "nobody"})["total"] == 0
+
+
 def test_filter_and_sort_by_importer_and_import_time(put, store):
     seed(put)
     r = store.list_models({"importedBy": "u1", "sort": "importedAt"})

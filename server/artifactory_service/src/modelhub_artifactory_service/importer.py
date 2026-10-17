@@ -49,7 +49,6 @@ IDLE_LIMIT = timedelta(hours=24)
 RUNNING = ("verifying", "uploading", "recording")
 OPEN = ("receiving", "ready")
 PROGRESS_STEP = 16 << 20
-MARGIN = 100 << 20
 
 
 class ServiceError(Exception):
@@ -60,6 +59,10 @@ class ServiceError(Exception):
 
 def _utc_now() -> datetime:
     return datetime.now(timezone.utc)
+
+
+class _Cancelled(Exception):
+    """The person cancelled while the import was running."""
 
 
 class ConsumingPieces(unpack.JoinedPieces):
@@ -100,6 +103,7 @@ class Importer:
         self.work = Path(work)
         self.clock, self.sleep, self.jitter = clock, sleep, jitter
         self.free_bytes = lambda path: shutil.disk_usage(path).free
+        self._cancel_requested: set[str] = set()
         self.work.mkdir(parents=True, exist_ok=True)
 
     # -- reading ------------------------------------------------------------------------------
@@ -225,12 +229,13 @@ class Importer:
             self._set(same["import_id"])
             return self.get(same["import_id"], owner_id)
 
-        needed = stream_size + max(stream_size // 50, MARGIN)
+        needed = stream_size + stream_size // 10  # the sizes plus 10 percent (rule BR1.20)
         if self.free_bytes(self.work) < needed:
             raise ServiceError(
                 507,
                 "insufficient_storage",
                 f"The import area has too little free space: {needed} bytes are needed.",
+                retryable=True,
             )
 
         import_id = uuid.uuid4().hex
@@ -442,6 +447,16 @@ class Importer:
             return
         try:
             outcome, plan = self._execute(job)
+        except _Cancelled:
+            self._cancel_requested.discard(import_id)
+            self._end(
+                import_id,
+                "cancelled",
+                error_code="cancelled",
+                error_message="Cancelled by the person who started it.",
+                retryable=True,
+            )
+            return
         except Exception as exc:
             error = exc if isinstance(exc, ServiceError) else self._map(exc)
             if error.code == "internal_error":
@@ -455,6 +470,7 @@ class Importer:
                 retryable=error.retryable,
             )
             return
+        self._cancel_requested.discard(import_id)
         self._end(import_id, "done", plan=plan, outcome=outcome)
 
     @staticmethod
@@ -475,6 +491,10 @@ class Importer:
             return ServiceError(422, "record_invalid", str(exc))
         return ServiceError(500, "internal_error", "The import failed unexpectedly.")
 
+    def _checkpoint(self, import_id: str) -> None:
+        if import_id in self._cancel_requested:
+            raise _Cancelled()
+
     def _retry(self, fn, retry_on):
         return retrying(fn, retry_on=retry_on, sleep=lambda s: self.sleep(s), jitter=self.jitter)
 
@@ -492,6 +512,7 @@ class Importer:
                 first.message if first else "No bundle was found.",
             )
 
+        self._checkpoint(import_id)
         self._set(import_id, step="unpacking", bytes_done=0)
         progress = _Progress(lambda done: self._set(import_id, bytes_done=done))
         unpack.rebuild_into(report, out, progress=progress, joined_factory=ConsumingPieces)
@@ -511,6 +532,7 @@ class Importer:
             self._set(import_id, plan=plan)
 
         if plan in ("full", "repair"):
+            self._checkpoint(import_id)
             self._set(import_id, state="uploading", step="uploading")
             self._retry(
                 lambda: self.gateway.uploader.upload(out / "files", model_id, commit),
@@ -559,10 +581,14 @@ class Importer:
 
     # -- cancel and sweeps --------------------------------------------------------------------
     def cancel(self, import_id: str, owner_id: str) -> dict:
+        """Stop an import that has not ended. A running one stops at its next step boundary."""
         job = self._owned(import_id, owner_id)
-        if job["state"] not in OPEN:
-            raise ServiceError(409, "wrong_state", "This import can no longer be cancelled.")
-        self._end(import_id, "cancelled")
+        if job["state"] in OPEN:
+            self._end(import_id, "cancelled")
+        elif job["state"] in RUNNING:
+            self._cancel_requested.add(import_id)
+        else:
+            raise ServiceError(409, "wrong_state", "This import has already ended.")
         return self.get(import_id, owner_id)
 
     def sweep_idle(self) -> int:

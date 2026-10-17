@@ -1,0 +1,49 @@
+{
+  "stage": "code-generation",
+  "unit": "artifactory-stand-in",
+  "version": 1,
+  "writes": [
+    {
+      "path": "server/stand_in/pyproject.toml"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/__init__.py"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/__main__.py"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/app.py"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/assumptions.json"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/register.py"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/rules.py"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/server.py"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/store.py"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/switches.py"
+    },
+    {
+      "path": "server/stand_in/tests/conftest.py"
+    },
+    {
+      "path": "server/stand_in/tests/test_hf_client.py"
+    },
+    {
+      "path": "server/stand_in/tests/test_rules.py"
+    },
+    {
+      "path": "server/stand_in/tests/test_switches_and_register.py"
+    }
+  ]
+}

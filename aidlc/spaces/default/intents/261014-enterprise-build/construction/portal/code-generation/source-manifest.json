@@ -1,0 +1,109 @@
+{
+  "stage": "code-generation",
+  "unit": "portal",
+  "version": 1,
+  "writes": [
+    {
+      "path": "server/portal/pyproject.toml"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/__init__.py"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/catalog_client.py"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/main.py"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/oidc.py"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/service_client.py"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/sessions.py"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/base.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/blob.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/commits.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/confirm_revoke.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/error.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/keys.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/keys_confirm.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/model.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/model_base.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/models.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/retention.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/retention_confirm.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/retention_result.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/signed_out.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/token_made.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/tokens.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/trail.html"
+    },
+    {
+      "path": "server/portal/src/modelhub_portal/templates/tree.html"
+    },
+    {
+      "path": "server/portal/tests/conftest.py"
+    },
+    {
+      "path": "server/portal/tests/fake_service.py"
+    },
+    {
+      "path": "server/portal/tests/seed.py"
+    },
+    {
+      "path": "server/portal/tests/test_admin.py"
+    },
+    {
+      "path": "server/portal/tests/test_main.py"
+    },
+    {
+      "path": "server/portal/tests/test_more_pages.py"
+    },
+    {
+      "path": "server/portal/tests/test_pages.py"
+    },
+    {
+      "path": "server/portal/tests/test_signin.py"
+    }
+  ]
+}

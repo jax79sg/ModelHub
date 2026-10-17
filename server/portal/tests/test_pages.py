@@ -297,3 +297,11 @@ def test_a_person_sees_only_their_own_tokens_and_an_administrator_can_see_all(po
     sign_in(portal, keycloak, username="root", admin=True)
     assert "adas" in portal.get("/account/tokens?all=1").text
     assert "adas" not in portal.get("/account/tokens").text
+
+
+def test_the_list_can_be_filtered_by_who_imported(catalog_http, issuer, signed_in):
+    put(catalog_http, issuer, "acme/a", C1)
+    html = signed_in.get("/models").text
+    assert "Imported by" in html and "ada" in html
+    assert names(signed_in.get("/models?importedByName=ada").text) == ["acme/a"]
+    assert "No models match" in signed_in.get("/models?importedByName=nobody").text

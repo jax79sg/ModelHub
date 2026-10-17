@@ -1,0 +1,146 @@
+{
+  "stage": "code-generation",
+  "unit": "artifactory-service",
+  "upstream_ids": [
+    "FR1.1",
+    "FR1.2",
+    "FR1.3",
+    "FR1.4",
+    "FR1.5",
+    "FR1.6",
+    "FR1.7",
+    "FR1.8",
+    "FR1.9",
+    "FR1.12",
+    "FR1.14",
+    "FR2.8",
+    "FR4.2",
+    "FR4.5",
+    "FR5.1",
+    "FR5.2",
+    "FR5.3",
+    "FR5.4",
+    "FR5.5",
+    "FR5.6",
+    "FR5.7",
+    "FR6.4",
+    "AC1.2"
+  ],
+  "coverage": [
+    {
+      "id": "FR1.1",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/importer.py"
+    },
+    {
+      "id": "FR1.2",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/app.py"
+    },
+    {
+      "id": "FR1.3",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/record_builder.py"
+    },
+    {
+      "id": "FR1.4",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/importer.py"
+    },
+    {
+      "id": "FR1.5",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/importer.py"
+    },
+    {
+      "id": "FR1.6",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/importer.py"
+    },
+    {
+      "id": "FR1.7",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/names.py"
+    },
+    {
+      "id": "FR1.8",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/gateway.py"
+    },
+    {
+      "id": "FR1.9",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/retry.py"
+    },
+    {
+      "id": "FR1.12",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/importer.py"
+    },
+    {
+      "id": "FR1.14",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/importer.py"
+    },
+    {
+      "id": "FR2.8",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/record_builder.py"
+    },
+    {
+      "id": "FR4.2",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/app.py"
+    },
+    {
+      "id": "FR4.5",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/app.py"
+    },
+    {
+      "id": "FR5.1",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/retention.py"
+    },
+    {
+      "id": "FR5.2",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/retention.py"
+    },
+    {
+      "id": "FR5.3",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/retention.py"
+    },
+    {
+      "id": "FR5.4",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/retention.py"
+    },
+    {
+      "id": "FR5.5",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/retention.py"
+    },
+    {
+      "id": "FR5.6",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/retention.py"
+    },
+    {
+      "id": "FR5.7",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/retention.py"
+    },
+    {
+      "id": "FR6.4",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/main.py"
+    },
+    {
+      "id": "AC1.2",
+      "status": "OK",
+      "target": "server/artifactory_service/tests/test_cli_end_to_end.py"
+    }
+  ]
+}

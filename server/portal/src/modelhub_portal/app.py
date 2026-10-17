@@ -75,7 +75,16 @@ BANDS = [
     ("128b", "32B–128B"),
     ("gt500b", "> 500B"),
 ]
-FILTERS = ("task", "library", "license", "language", "parameters", "importedFrom", "importedTo")
+FILTERS = (
+    "task",
+    "library",
+    "license",
+    "language",
+    "parameters",
+    "importedByName",
+    "importedFrom",
+    "importedTo",
+)
 
 
 @dataclass

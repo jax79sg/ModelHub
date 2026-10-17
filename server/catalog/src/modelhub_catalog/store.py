@@ -385,6 +385,7 @@ class CatalogStore:
             ("library", "library"),
             ("license", "license"),
             ("importedBy", "imported_by_id"),
+            ("importedByName", "imported_by_name"),
         ):
             if q.get(name):
                 where.append(f"{column} = %s")

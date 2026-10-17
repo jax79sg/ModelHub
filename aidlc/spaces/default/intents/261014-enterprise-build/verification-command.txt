@@ -1,0 +1,1 @@
+.venv/bin/python -m pytest server/e2e server/stand_in -q --timeout=300

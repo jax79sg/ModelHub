@@ -13,8 +13,8 @@ Approve the code plan?
 Full plan: aidlc/spaces/default/intents/261014-enterprise-build/construction/code-generation/code-generation-plan.md
 Test instructions: aidlc/spaces/default/intents/261014-enterprise-build/construction/code-generation/unit-test-instructions.md
 
-[Approval Fingerprint]: sha256:v3:434ca08c1f15c317ebabd015d52fb5c46c89f734689a6e31ef7e107a20ffd6d1
-[Planned Source]: 9b15bc1bda848de7c055e7784a005f35b5d8f32e4cba99ca2870bd6eabcfc045
+[Approval Fingerprint]: sha256:v3:956ae89a0cc56b6f94a8b8b2376b1e240b5c7e4f7b82aa3894fba49e0e02586f
+[Planned Source]: 1ef51dc81015e436a7122e64ace7e9566a6142dd67623879d22bf9797f5d3686
 
 - A. Approve Plan
 - B. Request Changes
