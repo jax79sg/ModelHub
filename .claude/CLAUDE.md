@@ -130,3 +130,14 @@ Commit the `aidlc/` workspace tree — the record (state, the per-clone audit sh
 - `aidlc/spaces/*/intents/*/runtime-graph.json` (also covers per-Bolt worktree fragments by relative-path glob)
 - `aidlc/spaces/*/intents/*/.aidlc-*` (the record's `.aidlc-engine/` framework state)
 - harness-local files your harness's shipped `.gitignore` block adds
+
+## Working agreement (do not remove; enforced by `.claude/loop/loop_guard.py`)
+
+- Work goes through AI-DLC. Do not commit, push, merge, open or merge a pull request, or change source, tests, deploy, docs or
+  workflow files unless the engine's latest directive (`aidlc engine orchestrate next`, then `report`) covers it. An approved plan
+  does not end the loop: keep asking the engine what comes next after every piece of work.
+- A hook blocks those actions when the engine has not been asked in the last 30 minutes. A block means: run
+  `aidlc engine orchestrate next --resume` and follow it. Never get round the hook (no settings edits, no shell tricks).
+- Anything outside the workflow is raised with the person first, and said plainly in the next report. Nothing is done quietly.
+- Start each progress report with where the work stands: stage, unit, last engine call.
+- Details: `docs/ai-dlc-working-agreement.md`.
