@@ -15,7 +15,7 @@ from pathlib import Path
 
 import httpx
 
-PORTAL = os.environ.get("PORTAL", "https://modelhub.test")
+PORTAL = os.environ.get("PORTAL", "https://modelhub.test:8443")
 STATE = Path(os.environ.get("STATE", "/state"))
 MODEL = "org/tiny"
 

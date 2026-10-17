@@ -541,11 +541,11 @@ def key_list() -> None:
 @pack_app.command("sign")
 def pack_sign(
     folder: Path = typer.Argument(..., help="The pack folder."),
-    key: str = typer.Option(..., "--key", help="The signing key to use (id or fingerprint)."),
+    signer: str = typer.Option(..., "--key", help="The signing key to use (id or fingerprint)."),
 ) -> None:
     """List every file of the pack with its checksum and sign the list."""
     with _guard():
-        count = serverpack.sign_pack(folder, key)
+        count = serverpack.sign_pack(folder, signer)
         typer.echo(f"Signed {count} files in {folder}")
 
 

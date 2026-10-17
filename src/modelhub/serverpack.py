@@ -24,7 +24,7 @@ def _files(folder: Path) -> list[str]:
     )
 
 
-def sign_pack(folder: Path | str, key_id: str) -> int:
+def sign_pack(folder: Path | str, signer: str) -> int:
     """List every file with its checksum and sign the list. Returns the number of files."""
     folder = Path(folder)
     if not folder.is_dir():
@@ -33,7 +33,7 @@ def sign_pack(folder: Path | str, key_id: str) -> int:
     lines = [f"{fsutil.sha256_file(folder / name)}  {name}\n" for name in names]
     sums = "".join(lines).encode("utf-8")
     fsutil.atomic_write_bytes(folder / SUMS, sums)
-    fsutil.atomic_write_text(folder / SIG, json.dumps(signing.sign_bytes(key_id, sums)) + "\n")
+    fsutil.atomic_write_text(folder / SIG, json.dumps(signing.sign_bytes(signer, sums)) + "\n")
     return len(names)
 
 

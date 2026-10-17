@@ -29,7 +29,7 @@ services:
     profiles: [driver]
     networks: {internal: {}}
     environment:
-      PORTAL: https://modelhub.test
+      PORTAL: https://modelhub.test:8443
       SSL_CERT_FILE: /certs/modelhub.crt
       STATE: /state
     volumes:
