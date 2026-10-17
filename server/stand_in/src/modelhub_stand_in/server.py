@@ -34,9 +34,13 @@ class StandIn:
         workdir: Path | str | None = None,
         host: str = LOCAL,
         port: int = 0,
+        allow_any_host: bool = False,
+        public_host: str | None = None,
     ) -> None:
-        if host != LOCAL:
+        if host != LOCAL and not allow_any_host:
             raise ValueError("the stand-in only listens on the local machine")
+        self._host = host
+        self._public_host = public_host or (LOCAL if host in (LOCAL, "0.0.0.0") else host)
         if layout not in LAYOUTS:
             raise ValueError(f"layout must be one of {LAYOUTS}")
         if not token:
@@ -58,7 +62,11 @@ class StandIn:
     # --- lifecycle ---------------------------------------------------------------------------
     def start(self) -> StandIn:
         config = uvicorn.Config(
-            create_app(self.state), host=LOCAL, port=self._port, log_level="warning", lifespan="off"
+            create_app(self.state),
+            host=self._host,
+            port=self._port,
+            log_level="warning",
+            lifespan="off",
         )
         self._server = uvicorn.Server(config)
         self._thread = threading.Thread(target=self._server.run, daemon=True)
@@ -69,7 +77,7 @@ class StandIn:
                 raise RuntimeError("the stand-in did not start")
             time.sleep(0.01)
         port = self._server.servers[0].sockets[0].getsockname()[1]
-        self.url = f"http://{LOCAL}:{port}"
+        self.url = f"http://{self._public_host}:{port}"
         self.state.base_url = self.url
         return self
 

@@ -15,3 +15,5 @@ server/testkit
 **/tests
 .github
 .claude
+!server/stand_in
+!server/testkit
