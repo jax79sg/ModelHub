@@ -76,6 +76,7 @@ def guarded(tool: str, tool_input: dict, root: str) -> str | None:
     if tool in ("Write", "Edit", "MultiEdit", "NotebookEdit"):
         path = str(tool_input.get("file_path", tool_input.get("notebook_path", "")))
         relative = os.path.relpath(path, root) if os.path.isabs(path) else path
+        relative = relative.replace("\\", "/")  # the folder list is written with forward slashes
         if relative.startswith(("aidlc/", ".claude/")):
             return None  # the framework's own records and settings
         if relative.startswith(GUARDED_DIRS):

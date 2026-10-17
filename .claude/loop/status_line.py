@@ -19,6 +19,8 @@ from loop_guard import MAX_AGE_MINUTES, last_engine_call, project_root
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")  # the warning sign needs it on Windows
     stdin = sys.stdin.read()
     try:
         base = subprocess.run(

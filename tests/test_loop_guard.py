@@ -37,6 +37,7 @@ def run(project, tool, tool_input, **env):
         env={**os.environ, "CLAUDE_PROJECT_DIR": str(project), **env},
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=False,
     )
 
@@ -117,6 +118,7 @@ def test_unreadable_input_never_blocks(project):
         input="not json",
         capture_output=True,
         text=True,
+        encoding="utf-8",
         env={**os.environ, "CLAUDE_PROJECT_DIR": str(project)},
         check=False,
     )
@@ -131,6 +133,7 @@ def test_the_status_line_shows_the_age_and_warns_when_it_is_too_long(project):
         input="{}",
         capture_output=True,
         text=True,
+        encoding="utf-8",
         env=env,
         check=False,
     ).stdout
@@ -141,6 +144,7 @@ def test_the_status_line_shows_the_age_and_warns_when_it_is_too_long(project):
         input="{}",
         capture_output=True,
         text=True,
+        encoding="utf-8",
         env=env,
         check=False,
     ).stdout
