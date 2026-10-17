@@ -159,3 +159,33 @@ def test_admin_links_are_shown_only_to_administrators(portal, keycloak):
     portal.cookies.clear()
     sign_in(portal, keycloak, username="root", admin=True)
     assert "/admin/retention" in portal.get("/models").text
+
+
+def test_an_id_token_for_some_other_sign_in_is_refused(portal, keycloak):
+    keycloak.wrong_nonce = True
+    r = portal.get("/auth/login")
+    back = keycloak.authorize(r.headers["location"]).removeprefix(BASE)
+    assert portal.get(back).status_code == 400
+    assert portal.get("/models").status_code == 302
+
+
+def test_a_sign_in_without_an_id_token_is_refused(portal, keycloak):
+    keycloak.no_id_token = True
+    r = portal.get("/auth/login")
+    back = keycloak.authorize(r.headers["location"]).removeprefix(BASE)
+    assert portal.get(back).status_code == 400
+
+
+def test_the_sign_in_address_carries_a_nonce(portal):
+    assert "nonce=" in portal.get("/auth/login").headers["location"]
+
+
+def test_the_ready_check_reports_the_catalog_and_keycloak_separately(portal, keycloak, monkeypatch):
+    ok = portal.get("/readyz").json()
+    assert ok == {"status": "ok", "keycloak": "ok", "catalog": "ok"}
+    keycloak.down = True
+    monkeypatch.setattr("modelhub_portal.oidc.time.time", lambda: 9e12)  # past the cached discovery
+    down = portal.get("/readyz").json()
+    assert (
+        down["status"] == "degraded" and down["keycloak"] == "degraded" and down["catalog"] == "ok"
+    )

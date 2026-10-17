@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+  <h1>Trail{% if model_filter %} · {{ model_filter }}{% endif %}</h1>
+  {% if note %}<div class="banner warn" role="status">{{ note }}</div>{% endif %}
+  <form method="get" action="{{ '/' ~ model_filter ~ '/trail' if scoped else '/trail' }}" class="stack">
+    {% if not scoped %}<label for="model">Model</label><input id="model" name="model" type="text" value="{{ model_filter or '' }}" maxlength="200">{% endif %}
+    <label><input type="checkbox" name="mine" value="1" {{ 'checked' if mine }}> Only my imports</label>
+    <button class="btn small" type="submit">Apply</button>
+  </form>
+  <table class="files">
+    <thead><tr><th>When</th><th>Who</th><th>What</th><th>Model</th><th>Commit</th><th>Result</th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr><td>{{ r.time[:16]|replace('T', ' ') }}</td><td>{{ r.who }}</td><td>{{ r.what }}</td>
+        <td><a href="/{{ r.model }}">{{ r.model }}</a></td><td class="mono">{{ r.commit[:12] }}</td><td>{{ r.result }}</td></tr>
+    {% else %}
+      <tr><td colspan="6" class="muted">Nothing in the trail yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% if pages > 1 %}
+  <nav class="pagination" aria-label="Pagination">
+    {% if current > 1 %}<a href="{{ link(p=current - 1) }}" rel="prev">‹ Previous</a>{% endif %}
+    <span class="muted">Page {{ current }} of {{ pages }}</span>
+    {% if current < pages %}<a href="{{ link(p=current + 1) }}" rel="next">Next ›</a>{% endif %}
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

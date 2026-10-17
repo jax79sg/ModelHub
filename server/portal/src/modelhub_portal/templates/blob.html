@@ -1,0 +1,17 @@
+{% extends "model_base.html" %}
+{% block content %}
+<nav class="crumbs" aria-label="File">
+  <a href="/{{ model.model_id }}/tree/{{ q(rev) }}">{{ model.model_id }}</a>
+  {% for part, p in crumbs %} / {{ part }}{% endfor %}
+</nav>
+<h2 class="mono">{{ path }}</h2>
+<dl class="facts">
+  <dt>Size</dt><dd>{{ fmt.size(entry.size_bytes) }} ({{ '{:,}'.format(entry.size_bytes) }} bytes)</dd>
+  <dt>SHA-256</dt><dd class="mono">{{ entry.sha256 or 'unknown' }}</dd>
+  <dt>Type</dt><dd>{{ entry.file_type or 'unknown' }}</dd>
+  <dt>Safety scan</dt><dd>{{ entry.safety_scan or 'unknown' }}</dd>
+  <dt>In the store</dt><dd>{% if entry.downloaded %}yes{% else %}<span class="tag plain">not in store</span> It was listed by the Hub but never downloaded.{% endif %}</dd>
+</dl>
+<p class="muted">This portal does not show or serve file contents. Fetch the file from Artifactory:</p>
+<pre class="snippet"><code>{{ file_snippet }}</code></pre>
+{% endblock %}

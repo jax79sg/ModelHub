@@ -1,0 +1,19 @@
+{% extends "model_base.html" %}
+{% block content %}
+<nav class="crumbs" aria-label="Folder">
+  <a href="/{{ model.model_id }}/tree/{{ q(rev) }}">{{ model.model_id }}</a>
+  {% for part, path in crumbs %} / <a href="/{{ model.model_id }}/tree/{{ q(rev) }}/{{ q(path, '/') }}">{{ part }}</a>{% endfor %}
+</nav>
+<table class="files">
+  <thead><tr><th>Name</th><th>Size</th><th>SHA-256</th><th>Scan</th></tr></thead>
+  <tbody>
+  {% for d in folders %}
+    <tr><td><a href="/{{ model.model_id }}/tree/{{ q(rev) }}/{{ q(prefix ~ d.name, '/') }}">📁 {{ d.name }}/</a></td><td>{{ fmt.size(d.size) }}</td><td class="muted">{{ d.count }} file{{ 's' if d.count != 1 }}</td><td></td></tr>
+  {% endfor %}
+  {% for f in entries %}
+    <tr><td><a class="mono" href="/{{ model.model_id }}/blob/{{ q(rev) }}/{{ q(f.path, '/') }}">{{ f.path[prefix|length:] }}</a>{% if not f.downloaded %} <span class="tag plain">not in store</span>{% endif %}</td>
+      <td>{{ fmt.size(f.size_bytes) }}</td><td class="mono small">{{ (f.sha256 or 'unknown')[:16] }}{{ '…' if f.sha256 }}</td><td>{{ f.safety_scan or 'unknown' }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -8,6 +8,7 @@ file: it shows what the Catalog stored (rule BR1.9).
 from __future__ import annotations
 
 import hmac
+import json
 import logging
 import posixpath
 import time
@@ -109,7 +110,7 @@ def create_app(
     service: RetentionService | None = None,
 ) -> FastAPI:
     sessions = SessionStore(settings.session_idle_hours * 3600, clock)
-    pending: dict[str, tuple[str, str, float]] = {}
+    pending: dict[str, tuple[str, str, str, float]] = {}
     app = FastAPI(title="ModelHub", docs_url=None, redoc_url=None, openapi_url=None)
     app.state.sessions = sessions
     app.state.catalog_http = getattr(catalog, "_http", None)
@@ -123,7 +124,7 @@ def create_app(
         q=lambda s, safe="": quote(str(s), safe=safe),
         qs=lambda pairs: urlencode(pairs),
         unknown=lambda v: "unknown" if v is None else v,
-        version=settings.version,
+        portal_version=settings.version,
     )
 
     # ------------------------------------------------------------------ helpers ---
@@ -297,15 +298,15 @@ def create_app(
             oidc.metadata()
         except AuthDown:
             keycloak = "degraded"
-        return JSONResponse(
-            {"status": "ok" if keycloak == "ok" else "degraded", "keycloak": keycloak}
-        )
+        catalog_state = "ok" if catalog.healthy() else "degraded"
+        status = "ok" if keycloak == catalog_state == "ok" else "degraded"
+        return JSONResponse({"status": status, "keycloak": keycloak, "catalog": catalog_state})
 
     # ----------------------------------------------------------------- sign-in ---
     @app.get("/auth/login")
     async def login(request: Request, next: str = "/models"):
         try:
-            url, state, verifier = await run_in_threadpool(oidc.start)
+            url, state, verifier, nonce = await run_in_threadpool(oidc.start)
         except AuthDown:
             return error_page(
                 request,
@@ -315,9 +316,9 @@ def create_app(
                 retry="/auth/login",
             )
         now = clock()
-        for old in [s for s, (_, _, until) in pending.items() if until < now]:
+        for old in [s for s, (_, _, _, until) in pending.items() if until < now]:
             del pending[old]
-        pending[state] = (verifier, _safe_next(next), now + 600)
+        pending[state] = (verifier, nonce, _safe_next(next), now + 600)
         response = RedirectResponse(url, 302)
         set_cookie(response, STATE_COOKIE, state, max_age=600, path="/auth")
         return response
@@ -334,9 +335,9 @@ def create_app(
                 "The sign-in could not be completed. Please start again.",
                 retry="/auth/login",
             )
-        verifier, nxt, _ = entry
+        verifier, nonce, nxt, _ = entry
         try:
-            tokens = await run_in_threadpool(oidc.exchange, code, verifier)
+            tokens = await run_in_threadpool(oidc.exchange, code, verifier, nonce)
             verdict = await run_in_threadpool(oidc.identity, tokens["access_token"])
         except AuthDown:
             return error_page(
@@ -703,24 +704,22 @@ def create_app(
             return Response(data, media_type="application/octet-stream", headers=headers)
         return Response(data, media_type=media, headers=headers)
 
-    @app.get("/{org}/{name}", response_class=HTMLResponse)
-    def model_page(request: Request, org: str, name: str, rev: str | None = None):
+    def load_model(request: Request, org: str, name: str, rev: str | None):
+        """(context, None) for a model page, or (None, the error page to send)."""
         model_id = f"{org}/{name}"
         token = token_of(request)
         model = catalog.model(token, model_id, rid(request))
         if model is None:
-            return error_page(request, 404, "Not found", f"{model_id} has not been imported.")
+            return None, error_page(request, 404, "Not found", f"{model_id} has not been imported.")
         commit, problem = pick_commit(model, rev)
         if commit is None:
-            return error_page(
-                request, 404 if "captured" in (problem or "") else 400, "Revision", problem or ""
-            )
+            status = 404 if "captured" in (problem or "") else 400
+            return None, error_page(request, status, "Revision", problem or "")
         version = catalog.version(token, model_id, commit, rid(request))
         if version is None:
-            return error_page(request, 404, "Not found", f"{model_id} has no version {commit[:7]}.")
-        label = rev or commit
-        text = text_document(request, model_id, commit, version.get("documents", []))
-        readme = render_markdown(text, model_id, commit, label) if text is not None else None
+            return None, error_page(
+                request, 404, "Not found", f"{model_id} has no version {commit[:7]}."
+            )
         revisions = [
             {"name": r["name"], "kind": r["kind"], "commit": r["commit"]} for r in model["refs"]
         ]
@@ -730,17 +729,232 @@ def create_app(
             for v in model["versions"]
             if v["commit"] not in known
         ]
+        ctx = {
+            "model": model,
+            "version": version,
+            "commit": commit,
+            "revisions": revisions,
+            "rev": rev or commit,
+            "snippets": fetch_snippets(model_id, commit),
+        }
+        return ctx, None
+
+    @app.get("/{org}/{name}", response_class=HTMLResponse)
+    def model_page(request: Request, org: str, name: str, rev: str | None = None):
+        ctx, failure = load_model(request, org, name, rev)
+        if failure:
+            return failure
+        model_id = f"{org}/{name}"
+        text = text_document(request, model_id, ctx["commit"], ctx["version"].get("documents", []))
+        readme = (
+            render_markdown(text, model_id, ctx["commit"], ctx["rev"]) if text is not None else None
+        )
+        return page(request, "model.html", title=model_id, readme=readme, active_tab="card", **ctx)
+
+    @app.get("/{org}/{name}/tree/{rev}", response_class=HTMLResponse)
+    @app.get("/{org}/{name}/tree/{rev}/{path:path}", response_class=HTMLResponse)
+    def tree(request: Request, org: str, name: str, rev: str, path: str = ""):
+        ctx, failure = load_model(request, org, name, rev)
+        if failure:
+            return failure
+        folder = path.strip("/")
+        prefix = folder + "/" if folder else ""
+        folders: dict[str, dict] = {}
+        entries = []
+        for f in ctx["version"]["files"]:
+            if not f["path"].startswith(prefix):
+                continue
+            rest = f["path"][len(prefix) :]
+            if "/" in rest:
+                head = rest.split("/", 1)[0]
+                d = folders.setdefault(head, {"name": head, "size": 0, "count": 0})
+                d["size"] += f["size_bytes"] or 0
+                d["count"] += 1
+            else:
+                entries.append(f)
+        if folder and not folders and not entries:
+            return error_page(
+                request, 404, "Not found", f"There is no folder “{folder}” at this revision."
+            )
+        crumbs = (
+            [
+                (part, "/".join(folder.split("/")[: i + 1]))
+                for i, part in enumerate(folder.split("/"))
+            ]
+            if folder
+            else []
+        )
         return page(
             request,
-            "model.html",
-            title=model_id,
-            model=model,
-            version=version,
-            commit=commit,
-            readme=readme,
-            revisions=revisions,
-            snippets=fetch_snippets(model_id, commit),
-            rev=label,
+            "tree.html",
+            title=f"{org}/{name} files",
+            active_tab="files",
+            folder=folder,
+            prefix=prefix,
+            crumbs=crumbs,
+            folders=sorted(folders.values(), key=lambda d: d["name"]),
+            entries=sorted(entries, key=lambda f: f["path"]),
+            **ctx,
         )
+
+    @app.get("/{org}/{name}/blob/{rev}/{path:path}", response_class=HTMLResponse)
+    def blob(request: Request, org: str, name: str, rev: str, path: str):
+        ctx, failure = load_model(request, org, name, rev)
+        if failure:
+            return failure
+        entry = next((f for f in ctx["version"]["files"] if f["path"] == path), None)
+        if entry is None:
+            return error_page(
+                request, 404, "Not found", f"There is no file “{path}” at this revision."
+            )
+        model_id = f"{org}/{name}"
+        snippet = (
+            "import os\n"
+            f'os.environ["HF_ENDPOINT"] = "{ctx["snippets"]["endpoint"]}"\n'
+            'os.environ["HF_TOKEN"] = "<your-token>"\n'
+            "from huggingface_hub import hf_hub_download\n"
+            f'hf_hub_download("{model_id}", "{path}", revision="{ctx["commit"]}")'
+        )
+        return page(
+            request,
+            "blob.html",
+            title=f"{path} · {model_id}",
+            active_tab="files",
+            entry=entry,
+            path=path,
+            file_snippet=snippet,
+            crumbs=[
+                (part, "/".join(path.split("/")[: i + 1])) for i, part in enumerate(path.split("/"))
+            ],
+            **ctx,
+        )
+
+    @app.get("/{org}/{name}/commits/{rev}", response_class=HTMLResponse)
+    def commits(request: Request, org: str, name: str, rev: str):
+        ctx, failure = load_model(request, org, name, rev)
+        if failure:
+            return failure
+        history = None
+        if any(
+            d["kind"] == "response" and d["name"] == "raw/commits.json"
+            for d in ctx["version"].get("documents", [])
+        ):
+            try:
+                found = catalog.document(
+                    token_of(request),
+                    f"{org}/{name}",
+                    ctx["commit"],
+                    "response",
+                    "raw/commits.json",
+                    rid(request),
+                )
+            except Gone:
+                found = None
+            if found:
+                try:
+                    history = json.loads(found[0].decode("utf-8", errors="replace"))
+                except ValueError:
+                    history = None
+        if not isinstance(history, list):
+            history = None
+        return page(
+            request,
+            "commits.html",
+            title=f"Commits · {org}/{name}",
+            active_tab="commits",
+            history=history,
+            **ctx,
+        )
+
+    # ------------------------------------------------------------------ the trail ---
+    def trail_page(request: Request, model_id: str | None):
+        token = token_of(request)
+        qp = request.query_params
+        mine = bool(qp.get("mine"))
+        model_filter = model_id or qp.get("model") or None
+        try:
+            number = max(1, int(qp.get("p", "1")))
+        except ValueError:
+            number = 1
+        params = {"page": number, "pageSize": PAGE_SIZE}
+        if model_filter:
+            params["model"] = model_filter
+        if mine:
+            params["person"] = request.state.session.person_id
+        body = catalog.trail(token, params, rid(request))
+        rows = [
+            {
+                "time": r["imported_at"],
+                "who": r["imported_by_name"],
+                "what": r["outcome"],
+                "model": r["model_id"],
+                "commit": r["commit"],
+                "result": r["outcome"],
+            }
+            for r in body["items"]
+        ]
+        pages = max(1, -(-body["total"] // PAGE_SIZE))
+        note = None
+        if service is not None:
+            try:
+                decisions = service.decisions(token, rid(request))
+            except (ServiceDown, ServiceRefused):
+                decisions, note = [], "Retention decisions cannot be shown just now."
+        else:
+            decisions, note = [], "Retention decisions cannot be shown just now."
+        low = rows[-1]["time"] if rows and number < pages else ""
+        high = rows[0]["time"] if rows and number > 1 else "9999"
+        for d in decisions:
+            if model_filter and d["modelId"].lower() != model_filter.lower():
+                continue
+            if mine and d["decidedBy"] != request.state.session.person_name:
+                continue
+            if low <= d["decidedAt"] <= high or (not rows and number == 1):
+                rows.append(
+                    {
+                        "time": d["decidedAt"],
+                        "who": d["decidedBy"],
+                        "what": "kept" if d["decision"] == "keep" else "removed",
+                        "model": d["modelId"],
+                        "commit": d["commit"],
+                        "result": d["outcome"],
+                    }
+                )
+        rows.sort(key=lambda r: r["time"], reverse=True)
+
+        def link(**change) -> str:
+            merged = {
+                k: v
+                for k, v in {
+                    "model": model_filter if not model_id else None,
+                    "mine": "1" if mine else None,
+                    **change,
+                }.items()
+                if v
+            }
+            base = f"/{model_id}/trail" if model_id else "/trail"
+            return base + ("?" + urlencode(merged) if merged else "")
+
+        return page(
+            request,
+            "trail.html",
+            title="Trail",
+            rows=rows,
+            note=note,
+            pages=pages,
+            current=number,
+            link=link,
+            model_filter=model_filter,
+            mine=mine,
+            scoped=bool(model_id),
+        )
+
+    @app.get("/trail", response_class=HTMLResponse)
+    def trail_all(request: Request):
+        return trail_page(request, None)
+
+    @app.get("/{org}/{name}/trail", response_class=HTMLResponse)
+    def trail_model(request: Request, org: str, name: str):
+        return trail_page(request, f"{org}/{name}")
 
     return app
