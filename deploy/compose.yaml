@@ -10,7 +10,7 @@ x-service: &service
   security_opt: ["no-new-privileges:true"]
   user: "10001:10001"
   tmpfs: ["/tmp:size=64m"]
-  networks: [internal]
+  networks: {internal: {}}
   logging:
     driver: json-file
     options: {max-size: "20m", max-file: "5"}
@@ -31,7 +31,7 @@ services:
     cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, SETGID, SETUID]
     security_opt: ["no-new-privileges:true"]
     tmpfs: ["/tmp:size=64m", "/run/postgresql:size=8m"]
-    networks: [internal]
+    networks: {internal: {}}
     environment:
       POSTGRES_USER: modelhub_admin
       POSTGRES_DB: modelhub
@@ -122,7 +122,7 @@ services:
     cap_drop: [ALL]
     security_opt: ["no-new-privileges:true"]
     tmpfs: ["/tmp:size=64m"]
-    networks: [internal]
+    networks: {internal: {}}
     ports: ["443:8443"]
     secrets: [tls_certificate, tls_key]
     depends_on:

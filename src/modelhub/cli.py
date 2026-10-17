@@ -25,6 +25,7 @@ from modelhub import (
     record,
     redact,
     runrecord,
+    serverpack,
     settings,
     signing,
     store,
@@ -42,6 +43,11 @@ key_app = typer.Typer(
     help="Signing keys: create, export, show fingerprints, trust.", no_args_is_help=True
 )
 app.add_typer(key_app, name="key")
+pack_app = typer.Typer(
+    help="The signed server pack: sign it where it is built, verify it on the server.",
+    no_args_is_help=True,
+)
+app.add_typer(pack_app, name="pack")
 
 _STATE: dict = {"log": None}
 
@@ -527,3 +533,29 @@ def key_list() -> None:
             typer.echo(f"own      {doc['key_id']}  {doc['fingerprint']}  {doc['name']}")
         for doc in signing.trusted_keys():
             typer.echo(f"trusted  {doc['key_id']}  {doc['fingerprint']}  {doc['name']}")
+
+
+# --- the server pack ------------------------------------------------------------------
+
+
+@pack_app.command("sign")
+def pack_sign(
+    folder: Path = typer.Argument(..., help="The pack folder."),
+    key: str = typer.Option(..., "--key", help="The signing key to use (id or fingerprint)."),
+) -> None:
+    """List every file of the pack with its checksum and sign the list."""
+    with _guard():
+        count = serverpack.sign_pack(folder, key)
+        typer.echo(f"Signed {count} files in {folder}")
+
+
+@pack_app.command("verify")
+def pack_verify(folder: Path = typer.Argument(..., help="The pack folder.")) -> None:
+    """Check the pack's signature (by a key trusted here) and every file in it."""
+    with _guard():
+        problems = serverpack.verify_pack(folder)
+        for problem in problems:
+            typer.echo(problem, err=True)
+        if problems:
+            raise typer.Exit(1)
+        typer.echo(f"OK pack {folder}")

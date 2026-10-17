@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Whole-stack smoke test and upgrade-and-return rehearsal, for CI (and any Docker host).
+# Needs the images built as modelhub/{catalog,artifactory-service,portal,proxy,smoke}:$FROM.
+#   FROM=<release tag>  TO=<another tag>  ./run.sh
+set -euo pipefail
+cd "$(dirname "$0")/.."          # deploy/
+: "${FROM:?set FROM to the release tag the images were built as}"
+: "${TO:=${FROM}-next}"
+POSTGRES_IMAGE=${POSTGRES_IMAGE:-postgres:16}
+
+C=(-f compose.yaml -f smoke/compose.smoke.yaml --env-file .env)
+trap 'docker compose "${C[@]}" down -v --remove-orphans >/dev/null 2>&1 || true; rm -rf secrets .env' EXIT
+cp smoke/env.smoke .env
+rm -rf secrets
+printf 'portal-secret\nservice-secret\nartifactory-secret-%s\n' "$RANDOM$RANDOM" | ./ops.sh init-secrets >/dev/null
+openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj "/CN=modelhub.test" \
+  -addext "subjectAltName=DNS:modelhub.test" \
+  -keyout secrets/tls_key -out secrets/tls_certificate 2>/dev/null
+chmod 444 secrets/tls_key secrets/tls_certificate
+
+step() { printf '\n== %s\n' "$*"; }
+up() {   # up <tag>
+  MODELHUB_VERSION=$1 POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" up -d --wait --wait-timeout 300
+}
+drive() { # drive <tag> <mode>
+  MODELHUB_VERSION=$1 POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" --profile driver run --rm driver python /smoke/driver.py "$2"
+}
+stop() {
+  MODELHUB_VERSION=$1 POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" --profile driver stop -t 60
+}
+
+step "release $FROM: start, first import"
+up "$FROM"
+drive "$FROM" import
+
+step "upgrade to $TO (the data must survive)"
+stop "$FROM"
+for name in catalog artifactory-service portal proxy smoke; do docker tag "modelhub/$name:$FROM" "modelhub/$name:$TO"; done
+up "$TO"
+drive "$TO" check
+
+step "return to $FROM (the data must still be there)"
+stop "$TO"
+up "$FROM"
+drive "$FROM" check
+
+step "smoke test and rehearsal passed"

@@ -2,6 +2,7 @@
 # Operator helper for the server stack. Run it from this folder (next to compose.yaml).
 #   ./ops.sh preflight        check the server is ready for a first install
 #   ./ops.sh init-secrets     make the secret files (random ones generated, others asked for)
+#   ./ops.sh load-images <pack>  load a verified server pack's images into Docker
 #   ./ops.sh versions         note the release tags now running (keep this for a return)
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -59,6 +60,18 @@ init_secrets() {
   say "Secrets are in ${SECRETS_DIR}/. Place tls_certificate and tls_key there too."
 }
 
+load_images() {
+  pack=${1:?usage: ./ops.sh load-images <pack folder>}
+  command -v modelhub >/dev/null \
+    || fail "the modelhub program is needed to verify the pack: run 'modelhub pack verify ${pack}' on a computer that has it, then try again"
+  modelhub pack verify "${pack}" || fail "the pack did not verify; nothing was loaded"
+  for archive in "${pack}"/images/*.tar.gz; do
+    say "Loading ${archive##*/}"
+    gunzip -c "${archive}" | docker load
+  done
+  say "Images loaded. Now: docker compose --env-file ${pack}/release.env --env-file .env up -d"
+}
+
 versions() {
   docker compose ps --format '{{.Service}} {{.Image}}'
 }
@@ -66,6 +79,7 @@ versions() {
 case "${1:-}" in
   preflight) preflight ;;
   init-secrets) init_secrets "${2:-}" ;;
+  load-images) load_images "${2:-}" ;;
   versions) versions ;;
-  *) say "Usage: ./ops.sh preflight | init-secrets [--force] | versions"; exit 2 ;;
+  *) say "Usage: ./ops.sh preflight | init-secrets [--force] | load-images <pack> | versions"; exit 2 ;;
 esac

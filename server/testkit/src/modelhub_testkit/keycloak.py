@@ -130,13 +130,22 @@ class KeycloakServer:
     straight back with a code. Never shipped; it binds the local machine only.
     """
 
-    def __init__(self, client_id: str = "modelhub") -> None:
+    def __init__(
+        self,
+        client_id: str = "modelhub",
+        host: str = "127.0.0.1",
+        public_host: str = "127.0.0.1",
+        port: int = 0,
+    ) -> None:
         import socket
 
-        with socket.socket() as probe:
-            probe.bind(("127.0.0.1", 0))
-            self.port = probe.getsockname()[1]
-        self.url = f"http://127.0.0.1:{self.port}"
+        self.host = host
+        if not port:
+            with socket.socket() as probe:
+                probe.bind(("127.0.0.1", 0))
+                port = probe.getsockname()[1]
+        self.port = port
+        self.url = f"http://{public_host}:{self.port}"
         self.realm = f"{self.url}/realms/modelhub"
         self.keycloak = FakeKeycloak(FakeIssuer(issuer=self.realm), client_id=client_id)
         self._server = None
@@ -192,7 +201,7 @@ class KeycloakServer:
         import uvicorn
 
         config = uvicorn.Config(
-            self._app(), host="127.0.0.1", port=self.port, log_level="warning", lifespan="off"
+            self._app(), host=self.host, port=self.port, log_level="warning", lifespan="off"
         )
         self._server = uvicorn.Server(config)
         self._thread = threading.Thread(target=self._server.run, daemon=True)

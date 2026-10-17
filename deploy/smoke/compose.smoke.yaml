@@ -1,0 +1,41 @@
+# Added to compose.yaml for CI's whole-stack smoke test only: the two outside systems as
+# stand-ins, the proxy reachable under the test host name, and a driver that plays a browser
+# and an import computer. Never part of a server pack.
+services:
+  standins:
+    image: modelhub/smoke:${MODELHUB_VERSION:?}
+    command: ["python", "/smoke/standins.py"]
+    networks: {internal: {}}
+    secrets: [artifactory_token]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; [socket.create_connection(('127.0.0.1', p), 3).close() for p in (9000, 9100)]"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  catalog:
+    depends_on:
+      standins: {condition: service_healthy}
+  artifactory-service:
+    depends_on:
+      standins: {condition: service_healthy}
+  portal:
+    depends_on:
+      standins: {condition: service_healthy}
+  proxy:
+    networks:
+      internal: {aliases: [modelhub.test]}
+  driver:
+    image: modelhub/smoke:${MODELHUB_VERSION:?}
+    profiles: [driver]
+    networks: {internal: {}}
+    environment:
+      PORTAL: https://modelhub.test
+      SSL_CERT_FILE: /certs/modelhub.crt
+      STATE: /state
+    volumes:
+      - smoke-state:/state
+      - ./secrets/tls_certificate:/certs/modelhub.crt:ro
+    depends_on:
+      proxy: {condition: service_healthy}
+volumes:
+  smoke-state: {}

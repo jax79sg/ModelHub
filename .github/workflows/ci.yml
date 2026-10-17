@@ -207,7 +207,7 @@ jobs:
   # The server images (deploy/): built, checked and scanned on every change (NFR5.1, NFR5.6, NFR5.7).
   images:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       RELEASE: ci-${{ github.sha }}
     steps:
@@ -253,3 +253,56 @@ jobs:
             docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.57.1 image \
               --severity CRITICAL --ignore-unfixed --exit-code 1 modelhub/$name:$RELEASE
           done
+      - name: Whole-stack smoke test and upgrade-and-return rehearsal
+        run: |
+          docker build -f deploy/smoke/Dockerfile -t modelhub/smoke:$RELEASE .
+          FROM=$RELEASE deploy/smoke/run.sh
+
+  # The signed server pack, made on every merge to main (the key comes from repository secrets;
+  # without them the pack is built unsigned and must not be carried across).
+  server-pack:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RELEASE: main-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Build the images
+        run: |
+          for unit in catalog artifactory_service portal; do
+            name=${unit//_/-}
+            docker build -f deploy/Dockerfile --build-arg UNIT=$unit --build-arg RELEASE=$RELEASE -t modelhub/$name:$RELEASE .
+          done
+          docker build -f deploy/proxy/Dockerfile -t modelhub/proxy:$RELEASE .
+      - name: Put the signing key in place
+        env:
+          KEY_ID: ${{ secrets.PACK_KEY_ID }}
+          KEY_PRIVATE: ${{ secrets.PACK_KEY_PRIVATE_B64 }}
+          KEY_PUBLIC: ${{ secrets.PACK_KEY_PUBLIC_B64 }}
+        run: |
+          if [ -n "$KEY_ID" ]; then
+            mkdir -p "$RUNNER_TEMP/mh/keys"
+            echo "$KEY_PRIVATE" | base64 -d > "$RUNNER_TEMP/mh/keys/$KEY_ID.key"
+            echo "$KEY_PUBLIC" | base64 -d > "$RUNNER_TEMP/mh/keys/$KEY_ID.pub.json"
+            chmod 600 "$RUNNER_TEMP/mh/keys/$KEY_ID.key"
+            echo "MODELHUB_HOME=$RUNNER_TEMP/mh" >> "$GITHUB_ENV"
+            echo "KEY_ID=$KEY_ID" >> "$GITHUB_ENV"
+          else
+            echo "No signing key is configured; the pack will be unsigned."
+          fi
+      - name: Build the pack
+        run: OUT="$RUNNER_TEMP/pack" deploy/build-pack.sh
+      - name: Check the pack is signed and holds no stand-in
+        run: |
+          if [ -n "${KEY_ID:-}" ]; then modelhub pack verify "$RUNNER_TEMP/pack"; fi
+          ! grep -Ei 'smoke|stand|driver|testkit' "$RUNNER_TEMP/pack/SHA256SUMS" 2>/dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: server-pack-${{ github.sha }}
+          path: ${{ runner.temp }}/pack
+          retention-days: 30

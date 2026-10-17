@@ -115,7 +115,7 @@ def test_the_services_use_the_migration_role_then_run_as_their_own():
 
 def test_every_service_joins_the_one_internal_network():
     for name, service in SERVICES.items():
-        assert service["networks"] == ["internal"], name
+        assert list(service["networks"]) == ["internal"], name
 
 
 # --- the proxy ---------------------------------------------------------------------------------

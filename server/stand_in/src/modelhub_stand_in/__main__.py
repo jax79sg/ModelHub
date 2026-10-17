@@ -16,6 +16,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--repo-key", default="models-hf")
     parser.add_argument("--layout", choices=["flat", "nested"], default="flat")
     parser.add_argument("--port", type=int, default=0)
+    parser.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="address to listen on; only a smoke-test container uses anything but 127.0.0.1",
+    )
+    parser.add_argument("--public-host", help="the name other containers use to reach it")
     parser.add_argument("--keep-limit-bytes", type=int, default=1024 * 1024)
     parser.add_argument("--checklist", action="store_true", help="print the checklist and exit")
     args = parser.parse_args(argv)
@@ -29,6 +35,9 @@ def main(argv: list[str] | None = None) -> int:
         repo_key=args.repo_key,
         layout=args.layout,
         port=args.port,
+        host=args.host,
+        allow_any_host=args.host != "127.0.0.1",
+        public_host=args.public_host,
         keep_limit_bytes=args.keep_limit_bytes,
     ) as stand_in:
         print(f"stand-in listening on {stand_in.url} (endpoint {stand_in.hf_endpoint})", flush=True)
