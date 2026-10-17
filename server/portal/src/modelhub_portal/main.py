@@ -59,6 +59,7 @@ def build_app(
         lambda: secrets["keycloak_client_secret"].reveal(),
         public + "/auth/callback",
         verifier,
+        keys=keys,
         transport=oidc_transport,
         timeout=timeouts,
     )

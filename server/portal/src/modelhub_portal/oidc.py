@@ -14,6 +14,7 @@ import time
 import httpx
 from authlib.oauth2.rfc6749.parameters import prepare_grant_uri
 from authlib.oauth2.rfc7636 import create_s256_code_challenge
+from modelhub_common.keys import KeySet
 from modelhub_common.tokens import TokenVerifier, Verdict
 
 
@@ -33,6 +34,7 @@ class Oidc:
         client_secret,
         redirect_uri: str,
         verifier: TokenVerifier,
+        keys: KeySet | None = None,
         transport: httpx.BaseTransport | None = None,
         timeout: httpx.Timeout | None = None,
     ) -> None:
@@ -41,6 +43,7 @@ class Oidc:
         self._secret = client_secret
         self._redirect = redirect_uri
         self._verifier = verifier
+        self._keys = keys
         self._transport = transport
         self._timeout = timeout or httpx.Timeout(30, connect=5)
         self._meta: dict | None = None
@@ -83,11 +86,12 @@ class Oidc:
             self._meta, self._meta_at = meta, time.time()
         return meta
 
-    def start(self) -> tuple[str, str, str]:
-        """(address to send the browser to, state, code verifier)."""
+    def start(self) -> tuple[str, str, str, str]:
+        """(address to send the browser to, state, code verifier, nonce)."""
         meta = self.metadata()
         state = secrets.token_urlsafe(24)
         verifier = secrets.token_urlsafe(48)
+        nonce = secrets.token_urlsafe(24)
         url = prepare_grant_uri(
             meta["authorization_endpoint"],
             self._client_id,
@@ -97,12 +101,13 @@ class Oidc:
             state=state,
             code_challenge=create_s256_code_challenge(verifier),
             code_challenge_method="S256",
+            nonce=nonce,
         )
-        return url, state, verifier
+        return url, state, verifier, nonce
 
-    def exchange(self, code: str, verifier: str) -> dict:
+    def exchange(self, code: str, verifier: str, nonce: str | None = None) -> dict:
         meta = self.metadata()
-        return self._post(
+        tokens = self._post(
             meta["token_endpoint"],
             {
                 "grant_type": "authorization_code",
@@ -111,6 +116,33 @@ class Oidc:
                 "redirect_uri": self._redirect,
             },
         )
+        if self._keys is not None:
+            self._check_id_token(tokens.get("id_token"), nonce)
+        return tokens
+
+    def _check_id_token(self, id_token: str | None, nonce: str | None) -> None:
+        """The id token proves this sign-in is the one we started (nonce, audience, issuer)."""
+        import jwt
+
+        if not id_token or not nonce:
+            raise AuthRefused("Keycloak gave no id token for this sign-in.")
+        try:
+            header = jwt.get_unverified_header(id_token)
+            key = self._keys.get(str(header.get("kid", "")))
+            if key is None or key.algorithm != header.get("alg"):
+                raise AuthRefused("The id token is not signed by a known key.")
+            claims = jwt.decode(
+                id_token,
+                key.key,
+                algorithms=[key.algorithm],
+                audience=self._client_id,
+                issuer=self.issuer,
+                leeway=60,
+            )
+        except jwt.PyJWTError as exc:
+            raise AuthRefused("The id token was not accepted.") from exc
+        if not secrets.compare_digest(str(claims.get("nonce", "")), nonce):
+            raise AuthRefused("The id token belongs to a different sign-in.")
 
     def refresh(self, refresh_token: str) -> dict:
         meta = self.metadata()

@@ -1,0 +1,15 @@
+{% extends "model_base.html" %}
+{% block content %}
+<h2>Commits</h2>
+{% if history %}
+<ul class="commit-list">
+  {% for c in history %}
+  <li><b>{{ c.title or (c.message or '')[:80] }}</b>
+    <span class="muted small">{% for a in (c.authors or []) %}{{ a.user if a is mapping and a.user else a }}{{ ', ' if not loop.last }}{% endfor %}
+    {{ (c.date or '')[:10] }} · <span class="mono">{{ (c.id or '')[:7] }}</span></span></li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">No commit history is stored for this version.</p>
+{% endif %}
+{% endblock %}

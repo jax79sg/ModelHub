@@ -49,6 +49,12 @@ class Catalog:
             body = {}
         return CatalogRefused(r.status_code, body.get("code", "refused"), body.get("message", ""))
 
+    def healthy(self) -> bool:
+        try:
+            return self._http.get(self._base + "/healthz").status_code == 200
+        except httpx.HTTPError:
+            return False
+
     def models(self, token: str, params: dict, rid: str | None = None) -> dict:
         r = self._call(token, "GET", "/v1/models", rid, params=params)
         if r.status_code != 200:
@@ -71,6 +77,12 @@ class Catalog:
         if r.status_code != 200:
             return None
         return r.content, r.headers.get("content-type", "application/octet-stream")
+
+    def trail(self, token: str, params: dict, rid: str | None = None) -> dict:
+        r = self._call(token, "GET", "/v1/trail", rid, params=params)
+        if r.status_code != 200:
+            raise self._refused(r)
+        return r.json()
 
     def make_token(self, token: str, name: str, rid: str | None = None) -> dict:
         r = self._call(token, "POST", "/v1/tokens", rid, json={"name": name})

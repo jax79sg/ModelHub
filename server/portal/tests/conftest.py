@@ -64,6 +64,7 @@ def make_portal(keycloak, catalog_http, clock, service_http=None, **settings):
         lambda: "client-secret-for-tests",
         BASE + "/auth/callback",
         verifier,
+        keys=keys,
         transport=keycloak.transport(),
     )
     cfg = Settings(
