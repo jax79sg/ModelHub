@@ -9,7 +9,18 @@ cd "$(dirname "$0")/.."          # deploy/
 POSTGRES_IMAGE=${POSTGRES_IMAGE:-postgres:16}
 
 C=(-f compose.yaml -f smoke/compose.smoke.yaml --env-file .env)
-trap 'docker compose "${C[@]}" down -v --remove-orphans >/dev/null 2>&1 || true; rm -rf secrets .env' EXIT
+cleanup() {
+  status=$?
+  if [ "$status" -ne 0 ]; then
+    echo "== the smoke test failed; the last log lines of each container follow"
+    MODELHUB_VERSION=${CURRENT:-$FROM} POSTGRES_IMAGE=$POSTGRES_IMAGE \
+      docker compose "${C[@]}" logs --tail 60 --no-color || true
+  fi
+  MODELHUB_VERSION=${CURRENT:-$FROM} POSTGRES_IMAGE=$POSTGRES_IMAGE \
+    docker compose "${C[@]}" down -v --remove-orphans >/dev/null 2>&1 || true
+  rm -rf secrets .env
+}
+trap cleanup EXIT
 cp smoke/env.smoke .env
 rm -rf secrets
 printf 'portal-secret\nservice-secret\nartifactory-secret-%s\n' "$RANDOM$RANDOM" | ./ops.sh init-secrets >/dev/null
@@ -20,6 +31,7 @@ chmod 444 secrets/tls_key secrets/tls_certificate
 
 step() { printf '\n== %s\n' "$*"; }
 up() {   # up <tag>
+  CURRENT=$1
   MODELHUB_VERSION=$1 POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" up -d --wait --wait-timeout 300
 }
 drive() { # drive <tag> <mode>
