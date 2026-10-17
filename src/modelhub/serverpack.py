@@ -29,11 +29,14 @@ def sign_pack(folder: Path | str, signer: str) -> int:
     folder = Path(folder)
     if not folder.is_dir():
         raise ValueError(f"{folder} is not a folder")
+    key = signing.find_own_key(signer)  # by id or fingerprint, as the command says
     names = _files(folder)
     lines = [f"{fsutil.sha256_file(folder / name)}  {name}\n" for name in names]
     sums = "".join(lines).encode("utf-8")
     fsutil.atomic_write_bytes(folder / SUMS, sums)
-    fsutil.atomic_write_text(folder / SIG, json.dumps(signing.sign_bytes(signer, sums)) + "\n")
+    fsutil.atomic_write_text(
+        folder / SIG, json.dumps(signing.sign_bytes(key["key_id"], sums)) + "\n"
+    )
     return len(names)
 
 

@@ -23,9 +23,10 @@ def pack(tmp_path):
 
 @pytest.fixture
 def trusted(home, key_id):
+    """The fingerprint of a signing key made and trusted here (the pack commands accept it)."""
     doc = signing.find_own_key(key_id)
     signing.trust_key(doc, doc["fingerprint"])
-    return key_id
+    return doc["fingerprint"]
 
 
 def test_a_signed_pack_verifies_and_lists_what_it_holds(pack, trusted):
@@ -63,7 +64,7 @@ def test_a_list_that_was_edited_fails_the_signature(pack, trusted):
 
 
 def test_a_pack_signed_by_a_key_not_trusted_here_is_refused(pack, home, key_id):
-    serverpack.sign_pack(pack, key_id)  # made here but never trusted
+    serverpack.sign_pack(pack, signing.find_own_key(key_id)["fingerprint"])  # never trusted
     problems = serverpack.verify_pack(pack)
     assert any("does not trust" in p for p in problems)
 
@@ -76,7 +77,7 @@ def test_paths_that_climb_out_of_the_pack_are_refused(pack, trusted):
     serverpack.sign_pack(pack, trusted)
     sums = pack / "SHA256SUMS"
     sums.write_text(sums.read_text() + "a" * 64 + "  ../outside\n")
-    sig = signing.sign_bytes(trusted, sums.read_bytes())
+    sig = signing.sign_bytes(signing.find_own_key(trusted)["key_id"], sums.read_bytes())
     (pack / "SHA256SUMS.sig").write_text(json.dumps(sig))
     assert any("unsafe" in p for p in serverpack.verify_pack(pack))
 
