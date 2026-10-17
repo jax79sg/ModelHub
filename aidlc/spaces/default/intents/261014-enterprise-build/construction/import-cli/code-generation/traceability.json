@@ -1,0 +1,62 @@
+{
+  "stage": "code-generation",
+  "unit": "import-cli",
+  "upstream_ids": [
+    "FR1.1",
+    "FR1.2",
+    "FR1.4",
+    "FR1.9",
+    "FR1.10",
+    "FR1.11",
+    "FR1.13",
+    "FR8.1",
+    "NFR10"
+  ],
+  "coverage": [
+    {
+      "id": "FR1.1",
+      "status": "OK",
+      "target": "src/modelhub/importer.py"
+    },
+    {
+      "id": "FR1.2",
+      "status": "OK",
+      "target": "src/modelhub/settings.py"
+    },
+    {
+      "id": "FR1.4",
+      "status": "OK",
+      "target": "src/modelhub/importer.py"
+    },
+    {
+      "id": "FR1.9",
+      "status": "OK",
+      "target": "src/modelhub/importer.py"
+    },
+    {
+      "id": "FR1.10",
+      "status": "OK",
+      "target": "src/modelhub/cli.py"
+    },
+    {
+      "id": "FR1.11",
+      "status": "OK",
+      "target": "src/modelhub/importer.py"
+    },
+    {
+      "id": "FR1.13",
+      "status": "OK",
+      "target": "src/modelhub/progress.py"
+    },
+    {
+      "id": "FR8.1",
+      "status": "OK",
+      "target": "src/modelhub/cli.py"
+    },
+    {
+      "id": "NFR10",
+      "status": "OK",
+      "target": "tests/test_import_cli.py"
+    }
+  ]
+}

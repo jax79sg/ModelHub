@@ -1,0 +1,58 @@
+{
+  "stage": "code-generation",
+  "unit": "catalog",
+  "version": 1,
+  "writes": [
+    {
+      "path": "server/catalog/pyproject.toml"
+    },
+    {
+      "path": "server/catalog/src/modelhub_catalog/__init__.py"
+    },
+    {
+      "path": "server/catalog/src/modelhub_catalog/__main__.py"
+    },
+    {
+      "path": "server/catalog/src/modelhub_catalog/app.py"
+    },
+    {
+      "path": "server/catalog/src/modelhub_catalog/db.py"
+    },
+    {
+      "path": "server/catalog/src/modelhub_catalog/main.py"
+    },
+    {
+      "path": "server/catalog/src/modelhub_catalog/migrations/0001_initial.sql"
+    },
+    {
+      "path": "server/catalog/src/modelhub_catalog/records.py"
+    },
+    {
+      "path": "server/catalog/src/modelhub_catalog/store.py"
+    },
+    {
+      "path": "server/catalog/tests/conftest.py"
+    },
+    {
+      "path": "server/catalog/tests/test_api.py"
+    },
+    {
+      "path": "server/catalog/tests/test_db.py"
+    },
+    {
+      "path": "server/catalog/tests/test_list_speed.py"
+    },
+    {
+      "path": "server/catalog/tests/test_main.py"
+    },
+    {
+      "path": "server/catalog/tests/test_records.py"
+    },
+    {
+      "path": "server/catalog/tests/test_store_put.py"
+    },
+    {
+      "path": "server/catalog/tests/test_store_read.py"
+    }
+  ]
+}

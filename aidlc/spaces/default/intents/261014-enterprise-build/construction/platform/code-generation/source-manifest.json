@@ -1,0 +1,94 @@
+{
+  "stage": "code-generation",
+  "unit": "platform",
+  "version": 1,
+  "writes": [
+    {
+      "path": ".claude/loop/loop_guard.py"
+    },
+    {
+      "path": ".claude/loop/status_line.py"
+    },
+    {
+      "path": ".dockerignore"
+    },
+    {
+      "path": ".github/pull_request_template.md"
+    },
+    {
+      "path": ".github/workflows/ci.yml"
+    },
+    {
+      "path": ".github/workflows/release.yml"
+    },
+    {
+      "path": "deploy/Dockerfile"
+    },
+    {
+      "path": "deploy/README.md"
+    },
+    {
+      "path": "deploy/build-pack.sh"
+    },
+    {
+      "path": "deploy/compose.yaml"
+    },
+    {
+      "path": "deploy/env.example"
+    },
+    {
+      "path": "deploy/ops.sh"
+    },
+    {
+      "path": "deploy/proxy/Dockerfile"
+    },
+    {
+      "path": "deploy/proxy/nginx.conf"
+    },
+    {
+      "path": "deploy/smoke/Dockerfile"
+    },
+    {
+      "path": "deploy/smoke/compose.smoke.yaml"
+    },
+    {
+      "path": "deploy/smoke/driver.py"
+    },
+    {
+      "path": "deploy/smoke/env.smoke"
+    },
+    {
+      "path": "deploy/smoke/run.sh"
+    },
+    {
+      "path": "deploy/smoke/standins.py"
+    },
+    {
+      "path": "docs/ai-dlc-working-agreement.md"
+    },
+    {
+      "path": "docs/traceability.md"
+    },
+    {
+      "path": "server/e2e/tests/test_whole_stack.py"
+    },
+    {
+      "path": "src/modelhub/cli.py"
+    },
+    {
+      "path": "src/modelhub/serverpack.py"
+    },
+    {
+      "path": "tests/test_build_pack.py"
+    },
+    {
+      "path": "tests/test_deploy_definition.py"
+    },
+    {
+      "path": "tests/test_loop_guard.py"
+    },
+    {
+      "path": "tests/test_serverpack.py"
+    }
+  ]
+}

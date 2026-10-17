@@ -1,0 +1,86 @@
+{
+  "stage": "code-generation",
+  "unit": "portal",
+  "upstream_ids": [
+    "FR3.1",
+    "FR3.2",
+    "FR3.3",
+    "FR3.6",
+    "FR3.7",
+    "FR3.8",
+    "FR4.1",
+    "FR4.3",
+    "FR4.4",
+    "FR4.6",
+    "FR5.7",
+    "FR6.4",
+    "NFR5"
+  ],
+  "coverage": [
+    {
+      "id": "FR3.1",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "id": "FR3.2",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/catalog_client.py"
+    },
+    {
+      "id": "FR3.3",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "id": "FR3.6",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "id": "FR3.7",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "id": "FR3.8",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "id": "FR4.1",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "id": "FR4.3",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "id": "FR4.4",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "id": "FR4.6",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "id": "FR5.7",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/app.py"
+    },
+    {
+      "id": "FR6.4",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/main.py"
+    },
+    {
+      "id": "NFR5",
+      "status": "OK",
+      "target": "server/portal/src/modelhub_portal/oidc.py"
+    }
+  ]
+}
