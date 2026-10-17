@@ -7,6 +7,8 @@ cd "$(dirname "$0")/.."          # deploy/
 : "${FROM:?set FROM to the release tag the images were built as}"
 : "${TO:=${FROM}-next}"
 POSTGRES_IMAGE=${POSTGRES_IMAGE:-postgres:16}
+export SMOKE_VERSION=$FROM   # the outside systems are not upgraded with the product
+PRODUCT=(proxy portal artifactory-service catalog database)
 
 C=(-f compose.yaml -f smoke/compose.smoke.yaml --env-file .env)
 cleanup() {
@@ -37,8 +39,8 @@ up() {   # up <tag>
 drive() { # drive <tag> <mode>
   MODELHUB_VERSION=$1 POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" --profile driver run --rm driver python /smoke/driver.py "$2"
 }
-stop() {
-  MODELHUB_VERSION=$1 POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" --profile driver stop -t 60
+stop() {   # stop the product, as an operator does; the stand-ins for outside systems stay up
+  MODELHUB_VERSION=$1 POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" stop -t 60 "${PRODUCT[@]}"
 }
 
 step "release $FROM: start, first import"
@@ -47,7 +49,7 @@ drive "$FROM" import
 
 step "upgrade to $TO (the data must survive)"
 stop "$FROM"
-for name in catalog artifactory-service portal proxy smoke; do docker tag "modelhub/$name:$FROM" "modelhub/$name:$TO"; done
+for name in catalog artifactory-service portal proxy; do docker tag "modelhub/$name:$FROM" "modelhub/$name:$TO"; done
 up "$TO"
 drive "$TO" check
 

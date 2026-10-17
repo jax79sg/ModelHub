@@ -1,9 +1,10 @@
 # Added to compose.yaml for CI's whole-stack smoke test only: the two outside systems as
 # stand-ins, the proxy reachable under the test host name, and a driver that plays a browser
-# and an import computer. Never part of a server pack.
+# and an import computer. Never part of a server pack. The stand-ins stand for outside systems,
+# so an upgrade of the product leaves them running (SMOKE_VERSION stays fixed).
 services:
   standins:
-    image: modelhub/smoke:${MODELHUB_VERSION:?}
+    image: modelhub/smoke:${SMOKE_VERSION:?}
     command: ["python", "/smoke/standins.py"]
     networks: {internal: {}}
     secrets: [artifactory_token]
@@ -25,7 +26,7 @@ services:
     networks:
       internal: {aliases: [modelhub.test]}
   driver:
-    image: modelhub/smoke:${MODELHUB_VERSION:?}
+    image: modelhub/smoke:${SMOKE_VERSION:?}
     profiles: [driver]
     networks: {internal: {}}
     environment:
