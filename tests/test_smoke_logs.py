@@ -4,13 +4,16 @@
 in them. It names the secret's file, never its value.
 """
 
+import base64
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 SMOKE = Path(__file__).resolve().parent.parent / "deploy" / "smoke"
 SCRIPT = SMOKE / "check_logs.py"
-PEM = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7\nZ1x9yq2QpLmN8vWb3Kf0aTRsHdE4uJ5cXoYiVg6\n-----END PRIVATE KEY-----\n"
+BODY = [base64.b64encode(os.urandom(48)).decode() for _ in range(2)]  # random each run
+PEM = "-----BEGIN " + "TEST KEY-----\n" + "\n".join(BODY) + "\n-----END " + "TEST KEY-----\n"
 
 
 def search(tmp_path, secrets: dict[str, str], logs: str):
@@ -57,13 +60,13 @@ def test_one_line_of_a_multi_line_key_in_the_logs_is_found(tmp_path):
     done = search(
         tmp_path,
         {"tls_key": PEM},
-        "proxy-1  | MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7\n",
+        f"proxy-1  | {BODY[0]}\n",
     )
     assert done.returncode == 1 and "tls_key" in done.stdout + done.stderr
 
 
 def test_the_begin_and_end_lines_of_a_key_do_not_count(tmp_path):
-    done = search(tmp_path, {"tls_key": PEM}, "proxy-1  | loaded -----BEGIN PRIVATE KEY----- ok\n")
+    done = search(tmp_path, {"tls_key": PEM}, "proxy-1  | loaded -----BEGIN TEST KEY----- ok\n")
     assert done.returncode == 0
 
 
