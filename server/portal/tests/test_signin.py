@@ -149,7 +149,7 @@ def test_the_security_headers_are_on_every_answer(portal):
     r = portal.get("/healthz")
     assert r.headers["x-content-type-options"] == "nosniff"
     assert "default-src 'none'" in r.headers["content-security-policy"]
-    assert r.headers["referrer-policy"] == "no-referrer"
+    assert r.headers["referrer-policy"] == "same-origin"  # not no-referrer: see test_chrome.py
     assert r.headers["x-request-id"]
 
 

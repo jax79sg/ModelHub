@@ -187,6 +187,38 @@ jobs:
             pytest server/$unit -v --timeout=240 || exit 1
           done
 
+  # The portal in Google Chrome (portal NFR10.1, Chrome only by the person's choice): a real browser
+  # drives the real portal on local ports. The runner's own Chrome is used; nothing is downloaded.
+  browser-chrome:
+    name: browser (chrome)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      MODELHUB_TEST_POSTGRES_URL: postgresql://postgres:test@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: google-chrome --version
+      - run: >-
+          pip install pytest pytest-timeout playwright -e .
+          -e server/testkit -e server/common -e "server/stand_in[test]"
+          -e web -e server/catalog -e server/artifactory_service -e server/portal
+      - run: pytest server/e2e/tests/test_chrome.py -v --timeout=240 -rs
+
   # The stand-in must run the same where the import command is tested (NFR10): Windows and macOS too.
   stand-in:
     strategy:

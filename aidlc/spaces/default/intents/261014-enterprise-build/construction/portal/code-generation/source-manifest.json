@@ -140,6 +140,18 @@
     },
     {
       "path": "server/testkit/tests/test_postgres.py"
+    },
+    {
+      "path": "server/e2e/tests/test_chrome.py"
+    },
+    {
+      "path": ".github/workflows/ci.yml"
+    },
+    {
+      "path": "server/e2e/tests/test_whole_stack.py"
+    },
+    {
+      "path": "tests/test_ci_definition.py"
     }
   ]
 }

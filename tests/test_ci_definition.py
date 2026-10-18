@@ -64,3 +64,11 @@ def test_the_macos_program_is_built_on_apple_silicon_and_driven_through_the_work
 def test_the_release_publishes_every_built_file_including_the_macos_one():
     # the release downloads all artifacts of the run, so the macOS file needs no extra step
     assert "actions/download-artifact@v4" in RELEASE and "find files -type f" in RELEASE
+
+
+def test_the_portal_is_driven_in_chrome_in_ci_and_the_test_cannot_skip_there():
+    job = CI[CI.index("browser-chrome:") :]
+    job = job[: job.index("\n  # ")] if "\n  # " in job else job
+    assert "google-chrome --version" in job  # fails the job if Chrome is missing
+    assert "playwright" in job and "server/e2e/tests/test_chrome.py" in job
+    assert "postgres:16" in job

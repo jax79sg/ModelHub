@@ -13,6 +13,10 @@
 
 - 2026-10-18T02:20:00Z — Loop-back 3: the person chose Retry with fix for the one Unverified target with a code fix (platform NFR7.2, free space checked at start); the other 13 stay Unverified.
 
+- 2026-10-18T03:30:00Z — The person reviewed the 13 Unverified targets and dropped 5 (catalog NFR4.1, import-cli NFR7.3, artifactory-service NFR7.1 and NFR7.2, import-cli NFR7.2). The word "speed related" was read as the three speed targets; the others (for example the planning figures) were not dropped. 8 targets stay Unverified.
+
+- 2026-10-18T04:00:00Z — Loop-back 4: the person narrowed portal NFR10.1 to Chrome ("Nfr 10.1, just chrome."); the answer was read as authorising a fourth loop-back limited to a Chrome test of the portal. The other 7 Unverified targets were not addressed by that answer.
+
 ## Tradeoffs
 - 2026-10-17T11:12:59Z — Offered the person a loop-back to close the 4 Not Met targets; they accepted the failure instead, so those and the 60 Unverified targets stay open and the stage is presented as not deployment-ready.
 

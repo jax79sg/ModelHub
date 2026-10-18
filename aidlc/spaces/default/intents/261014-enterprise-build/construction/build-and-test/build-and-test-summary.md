@@ -2,7 +2,7 @@
 
 ## Overall status
 
-Build: success. Tests: 1137 passed, 0 failed, and the CI run on the pushed branch (run 39088051063) passed every build, test, image, scan, smoke-test and rehearsal job. Targets: **175 Met, 13 Unverified, 0 Not Met** of 188 (after loop-backs 1, 2 and 3). By the stage's failure rule the stage has still not passed: any applicable target that is Unverified is a failure, and no later validation stage in this plan owns the 13 that remain.
+Build: success. Tests: 1137 passed, 0 failed; the CI run on the pushed branch passed every build, test, image, scan, smoke-test and rehearsal job (images run 39088051063). Targets: **175 Met, 8 Unverified, 0 Not Met** of 183 applicable (5 targets were dropped by the person on 2026-10-18, see below). By the stage's failure rule the stage has still not passed: an applicable target that is Unverified is a failure, and no later validation stage in this plan owns the 8 that remain.
 
 ## Test type inventory
 
@@ -15,16 +15,31 @@ Standard strategy: five to eight tests per component plus integration tests at t
 ## Readiness assessment
 
 - Build-ready: yes.
-- Test-ready: yes; all 1137 tests pass, and the CI run on the branch passed (images built and scanned, JFrog CLI present only in the import service image, no secret in any container's logs, whole-stack smoke test and upgrade-and-return rehearsal).
-- Deployment-ready: **no**, until the 13 remaining Unverified targets are checked or knowingly accepted. None of them can be closed from this repository: they need a real Artifactory, a real Keycloak, real browsers, the monitoring team's alerts, the host's firewall, or a decision about the design (listed below).
+- Test-ready: yes; all 1137 tests pass, and the CI run on the branch passed (images built and scanned, JFrog CLI only in the import service image, no secret in any container's logs, whole-stack smoke test and upgrade-and-return rehearsal).
+- Deployment-ready: **no**, until the 8 remaining Unverified targets are checked or knowingly accepted (listed below with what closes each).
+
+## Targets dropped by the person
+
+On 2026-10-18, after a review of the Unverified targets, the person answered "Drop nfr 4.1, 7.3 and speed related nfr." This was read as the five targets below; they are no longer applicable targets of this build, are not counted as Met, and are kept here in full so the choice can be reversed. The design intent's own tables (`261011-enterprise-modelhub`) still list them.
+
+| Target ID | Source | Target as written | State when dropped |
+|---|---|---|---|
+| catalog:NFR4.1 | catalog/nfr-requirements/performance-requirements.md | A version with 10,000 files and 100 MB of documents in under 60 seconds; an identical repeat in under 1 second | Largest accepted version (10,000 files, 64 MiB) stores in under 60 s, but the target says 100 MB of documents and NFR7.5 refuses m |
+| artifactory-service:NFR7.1 | artifactory-service/nfr-requirements/performance-requirements.md | Measured on a real Artifactory when available; until then the stand-in measures the service's own part (receiv | A 100 GB import needs a real Artifactory; not measured |
+| artifactory-service:NFR7.2 | artifactory-service/nfr-requirements/performance-requirements.md | At least 100 MB/s sustained on the server's disk with SHA-256 checking, tested with the stand-in | 100 MB/s sustained was not measured |
+| import-cli:NFR7.2 | import-cli/nfr-requirements/performance-requirements.md | At least 90% of the measured link speed on a 1 Gbit/s link to the stand-in | Link speed was not measured |
+| import-cli:NFR7.3 | import-cli/nfr-requirements/scalability-requirements.md | Progress and memory do not grow with the number of pieces | Memory grows by under 1 KiB per piece (tests/test_import_limits.py) so 999,999 pieces stays under 1 GB; the target says it does no |
 
 ## Known limitations or outstanding items
 
-- Not Met: none. Loop-back 1 closed the four Not Met targets; loop-backs 2 and 3 added checks for 48 Unverified targets and closed them, and the checks found and fixed real problems: two catalog event codes never logged, a catalog that answered 500 instead of 503 with the database away and reused dropped connections, no stop grace, import service work folders not owner-only, an import command that could report over 2 seconds late, and free space not checked again when an import starts (loop-back 3).
-- Unverified (13), by what they need:
-  - A real system: `artifactory-service:NFR7.1` (100 GB import), `NFR7.2` (100 MB/s disk), `import-cli:NFR7.2` (link speed on 1 Gbit/s), `portal:NFR10.1` (Chrome, Edge, Firefox), `artifactory-service:NFR7.6` and `catalog:NFR7.2` (free-space and database size plans).
-  - Another team: `catalog:NFR6.3`, `catalog:NFR6.4`, `artifactory-service:NFR6.4` (error-rate measure and alert thresholds belong to central monitoring), `platform:NFR8.1` (containers without a route to the internet is a host firewall matter).
-  - A decision (3): `catalog:NFR4.1` says 100 MB of documents while NFR7.5 refuses more than 64 MiB (the largest accepted version stores in under 60 s); `artifactory-service:NFR9.2` wants `huggingface_hub` pinned to a release Artifactory supports (up to 1.19.0) while the project is built on 2.2 to 3; `import-cli:NFR7.3` says memory does not grow with the number of pieces, but it grows by under 1 KiB per piece (999,999 pieces stays under 1 GB).
+- Not Met: none. Loop-back 1 closed the four Not Met targets; loop-backs 2 and 3 added checks for 48 Unverified targets and closed them. The checks found and fixed real problems: two catalog event codes never logged, a catalog that answered 500 instead of 503 with the database away and reused dropped connections, no stop grace, import service work folders not owner-only, an import command that could report over 2 seconds late, and free space not checked again when an import starts.
+- Unverified (8), with what closes each:
+  - `portal:NFR10.1` Chrome, Edge and Firefox: browser tests in CI (Playwright), or a manual check on those browsers.
+  - `catalog:NFR6.3` error-rate measure: a test that computes the 5xx share from the access log (closable here).
+  - `catalog:NFR6.4`, `artifactory-service:NFR6.4` alert thresholds: the monitoring team loads them; the repository can ship the rules as a file and test that the signals exist (partly closable here).
+  - `artifactory-service:NFR7.6` (440 GB import disk) and `catalog:NFR7.2` (100 GB database plan): planning figures; `ops.sh preflight` can be made to fail below them (closable here).
+  - `platform:NFR8.1` containers without a route to the internet: run the smoke test and rehearsal on an internal-only network (closable here), and the host firewall on the real server.
+  - `artifactory-service:NFR9.2` `huggingface_hub` pinned to a release Artifactory supports (up to 1.19.0) while the project is built on 2.2 to 3: the person's decision, and a check against the real Artifactory.
 - Readings used: `artifactory-stand-in:NFR7.1` was checked with 1,000 versions of which one holds 10,000 files (the target says "up to"); `common:NFR5.11` is met by a `.github/dependabot.yml` and a test of it, switching Dependabot on in the repository settings is the owner's.
 - The rehearsal retags the same images as the new release, so it does not exercise a schema change.
 
@@ -80,7 +95,6 @@ Standard strategy: five to eight tests per component plus integration tests at t
 | catalog:NFR2.4 | catalog/nfr-requirements/performance-requirements.md | 95th percentile under 300 ms | Holds | server/catalog/tests/test_limits_and_events.py (95th percentile under 300 ms) | build-and-test | Met |
 | catalog:NFR2.5 | catalog/nfr-requirements/performance-requirements.md | Under 1 second for a document up to 16 MiB, streamed | Holds | server/catalog/tests/test_limits_and_events.py (first byte of 16 MiB under 1 s) | build-and-test | Met |
 | catalog:NFR1.1 | catalog/nfr-requirements/performance-requirements.md | A test lists right after a store and finds it; no delayed index step | Holds | server/catalog/tests/test_store_read.py; server/e2e/tests/test_whole_stack.py | build-and-test | Met |
-| catalog:NFR4.1 | catalog/nfr-requirements/performance-requirements.md | A version with 10,000 files and 100 MB of documents in under 60 seconds; an ide… | Not checked | Largest accepted version (10,000 files, 64 MiB) stores in under 60 s, but the target says 100 MB of documents and NFR7.5 refuses more than 64 MiB: th… | none scheduled (performance-validation and operations stages are skipped) | Unverified |
 | catalog:NFR2.6 | catalog/nfr-requirements/performance-requirements.md | 5-second limit per query; longer ones are cancelled and answered with 503 | Holds | server/catalog/src/modelhub_catalog/db.py (5 s statement limit); no test cancels a slow query | build-and-test | Met |
 | catalog:NFR3.1 | catalog/nfr-requirements/reliability-requirements.md | Planned downtime for upgrades is allowed | Holds | No promise made; restart policy in deploy/compose.yaml | build-and-test | Met |
 | catalog:NFR3.2 | catalog/nfr-requirements/reliability-requirements.md | The upgrade-and-return procedure is rehearsed once (FR6.6) | Holds | .github/workflows/ci.yml (CI matrix): images job rehearsal (upgrade and return) | build-and-test | Met |
@@ -113,8 +127,6 @@ Standard strategy: five to eight tests per component plus integration tests at t
 | artifactory-service:NFR6.3 | artifactory-service/nfr-requirements/observability-requirem… | Import state and error codes in logs and through the import call | Holds | server/artifactory_service/tests/test_api.py (state and error code through the import call) | build-and-test | Met |
 | artifactory-service:NFR6.4 | artifactory-service/nfr-requirements/observability-requirem… | Ready 503 over 5 minutes; imports failed as 'interrupted' or 'artifactory_incon… | Not checked | Alert thresholds belong to central monitoring | none scheduled (performance-validation and operations stages are skipped) | Unverified |
 | artifactory-service:NFR6.5 | artifactory-service/nfr-requirements/observability-requirem… | import_created, import_skipped, import_done, import_failed, key_added, key_revo… | Holds | server/artifactory_service/tests/test_operability.py (all eight event codes, no secret in any) | build-and-test | Met |
-| artifactory-service:NFR7.1 | artifactory-service/nfr-requirements/performance-requiremen… | Measured on a real Artifactory when available; until then the stand-in measures… | Not checked | A 100 GB import needs a real Artifactory; not measured | none scheduled (performance-validation and operations stages are skipped) | Unverified |
-| artifactory-service:NFR7.2 | artifactory-service/nfr-requirements/performance-requiremen… | At least 100 MB/s sustained on the server's disk with SHA-256 checking, tested … | Not checked | 100 MB/s sustained was not measured | none scheduled (performance-validation and operations stages are skipped) | Unverified |
 | artifactory-service:NFR7.3 | artifactory-service/nfr-requirements/performance-requiremen… | At most 8 GB at peak; files and pieces are streamed in blocks of at most 8 MiB | Holds | server/artifactory_service/tests/test_limits_and_resilience.py (48 MiB import in 8 MiB pieces, memory below the bundle size) | build-and-test | Met |
 | artifactory-service:NFR1.1 | artifactory-service/nfr-requirements/performance-requiremen… | The record is sent as soon as Artifactory's listing matches | Holds | server/e2e/tests/test_whole_stack.py (listed right after the import) | build-and-test | Met |
 | artifactory-service:NFR2.1 | artifactory-service/nfr-requirements/performance-requiremen… | 95th percentile under 1 second, excluding the Artifactory listing; the listing … | Holds | server/artifactory_service/tests/test_limits_and_resilience.py (95th percentile under 1 s) | build-and-test | Met |
@@ -177,7 +189,6 @@ Standard strategy: five to eight tests per component plus integration tests at t
 | import-cli:NFR6.2 | import-cli/nfr-requirements/observability-requirements.md | Rule BR1.9 | Holds | tests/test_import_cli.py | build-and-test | Met |
 | import-cli:NFR6.3 | import-cli/nfr-requirements/observability-requirements.md | A test checks the record | Holds | tests/test_import_cli.py (run-record.json line per model, no token) | build-and-test | Met |
 | import-cli:NFR7.1 | import-cli/nfr-requirements/performance-requirements.md | Files and pieces are read in blocks of at most 8 MiB; tested with a 200 GB decl… | Holds | tests/test_import_limits.py (200 GB declared, client under 150 MB) | build-and-test | Met |
-| import-cli:NFR7.2 | import-cli/nfr-requirements/performance-requirements.md | At least 90% of the measured link speed on a 1 Gbit/s link to the stand-in | Not checked | Link speed was not measured | none scheduled (performance-validation and operations stages are skipped) | Unverified |
 | import-cli:NFR1.1 | import-cli/nfr-requirements/performance-requirements.md | Within 2 seconds of the service's done | Holds | tests/test_import_limits.py (report within 2 s of done (poll every second)) | build-and-test | Met |
 | import-cli:NFR4.1 | import-cli/nfr-requirements/performance-requirements.md | No piece already stored is sent again | Holds | tests/test_import_cli.py (rerun sends only the missing pieces) | build-and-test | Met |
 | import-cli:NFR4.2 | import-cli/nfr-requirements/reliability-requirements.md | Tested by killing the process during create, during a piece and during the wait | Holds | tests/test_import_limits.py (process killed during create, a piece and the wait, then rerun) | build-and-test | Met |
@@ -185,7 +196,6 @@ Standard strategy: five to eight tests per component plus integration tests at t
 | import-cli:NFR4.4 | import-cli/nfr-requirements/reliability-requirements.md | Settings busy_wait_minutes and busy_poll_seconds | Holds | tests/test_import_cli.py (busy wait, 30 minutes) | build-and-test | Met |
 | import-cli:NFR3.1 | import-cli/nfr-requirements/reliability-requirements.md | None | Holds | No promise made; nothing to measure | build-and-test | Met |
 | import-cli:NFR10.1 | import-cli/nfr-requirements/reliability-requirements.md | The import tests run on both against the stand-in | Holds | .github/workflows/ci.yml (CI matrix): the CLI tests run on Linux, Windows and macOS | build-and-test | Met |
-| import-cli:NFR7.3 | import-cli/nfr-requirements/scalability-requirements.md | Progress and memory do not grow with the number of pieces | Not checked | Memory grows by under 1 KiB per piece (tests/test_import_limits.py) so 999,999 pieces stays under 1 GB; the target says it does not grow: wording to … | none scheduled (performance-validation and operations stages are skipped) | Unverified |
 | import-cli:NFR7.4 | import-cli/nfr-requirements/scalability-requirements.md | A list of 50 bundles runs with constant memory | Holds | tests/test_import_limits.py (50 bundles, growth under 2 MB) | build-and-test | Met |
 | import-cli:NFR5.1 | import-cli/nfr-requirements/security-requirements.md | Permissions checked by a test on Linux; on Windows the file lies in the person'… | Holds | tests/test_import_cli.py (private file; permission failure saves nothing) | build-and-test | Met |
 | import-cli:NFR5.2 | import-cli/nfr-requirements/security-requirements.md | A test greps all outputs for the token | Holds | tests/test_import_cli.py (token never in output) | build-and-test | Met |

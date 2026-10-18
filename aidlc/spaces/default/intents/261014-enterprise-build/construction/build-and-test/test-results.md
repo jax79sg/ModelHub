@@ -25,9 +25,9 @@ The per-unit commands in each unit's `unit-test-instructions.md` are subsets of 
 
 ## Failure details
 
-No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 13 are Unverified, out of 188 (after loop-back 3). See `build-and-test-summary.md`. Loop-backs 2 and 3 closed 48 Unverified targets, including `artifactory-service:NFR10.1` and `platform:NFR5.1`, which the CI `images` job proved (run 39088051063).
+No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 8 are Unverified, out of 183 applicable targets (5 were dropped by the person on 2026-10-18; see `build-and-test-summary.md`). Loop-backs 2 and 3 closed 48 Unverified targets, including `artifactory-service:NFR10.1` and `platform:NFR5.1`, which the CI `images` job proved (run 39088051063).
 
-CI on the pushed branch: every build, test, stand-in, web, offline-pack, lint, image and smoke job passes. Two checks are not green: CodeQL (one alert in a new portal test, fixed in the next commit) and GitGuardian (a fake key-shaped text in a new test, no longer built from literal text; the earlier commit may still need marking as a false positive in GitGuardian).
+CI on the pushed branch: every build, test, stand-in, web, offline-pack, lint and server job passes; CodeQL passes. GitGuardian fails on a fake key-shaped text in a test of an earlier commit (no longer built from literal text); it needs marking as a false positive in GitGuardian.
 
 ## Coverage report
 
@@ -61,4 +61,15 @@ The person chose **Retry with fix** for the 61 Unverified targets: loop-back 2 r
 - **Root-cause stage:** code-generation, unit artifactory-service (the importer's start step).
 - **Planned fix:** refuse to start an import when the free space on the working volume is under the minimum, with a retryable reason, tested; no target is weakened.
 - **Estimated impact:** effort about an hour plus 1 plan approval and 1 checkpoint; financial cost none; risk low. The other 13 Unverified targets stay open: 6 need a real system, 4 belong to other teams, 3 need the person's decision.
+
+## Dropped targets
+
+On 2026-10-18 the person dropped `catalog:NFR4.1`, `import-cli:NFR7.3` and the speed-related targets `artifactory-service:NFR7.1`, `artifactory-service:NFR7.2` and `import-cli:NFR7.2` ("Drop nfr 4.1, 7.3 and speed related nfr."). They are listed in `build-and-test-summary.md`.
+
+### Loop-back 4 — 2026-10-18T04:00:00Z
+
+- **Diagnosis:** 8 Unverified targets of 183 remain (175 Met). The person answered the question about the remaining 8 with "Nfr 10.1, just chrome.", read here as: `portal:NFR10.1` (current and previous Chrome, Edge and Firefox) now covers Chrome only, and is to be tested in Chrome. This is a fourth loop-back, over the bound of 3, authorised by that answer; it is limited to this one target.
+- **Root-cause stage:** code-generation, unit portal (no browser test was ever written).
+- **Planned fix:** a browser test of the portal in Chrome (sign in, list, model page, tokens, theme toggle, no console errors), run in CI in a new job; the target is read as "the current version of Chrome"; previous versions, Edge and Firefox are not covered, by the person's choice.
+- **Estimated impact:** effort about half a day plus 1 plan approval and 1 checkpoint; financial cost none (CI minutes); risk low to medium (a new CI job on a browser). The other 7 Unverified targets are not part of this loop-back.
 
