@@ -14,7 +14,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -31,7 +31,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
@@ -47,7 +47,7 @@ jobs:
     container: almalinux:8
     steps:
       - run: dnf install -y git python3.12 python3.12-pip binutils
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: python3.12 -m pip install -e ".[build]"
       - run: python3.12 packaging/build.py pyinstaller
       - run: python3.12 packaging/roundtrip_smoke.py dist/modelhub-linux-x86_64
@@ -64,7 +64,7 @@ jobs:
     container: ubuntu:20.04
     steps:
       - run: apt-get update && apt-get install -y python3 ca-certificates
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/download-artifact@v4
         with:
           name: modelhub-linux-x86_64
@@ -75,7 +75,7 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -92,7 +92,7 @@ jobs:
   build-macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -114,7 +114,7 @@ jobs:
         python: ["3.10", "3.12"]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
@@ -140,7 +140,7 @@ jobs:
       run:
         working-directory: web
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
@@ -173,7 +173,7 @@ jobs:
     env:
       MODELHUB_TEST_POSTGRES_URL: postgresql://postgres:test@127.0.0.1:5432/postgres
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
@@ -208,7 +208,7 @@ jobs:
     env:
       MODELHUB_TEST_POSTGRES_URL: postgresql://postgres:test@127.0.0.1:5432/postgres
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -229,7 +229,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
@@ -243,7 +243,7 @@ jobs:
     env:
       RELEASE: ci-${{ github.sha }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Check the Compose file reads with example values
         run: |
           cp deploy/env.example deploy/.env
@@ -307,7 +307,7 @@ jobs:
     env:
       RELEASE: main-${{ github.sha }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
