@@ -275,6 +275,7 @@ def test_the_smoke_test_runs_the_whole_stack_on_a_network_with_no_route_out():
 def test_the_smoke_test_checks_that_a_product_container_cannot_reach_the_internet():
     script = (DEPLOY / "smoke" / "run.sh").read_text()
     assert "cannot reach the internet" in script
+    assert "the check below would prove nothing" in script  # a control comes before each test
     for name in ("catalog", "portal", "artifactory-service", "proxy"):
         assert name in script[script.index("no route out") :]
     assert script.index("no route out") < script.index("release $FROM: start, first import") or (
