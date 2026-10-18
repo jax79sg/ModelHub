@@ -7,6 +7,7 @@ FROM ${PYTHON_IMAGE} AS build
 ARG UNIT
 WORKDIR /src
 COPY pyproject.toml README.md ./
+COPY deploy/constraints.txt /constraints.txt
 COPY src ./src
 COPY web ./web
 COPY server/common ./server/common
@@ -20,7 +21,7 @@ RUN python -m venv /opt/venv \
       portal)              PKGS="./web ./server/common ./server/portal" ;; \
       *) echo "UNIT must be catalog, artifactory_service or portal" >&2; exit 1 ;; \
     esac \
- && /opt/venv/bin/pip install --no-cache-dir ${PKGS}
+ && /opt/venv/bin/pip install --no-cache-dir -c /constraints.txt ${PKGS}
 
 FROM ${PYTHON_IMAGE}
 ARG UNIT

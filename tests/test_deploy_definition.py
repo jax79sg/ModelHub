@@ -282,3 +282,37 @@ def test_the_smoke_test_checks_that_a_product_container_cannot_reach_the_interne
         script.index("no route out") > script.index('drive "$FROM" import')
     )
     assert script.index("no route out") < script.index("smoke test and rehearsal passed")
+
+
+# --- the Hugging Face library is pinned exactly in the images (import service NFR9.2) -------------
+CONSTRAINTS = DEPLOY / "constraints.txt"
+
+
+def _pinned_hf() -> str:
+    lines = [
+        line.strip()
+        for line in CONSTRAINTS.read_text().splitlines()
+        if line.strip().startswith("huggingface_hub")
+    ]
+    assert len(lines) == 1, lines
+    return lines[0]
+
+
+def test_huggingface_hub_is_pinned_to_one_exact_version():
+    assert re.fullmatch(r"huggingface_hub==\d+\.\d+\.\d+", _pinned_hf())
+
+
+def test_the_image_recipe_installs_with_the_pin_in_every_build():
+    assert "COPY deploy/constraints.txt" in DOCKERFILE
+    assert "pip install --no-cache-dir -c " in DOCKERFILE and "constraints.txt" in DOCKERFILE
+
+
+def test_the_pinned_version_is_the_one_the_tests_ran_on():
+    from importlib.metadata import version
+
+    assert _pinned_hf() == f"huggingface_hub=={version('huggingface_hub')}"
+
+
+def test_the_guide_names_the_version_as_a_check_for_the_first_real_artifactory_test():
+    guide = (DEPLOY / "README.md").read_text()
+    assert _pinned_hf().split("==")[1] in guide and "first real Artifactory" in guide

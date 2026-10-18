@@ -284,6 +284,9 @@
     },
     {
       "path": "tests/test_verify.py"
+    },
+    {
+      "path": "deploy/constraints.txt"
     }
   ]
 }

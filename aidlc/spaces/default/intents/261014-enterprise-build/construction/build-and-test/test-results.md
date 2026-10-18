@@ -25,7 +25,7 @@ The per-unit commands in each unit's `unit-test-instructions.md` are subsets of 
 
 ## Failure details
 
-No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 3 are Unverified, out of 183 applicable targets (5 dropped and 1 narrowed by the person on 2026-10-18; see `build-and-test-summary.md`). Loop-backs 2 to 5 closed 53 Unverified targets. The 3 left: `catalog:NFR6.4` and `artifactory-service:NFR6.4` (the monitoring team sets the alerts; the rules are delivered) and `artifactory-service:NFR9.2` (the person's decision and the real Artifactory).
+No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 1 is Unverified, out of 181 applicable targets (7 dropped and 1 narrowed by the person on 2026-10-18; see `build-and-test-summary.md`). Loop-backs 2 to 5 closed 53 Unverified targets. The one left: `artifactory-service:NFR9.2` (the person's decision and the real Artifactory). The person dropped the two alert targets (`catalog:NFR6.4`, `artifactory-service:NFR6.4`) with "Drop the two alert targets".
 
 CI on the pushed branch (commit 563fdc5): every build, test, stand-in, web, offline-pack, lint, server, image, smoke and browser job passes, and CodeQL passes. GitGuardian fails on a fake key-shaped text in a test of an earlier commit (no longer built from literal text); it needs marking as a false positive in GitGuardian.
 
@@ -83,3 +83,11 @@ On 2026-10-18 the person narrowed `portal:NFR10.1` to Chrome ("Nfr 10.1, just ch
 - **Estimated impact:** effort about a day plus 1 plan approval and 1 checkpoint; financial cost none; risk medium (the internal-only network is proven only by the CI images job). Stays Unverified: alert thresholds set in the monitoring system (monitoring team) and `artifactory-service:NFR9.2` (the person's decision and the real Artifactory).
 
 Loop-back 5 (2026-10-18, chosen by the person: "Loop-back 5: close what I can") closed `catalog:NFR6.3`, `catalog:NFR7.2`, `artifactory-service:NFR7.6` and `platform:NFR8.1`.
+
+### Loop-back 6 — 2026-10-18T07:00:00Z
+
+- **Diagnosis:** 1 Unverified target of 181 remains: `artifactory-service:NFR9.2` ("huggingface_hub is pinned to a release Artifactory supports (up to 1.19.0)"). The images install it from a range (2.2 to 3). The person chose "Pin exactly, reword target": the target now reads "pinned to the exact version tested (2.2.0); that this release works with the real Artifactory is checked at the first real Artifactory test".
+- **Root-cause stage:** code-generation, unit platform (the image recipe).
+- **Planned fix:** a constraints file `deploy/constraints.txt` pinning `huggingface_hub==2.2.0` that the image recipe installs with, a test that the pin is exact, used by the recipe and equal to the version the tests ran on, and a line in the operator guide naming the version check as a first-real-test item.
+- **Estimated impact:** effort about an hour plus 1 plan approval and 1 checkpoint; financial cost none; risk low (the image build proves it in CI). Whether 2.2.0 works with the real Artifactory is not proven by this.
+

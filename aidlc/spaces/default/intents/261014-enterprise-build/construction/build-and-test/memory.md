@@ -19,6 +19,10 @@
 
 - 2026-10-18T05:30:00Z — Loop-back 5: the person chose to close what can be closed of the remaining 7; work lands in the platform unit (monitoring files, preflight, internal-only smoke test).
 
+- 2026-10-18T06:30:00Z — The person dropped the two alert targets (catalog NFR6.4, artifactory-service NFR6.4). 1 target stays Unverified: artifactory-service NFR9.2.
+
+- 2026-10-18T07:00:00Z — Loop-back 6: the person reworded artifactory-service NFR9.2 to an exact pin of the tested huggingface_hub version, checked against the real Artifactory at the first real test.
+
 ## Tradeoffs
 - 2026-10-17T11:12:59Z — Offered the person a loop-back to close the 4 Not Met targets; they accepted the failure instead, so those and the 60 Unverified targets stay open and the stage is presented as not deployment-ready.
 

@@ -66,6 +66,15 @@ are never in an image, an environment variable or `compose.yaml`. The folder is 
 people on the server (mode 700); the files are readable (mode 444) because each container runs as
 its own non-root user. Keep `secrets/` out of backups that leave the server.
 
+## Before the first real use with Artifactory
+
+The images were built and tested against a stand-in for Artifactory, with `huggingface_hub 2.2.0`
+(pinned in `constraints.txt`). The first real Artifactory test is the check that this version
+works with it: the first import into the organisation's Artifactory. import one small model, then list it and download it with
+`jf hf download`. If Artifactory refuses this version, change the pin in `constraints.txt`, rebuild
+and test again. The same first run is the place to check the rest of the Artifactory
+behaviour that the stand-in could only assume (see the stand-in's checklist).
+
 ## What the central monitoring should watch
 
 Any container unhealthy for 5 minutes in business hours; free space under 20% on the database
