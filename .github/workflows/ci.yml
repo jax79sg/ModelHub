@@ -51,7 +51,7 @@ jobs:
       - run: python3.12 -m pip install -e ".[build]"
       - run: python3.12 packaging/build.py pyinstaller
       - run: python3.12 packaging/roundtrip_smoke.py dist/modelhub-linux-x86_64
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: modelhub-linux-x86_64
           path: dist/modelhub-linux-x86_64
@@ -82,7 +82,7 @@ jobs:
       - run: pip install -e ".[build]"
       - run: python packaging/build.py pyinstaller
       - run: python packaging/roundtrip_smoke.py dist/modelhub-windows-x86_64.exe
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: modelhub-windows-x86_64.exe
           path: dist/modelhub-windows-x86_64.exe
@@ -99,7 +99,7 @@ jobs:
       - run: pip install -e ".[build]"
       - run: python packaging/build.py pyinstaller
       - run: python packaging/roundtrip_smoke.py dist/modelhub-darwin-arm64
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: modelhub-darwin-arm64
           path: dist/modelhub-darwin-arm64
@@ -121,7 +121,7 @@ jobs:
       - run: python packaging/offline_pack.py pack
       - run: pip install --no-index --find-links pack modelhub
       - run: modelhub --version
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: modelhub-pack-${{ runner.os }}-py${{ matrix.python }}
           path: pack
@@ -341,7 +341,7 @@ jobs:
         run: |
           if [ -n "${KEY_ID:-}" ]; then modelhub pack verify "$RUNNER_TEMP/pack"; fi
           ! grep -Ei 'smoke|stand|driver|testkit' "$RUNNER_TEMP/pack/SHA256SUMS" 2>/dev/null
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: server-pack-${{ github.sha }}
           path: ${{ runner.temp }}/pack
