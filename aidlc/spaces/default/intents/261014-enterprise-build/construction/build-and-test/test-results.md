@@ -74,3 +74,11 @@ On 2026-10-18 the person dropped `catalog:NFR4.1`, `import-cli:NFR7.3` and the s
 - **Estimated impact:** effort about half a day plus 1 plan approval and 1 checkpoint; financial cost none (CI minutes); risk low to medium (a new CI job on a browser). The other 7 Unverified targets are not part of this loop-back.
 
 On 2026-10-18 the person narrowed `portal:NFR10.1` to Chrome ("Nfr 10.1, just chrome."); it is Met on that reading (CI job `browser (chrome)`, Google Chrome 155, passed).
+
+### Loop-back 5 — 2026-10-18T05:30:00Z
+
+- **Diagnosis:** 7 Unverified targets of 183 remain (176 Met). The person chose "Loop-back 5: close what I can". Four have a repository-side part: `catalog:NFR6.3` (error rate from the access log), `platform:NFR8.1` (no route to the internet), `artifactory-service:NFR7.6` and `catalog:NFR7.2` (disk and database minimums not enforced at install), and the two alert-threshold targets (`catalog:NFR6.4`, `artifactory-service:NFR6.4`) have a deliverable (the rules) but are set by the monitoring team.
+- **Root-cause stage:** code-generation, unit platform (the operator and monitoring tooling and the smoke test); the catalog and import service code is not changed.
+- **Planned fix:** (1) `deploy/monitoring/error_rate.py` and `deploy/monitoring/alerts.json` with the alert rules and the signal for each, tested against real access lines; (2) `ops.sh preflight` fails when the Docker data folder has less than 540 GB free (100 GB database plus 440 GB import area); (3) the smoke test and rehearsal run on a network with no route out, and a check that a product container cannot reach the internet. No target is weakened.
+- **Estimated impact:** effort about a day plus 1 plan approval and 1 checkpoint; financial cost none; risk medium (the internal-only network is proven only by the CI images job). Stays Unverified: alert thresholds set in the monitoring system (monitoring team) and `artifactory-service:NFR9.2` (the person's decision and the real Artifactory).
+

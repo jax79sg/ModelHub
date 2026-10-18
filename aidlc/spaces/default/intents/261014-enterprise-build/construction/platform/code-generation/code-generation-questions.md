@@ -14,8 +14,8 @@ Approve the code plan for platform?
 Full plan: aidlc/spaces/default/intents/261014-enterprise-build/construction/platform/code-generation/code-generation-plan.md
 Test instructions: aidlc/spaces/default/intents/261014-enterprise-build/construction/platform/code-generation/unit-test-instructions.md
 
-[Approval Fingerprint]: sha256:v3:551fb77b348a9021b102f2be3cf4ecd9c76bc13606eef5060dd8ed0c40edc49b
-[Planned Source]: 6e301710f02b2704c14620a5d5ac643653666d748d3405c5ba10617f93c36d8b
+[Approval Fingerprint]: sha256:v3:61702e1cccce51bb5be77bedc9923c7a9adec1d06769d3418400311f9124012b
+[Planned Source]: aad6166775255953db899dca763296b5336414bb6afffda6df183d8d8ada7593
 
 - A. Approve Plan
 - B. Request Changes

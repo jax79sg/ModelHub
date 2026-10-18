@@ -25,6 +25,7 @@ services:
   proxy:
     networks:
       internal: {aliases: [modelhub.test]}
+    ports: !reset []   # the network has no route out, so nothing is published; the driver is inside it
   driver:
     image: modelhub/smoke:${SMOKE_VERSION:?}
     profiles: [driver]
@@ -38,5 +39,10 @@ services:
       - ./secrets/tls_certificate:/certs/modelhub.crt:ro
     depends_on:
       proxy: {condition: service_healthy}
+# The whole smoke test and rehearsal run on a network with no route to the internet: if the stack
+# needed to download or call anything outside, it would fail here (platform NFR8.1).
+networks:
+  internal:
+    internal: true
 volumes:
   smoke-state: {}

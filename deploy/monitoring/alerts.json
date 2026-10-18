@@ -1,0 +1,51 @@
+{
+  "about": "The alerts of the design (catalog NFR6.4, import service NFR6.4), each with the signal it is read from. The monitoring team loads them into the organisation's monitoring system; nothing here sends an alert by itself.",
+  "alerts": [
+    {
+      "id": "ready-down",
+      "targets": ["catalog:NFR6.4", "artifactory-service:NFR6.4"],
+      "description": "A service has been not ready (503 on /readyz) for over 5 minutes in business hours.",
+      "threshold": "503",
+      "window": "5 minutes",
+      "signal": {"kind": "health", "source": "GET /readyz of the catalog, the import service and the portal"}
+    },
+    {
+      "id": "error-share",
+      "targets": ["catalog:NFR6.3", "catalog:NFR6.4"],
+      "description": "The share of 5xx access lines of a service is over 5% for 10 minutes.",
+      "threshold": "5%",
+      "window": "10 minutes",
+      "signal": {"kind": "log", "source": "access lines (event access, field status), taken by deploy/monitoring/error_rate.py"}
+    },
+    {
+      "id": "list-slow",
+      "targets": ["catalog:NFR6.4"],
+      "description": "The 95th percentile of the models list is over 800 ms for 10 minutes.",
+      "threshold": "800 ms",
+      "window": "10 minutes",
+      "signal": {"kind": "log", "source": "access lines for GET /v1/models (field duration_ms) of the catalog"}
+    },
+    {
+      "id": "import-interrupted",
+      "targets": ["artifactory-service:NFR6.4"],
+      "description": "Any import failed as interrupted or artifactory_inconsistent.",
+      "threshold": "any",
+      "signal": {"kind": "log", "source": "import service events import_failed with code interrupted or artifactory_inconsistent"}
+    },
+    {
+      "id": "disk-free",
+      "targets": ["artifactory-service:NFR6.4"],
+      "description": "Free space on the import working volume is under 25%.",
+      "threshold": "25%",
+      "signal": {"kind": "host", "source": "free space of the Docker volume import-work (df on the server)"}
+    },
+    {
+      "id": "artifactory-down",
+      "targets": ["artifactory-service:NFR6.4"],
+      "description": "The import service reports Artifactory as down for over 10 minutes.",
+      "threshold": "down",
+      "window": "10 minutes",
+      "signal": {"kind": "health", "source": "GET /readyz of the import service, check artifactory"}
+    }
+  ]
+}

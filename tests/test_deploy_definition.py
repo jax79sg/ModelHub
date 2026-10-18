@@ -202,3 +202,82 @@ def test_the_ci_image_job_proves_the_cli_is_there_and_only_there():
         "modelhub/artifactory-service"
         in ci[ci.index("jf --version") - 400 : ci.index("jf --version") + 400]
     )
+
+
+# --- the disk minimums are enforced at install (catalog NFR7.2, import service NFR7.6) ------------
+def _preflight(tmp_path, free_gb: int, **env):
+    import shutil
+    import subprocess
+    import sys
+
+    if sys.platform == "win32":
+        pytest.skip("the operator script is for the Linux server")
+    stub = tmp_path / "bin"
+    stub.mkdir()
+    (stub / "docker").write_text(
+        "#!/bin/sh\n"
+        'case "$1 $2" in\n'
+        '  "info --format") echo /var/lib/docker ;;\n'
+        "  *) exit 0 ;;\n"
+        "esac\n"
+    )
+    (stub / "df").write_text(
+        "#!/bin/sh\n"
+        'case "$*" in\n'
+        '  *-Pk*) echo "Filesystem 1024-blocks Used Available Capacity Mounted"; '
+        f'echo "fs 9999999999 1 {free_gb * 1024 * 1024} 1% /" ;;\n'
+        '  *) echo "Filesystem Size Used Avail Use% Mounted"; echo "fs 9T 1G 9T 1% /" ;;\n'
+        "esac\n"
+    )
+    for name in ("docker", "df"):
+        (stub / name).chmod(0o755)
+    home = tmp_path / "deploy"
+    home.mkdir()
+    for name in ("ops.sh", "compose.yaml"):
+        shutil.copy(DEPLOY / name, home / name)
+    (home / ".env").write_text(
+        "PUBLIC_URL=https://modelhub.example.org\nKEYCLOAK_ISSUER=https://kc/realms/x\n"
+        "ARTIFACTORY_URL=https://art\nARTIFACTORY_REPO=hf-local\n"
+    )
+    return subprocess.run(
+        ["bash", str(home / "ops.sh"), "preflight"],
+        env={"PATH": f"{stub}:/usr/bin:/bin", "HOME": str(tmp_path), **env},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+def test_preflight_refuses_a_server_with_less_than_540_gb_free(tmp_path):
+    done = _preflight(tmp_path, free_gb=300)
+    assert done.returncode == 1
+    assert "Problem" in done.stderr and "540 GB" in done.stderr
+
+
+def test_preflight_accepts_a_server_with_enough_space(tmp_path):
+    done = _preflight(tmp_path, free_gb=600)
+    assert done.returncode == 0, done.stderr
+
+
+def test_preflight_can_be_told_a_small_test_server_is_fine(tmp_path):
+    done = _preflight(tmp_path, free_gb=100, MODELHUB_PREFLIGHT_SMALL="1")
+    assert done.returncode == 0, done.stderr
+    assert "small" in done.stdout.lower()
+
+
+# --- the stack needs no route to the internet (platform NFR8.1) ----------------------------------
+def test_the_smoke_test_runs_the_whole_stack_on_a_network_with_no_route_out():
+    smoke = (DEPLOY / "smoke" / "compose.smoke.yaml").read_text()
+    assert re.search(r"^networks:\n  internal:\n    internal: true", smoke, re.MULTILINE)
+    assert "ports: !reset []" in smoke  # nothing can be published from a network with no route
+
+
+def test_the_smoke_test_checks_that_a_product_container_cannot_reach_the_internet():
+    script = (DEPLOY / "smoke" / "run.sh").read_text()
+    assert "cannot reach the internet" in script
+    for name in ("catalog", "portal", "artifactory-service", "proxy"):
+        assert name in script[script.index("no route out") :]
+    assert script.index("no route out") < script.index("release $FROM: start, first import") or (
+        script.index("no route out") > script.index('drive "$FROM" import')
+    )
+    assert script.index("no route out") < script.index("smoke test and rehearsal passed")

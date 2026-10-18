@@ -58,6 +58,20 @@ stop "$TO"
 up "$FROM"
 drive "$FROM" check
 
+step "no route out: a product container cannot reach the internet"
+for name in catalog portal artifactory-service; do
+  if MODELHUB_VERSION=$FROM POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" exec -T "$name" \
+    python -c "import socket; socket.create_connection(('1.1.1.1', 443), 3)" >/dev/null 2>&1; then
+    echo "Problem: $name can reach the internet"; exit 1
+  fi
+  echo "$name cannot reach the internet"
+done
+if MODELHUB_VERSION=$FROM POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" exec -T proxy \
+  curl --silent --max-time 3 https://1.1.1.1 >/dev/null 2>&1; then
+  echo "Problem: proxy can reach the internet"; exit 1
+fi
+echo "proxy cannot reach the internet"
+
 step "no secret may be in the logs of any container"
 LOGS=$(mktemp)
 MODELHUB_VERSION=$FROM POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" logs --no-color >"$LOGS" 2>&1
