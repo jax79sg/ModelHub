@@ -2,7 +2,7 @@
 
 ## Overall status
 
-Build: success. Tests: 1137 passed, 0 failed; the CI run on the pushed branch passed every build, test, image, scan, smoke-test and rehearsal job (images run 39088051063). Targets: **175 Met, 8 Unverified, 0 Not Met** of 183 applicable (5 targets were dropped by the person on 2026-10-18, see below). By the stage's failure rule the stage has still not passed: an applicable target that is Unverified is a failure, and no later validation stage in this plan owns the 8 that remain.
+Build: success. Tests: 1139 passed, 0 failed; the CI run on the pushed branch passed every build, test, image, scan, smoke-test and rehearsal job (images run 39088051063). Targets: **176 Met, 7 Unverified, 0 Not Met** of 183 applicable (5 targets were dropped by the person on 2026-10-18 and one narrowed to Chrome, see below). By the stage's failure rule the stage has still not passed: an applicable target that is Unverified is a failure, and no later validation stage in this plan owns the 7 that remain.
 
 ## Test type inventory
 
@@ -10,13 +10,13 @@ Unit (per unit, see each `unit-test-instructions.md`), integration and cross-uni
 
 ## Coverage expectations per unit
 
-Standard strategy: five to eight tests per component plus integration tests at the boundaries. Counts: common 90, stand-in 86, catalog 125, artifactory-service 167, portal 83, CLI and import command 466 (with the deployment and pack checks), web prototype 24, test helpers 15, whole-stack 1.
+Standard strategy: five to eight tests per component plus integration tests at the boundaries. Counts: common 90, stand-in 86, catalog 125, artifactory-service 167, portal 83, CLI and import command 466 (with the deployment and pack checks), web prototype 24, test helpers 15, whole-stack and Chrome 2.
 
 ## Readiness assessment
 
 - Build-ready: yes.
-- Test-ready: yes; all 1137 tests pass, and the CI run on the branch passed (images built and scanned, JFrog CLI only in the import service image, no secret in any container's logs, whole-stack smoke test and upgrade-and-return rehearsal).
-- Deployment-ready: **no**, until the 8 remaining Unverified targets are checked or knowingly accepted (listed below with what closes each).
+- Test-ready: yes; all 1139 tests pass, and the CI run on the branch passed (images built and scanned, JFrog CLI only in the import service image, no secret in any container's logs, whole-stack smoke test and upgrade-and-return rehearsal).
+- Deployment-ready: **no**, until the 7 remaining Unverified targets are checked or knowingly accepted (listed below with what closes each).
 
 ## Targets dropped by the person
 
@@ -30,11 +30,14 @@ On 2026-10-18, after a review of the Unverified targets, the person answered "Dr
 | import-cli:NFR7.2 | import-cli/nfr-requirements/performance-requirements.md | At least 90% of the measured link speed on a 1 Gbit/s link to the stand-in | Link speed was not measured |
 | import-cli:NFR7.3 | import-cli/nfr-requirements/scalability-requirements.md | Progress and memory do not grow with the number of pieces | Memory grows by under 1 KiB per piece (tests/test_import_limits.py) so 999,999 pieces stays under 1 GB; the target says it does no |
 
+## Target narrowed by the person
+
+`portal:NFR10.1` was "Works in the current and previous versions of Chrome, Edge and Firefox". On 2026-10-18 the person answered "Nfr 10.1, just chrome." It is read as the current version of Chrome only, and is Met on that reading: a Playwright test drives Chrome 155 through the real portal and the CI job `browser (chrome)` passed. Previous Chrome versions, Edge and Firefox are not covered.
+
 ## Known limitations or outstanding items
 
-- Not Met: none. Loop-back 1 closed the four Not Met targets; loop-backs 2 and 3 added checks for 48 Unverified targets and closed them. The checks found and fixed real problems: two catalog event codes never logged, a catalog that answered 500 instead of 503 with the database away and reused dropped connections, no stop grace, import service work folders not owner-only, an import command that could report over 2 seconds late, and free space not checked again when an import starts.
-- Unverified (8), with what closes each:
-  - `portal:NFR10.1` Chrome, Edge and Firefox: browser tests in CI (Playwright), or a manual check on those browsers.
+- Not Met: none. Loop-back 1 closed the four Not Met targets; loop-backs 2, 3 and 4 added checks for 49 Unverified targets and closed them. The checks found and fixed real problems: two catalog event codes never logged, a catalog that answered 500 instead of 503 with the database away and reused dropped connections, no stop grace, import service work folders not owner-only, an import command that could report over 2 seconds late, free space not checked again when an import starts, and (found only by a real Chrome) a Referrer-Policy that made Chrome send `Origin: null` so every portal form was refused, and a favicon 404 on every page.
+- Unverified (7), with what closes each:
   - `catalog:NFR6.3` error-rate measure: a test that computes the 5xx share from the access log (closable here).
   - `catalog:NFR6.4`, `artifactory-service:NFR6.4` alert thresholds: the monitoring team loads them; the repository can ship the rules as a file and test that the signals exist (partly closable here).
   - `artifactory-service:NFR7.6` (440 GB import disk) and `catalog:NFR7.2` (100 GB database plan): planning figures; `ops.sh preflight` can be made to fail below them (closable here).
@@ -175,7 +178,7 @@ On 2026-10-18, after a review of the Unverified targets, the person answered "Dr
 | portal:NFR5.9 | portal/nfr-requirements/security-requirements.md | The download and raw routes do not exist | Holds | server/portal/tests/test_pages.py, test_more_pages.py (no file route) | build-and-test | Met |
 | portal:NFR5.10 | portal/nfr-requirements/security-requirements.md | Tested with a short idle setting | Holds | server/portal/tests/test_signin.py (idle and refresh) | build-and-test | Met |
 | portal:NFR5.11 | portal/nfr-requirements/security-requirements.md | None in images, files, logs or pages | Holds | server/portal/tests/test_main.py | build-and-test | Met |
-| portal:NFR10.1 | portal/nfr-requirements/tech-stack-decisions.md | Tested in those; Safari is not covered | Not checked | Not tested in Chrome, Edge or Firefox; only the HTML is checked | none scheduled (performance-validation and operations stages are skipped) | Unverified |
+| portal:NFR10.1 | portal/nfr-requirements/tech-stack-decisions.md | Tested in those; Safari is not covered | Holds | Revised by the person to the current Chrome only: server/e2e/tests/test_chrome.py; CI job browser (chrome), Google Chrome 155, PASSED (run of commit … | build-and-test | Met |
 | portal:NFR9.1 | portal/nfr-requirements/tech-stack-decisions.md | Same as the prototype | Holds | server/portal/pyproject.toml | build-and-test | Met |
 | portal:NFR9.2 | portal/nfr-requirements/tech-stack-decisions.md | Chosen so we do not write security-sensitive code ourselves | Holds | server/portal/src/modelhub_portal/oidc.py (Authlib for the proof key; calls are plain httpx) | build-and-test | Met |
 | portal:NFR9.3 | portal/nfr-requirements/tech-stack-decisions.md | Shared timeouts from the common library | Holds | server/portal/src/modelhub_portal/main.py (timeouts from settings, request id) | build-and-test | Met |

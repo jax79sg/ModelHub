@@ -10,7 +10,7 @@ Re-run after loop-back 1 on 2026-10-17 from the project root; each distinct comm
 
 | Command | Passed | Failed | Skipped |
 |---|---|---|---|
-| `pytest tests -q` (CLI, import command, pack, deployment definition, log search, loop guard) | 480 | 0 | 6 deselected (network tests) |
+| `pytest tests -q` (CLI, import command, pack, deployment definition, log search, loop guard) | 481 | 0 | 6 deselected (network tests) |
 | `pytest web/tests -q` (prototype web app) | 24 | 0 | 0 |
 | `pytest server/common -q` | 93 | 0 | 0 |
 | `pytest server/catalog -q` | 154 | 0 | 0 |
@@ -18,14 +18,14 @@ Re-run after loop-back 1 on 2026-10-17 from the project root; each distinct comm
 | `pytest server/stand_in -q` | 95 | 0 | 0 |
 | `pytest server/portal -q` | 92 | 0 | 0 |
 | `pytest server/testkit -q` | 15 | 0 | 0 |
-| `pytest server/e2e -q` | 1 | 0 | 0 |
-| **Total** | **1137** | **0** | |
+| `pytest server/e2e -q` (whole stack, Chrome) | 2 | 0 | 0 |
+| **Total** | **1139** | **0** | |
 
 The per-unit commands in each unit's `unit-test-instructions.md` are subsets of these runs (for example `tests/test_import_cli.py` is part of `pytest tests`), so no test is counted twice.
 
 ## Failure details
 
-No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 8 are Unverified, out of 183 applicable targets (5 were dropped by the person on 2026-10-18; see `build-and-test-summary.md`). Loop-backs 2 and 3 closed 48 Unverified targets, including `artifactory-service:NFR10.1` and `platform:NFR5.1`, which the CI `images` job proved (run 39088051063).
+No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 7 are Unverified, out of 183 applicable targets (5 were dropped by the person on 2026-10-18; see `build-and-test-summary.md`). Loop-backs 2, 3 and 4 closed 49 Unverified targets, including `artifactory-service:NFR10.1` and `platform:NFR5.1`, which the CI `images` job proved (run 39088051063).
 
 CI on the pushed branch: every build, test, stand-in, web, offline-pack, lint and server job passes; CodeQL passes. GitGuardian fails on a fake key-shaped text in a test of an earlier commit (no longer built from literal text); it needs marking as a false positive in GitGuardian.
 
@@ -73,3 +73,4 @@ On 2026-10-18 the person dropped `catalog:NFR4.1`, `import-cli:NFR7.3` and the s
 - **Planned fix:** a browser test of the portal in Chrome (sign in, list, model page, tokens, theme toggle, no console errors), run in CI in a new job; the target is read as "the current version of Chrome"; previous versions, Edge and Firefox are not covered, by the person's choice.
 - **Estimated impact:** effort about half a day plus 1 plan approval and 1 checkpoint; financial cost none (CI minutes); risk low to medium (a new CI job on a browser). The other 7 Unverified targets are not part of this loop-back.
 
+On 2026-10-18 the person narrowed `portal:NFR10.1` to Chrome ("Nfr 10.1, just chrome."); it is Met on that reading (CI job `browser (chrome)`, Google Chrome 155, passed).
