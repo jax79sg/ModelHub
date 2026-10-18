@@ -199,6 +199,8 @@ def test_the_whole_path_from_sign_in_to_a_model_in_the_portal(stack, tmp_path, m
 
     # the real command, on an import computer that trusts the key, with that token
     monkeypatch.setenv("MODELHUB_HOME", str(tmp_path / "import-computer"))
+    (tmp_path / "cwd").mkdir()
+    monkeypatch.chdir(tmp_path / "cwd")  # the command writes its run record where it is started
     signing.trust_key(bundle.public_key, bundle.public_key["fingerprint"])
     env = {"MODELHUB_SERVER": service, "MODELHUB_TOKEN": token}
     result = CliRunner().invoke(cli.app, ["import", str(bundle.directory)], env=env)

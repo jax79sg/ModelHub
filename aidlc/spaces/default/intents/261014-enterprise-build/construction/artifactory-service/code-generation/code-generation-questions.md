@@ -14,8 +14,8 @@ Approve the code plan for artifactory-service?
 Full plan: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-service/code-generation/code-generation-plan.md
 Test instructions: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-service/code-generation/unit-test-instructions.md
 
-[Approval Fingerprint]: sha256:v3:57e29c41168b5893f6ee61775c1b61b4f04a9ed39d55b8474741f68b7d45b0d1
-[Planned Source]: 656ff70f5fdffe2c12b1d9c098b969cfbcbed78eabc4bc7952e2574fb44c6fcd
+[Approval Fingerprint]: sha256:v3:bf547be6d60b1bd9125a1af2b5a17c5ad4d85a067427d53e9d52f3b6ca453016
+[Planned Source]: 48ae5a40f7aac76dbbbf6c0ebd39241ed4c622e99b08d02805a82ee55b822a48
 
 - A. Approve Plan
 - B. Request Changes

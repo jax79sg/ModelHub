@@ -239,14 +239,7 @@ class Importer:
             self._set(same["import_id"])
             return self.get(same["import_id"], owner_id)
 
-        needed = stream_size + stream_size // 10  # the sizes plus 10 percent (rule BR1.20)
-        if self.free_bytes(self.work) < needed:
-            raise ServiceError(
-                507,
-                "insufficient_storage",
-                f"The import area has too little free space: {needed} bytes are needed.",
-                retryable=True,
-            )
+        self._require_space(stream_size)
 
         import_id = uuid.uuid4().hex
         now = self.clock()
@@ -293,6 +286,18 @@ class Importer:
         (in_dir / "bundle.bundle.json").write_bytes(description_bytes)
         (in_dir / "bundle.bundle.sig").write_bytes(signature_bytes)
         return self.get(import_id, owner_id)
+
+    def _require_space(self, stream_size: int) -> None:
+        """The sizes plus 10 percent must be free (rule BR1.20); checked at create and again at
+        start, because other imports may have used the space in between (NFR7.2)."""
+        needed = stream_size + stream_size // 10
+        if self.free_bytes(self.work) < needed:
+            raise ServiceError(
+                507,
+                "insufficient_storage",
+                f"The import area has too little free space: {needed} bytes are needed.",
+                retryable=True,
+            )
 
     def _insert(
         self, row, description, signature, key, computer, tool_version, checks, count, size, now
@@ -434,6 +439,7 @@ class Importer:
         if missing:
             shown = ", ".join(str(n) for n in missing[:20])
             raise ServiceError(409, "pieces_missing", f"Pieces still to send: {shown}.")
+        self._require_space(json.loads(job["bundle_description"])["stream"]["size"])
         with self.pool.connection() as conn, conn.transaction():
             conn.execute("select pg_advisory_xact_lock(7340003)")
             running = conn.execute(

@@ -292,3 +292,21 @@ def test_with_other_sockets_blocked_a_full_import_still_works(world, bundle, mon
 
 
 _ = (send_pieces, subprocess)
+
+
+# --- platform NFR7.2: the documented free-space minimum is checked at start too -------------------
+def test_an_import_is_not_started_when_the_space_has_gone_since_it_was_created(world, bundle):
+    import json
+
+    from modelhub_artifactory_service.importer import ServiceError
+
+    size = json.loads(bundle.description_path.read_text())["stream"]["size"]
+    job = create(world, bundle)
+    send_all(world, job, bundle)
+    world.free_bytes = lambda path: size + size // 10 - 1  # one byte short of the sizes plus 10%
+    with pytest.raises(ServiceError) as err:
+        world.start(job["importId"], "u1")
+    assert err.value.status == 507 and err.value.retryable is True
+    assert world.get(job["importId"], "u1")["state"] == "receiving"  # still open, nothing lost
+    world.free_bytes = lambda path: size + size // 10
+    assert world.start(job["importId"], "u1")["state"] == "verifying"

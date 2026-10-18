@@ -14,18 +14,18 @@ Re-run after loop-back 1 on 2026-10-17 from the project root; each distinct comm
 | `pytest web/tests -q` (prototype web app) | 24 | 0 | 0 |
 | `pytest server/common -q` | 93 | 0 | 0 |
 | `pytest server/catalog -q` | 154 | 0 | 0 |
-| `pytest server/artifactory_service -q` | 167 | 0 | 0 |
+| `pytest server/artifactory_service -q` | 183 | 0 | 0 |
 | `pytest server/stand_in -q` | 95 | 0 | 0 |
 | `pytest server/portal -q` | 92 | 0 | 0 |
 | `pytest server/testkit -q` | 15 | 0 | 0 |
 | `pytest server/e2e -q` | 1 | 0 | 0 |
-| **Total** | **1136** | **0** | |
+| **Total** | **1137** | **0** | |
 
 The per-unit commands in each unit's `unit-test-instructions.md` are subsets of these runs (for example `tests/test_import_cli.py` is part of `pytest tests`), so no test is counted twice.
 
 ## Failure details
 
-No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 14 are Unverified, out of 188. See `build-and-test-summary.md`. Loop-back 2 closed 47 Unverified targets, including `artifactory-service:NFR10.1` and `platform:NFR5.1`, which the CI `images` job proved (run 39088051063).
+No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 13 are Unverified, out of 188 (after loop-back 3). See `build-and-test-summary.md`. Loop-backs 2 and 3 closed 48 Unverified targets, including `artifactory-service:NFR10.1` and `platform:NFR5.1`, which the CI `images` job proved (run 39088051063).
 
 CI on the pushed branch: every build, test, stand-in, web, offline-pack, lint, image and smoke job passes. Two checks are not green: CodeQL (one alert in a new portal test, fixed in the next commit) and GitGuardian (a fake key-shaped text in a new test, no longer built from literal text; the earlier commit may still need marking as a false positive in GitGuardian).
 
@@ -54,3 +54,11 @@ On 2026-10-17 the person was shown the halt-and-ask for this result (4 Not Met, 
 - **Estimated impact:** effort about 1 to 2 days plus up to 7 plan approvals and checkpoints; financial cost none; risk low. About 26 targets stay Unverified and need a real environment or an accepted-by-name decision.
 
 The person chose **Retry with fix** for the 61 Unverified targets: loop-back 2 reopened Code Generation for all seven units; all seven were replanned, approved, built, verified and approved again.
+
+### Loop-back 3 — 2026-10-18T02:20:00Z
+
+- **Diagnosis:** after loop-back 2 there are 0 Not Met and 14 Unverified targets of 188 (174 Met). One of them, `platform:NFR7.2`, has a code fix: the import service checks free space when an import is created but not again when it is started, while the documented minimums are to be checked at start.
+- **Root-cause stage:** code-generation, unit artifactory-service (the importer's start step).
+- **Planned fix:** refuse to start an import when the free space on the working volume is under the minimum, with a retryable reason, tested; no target is weakened.
+- **Estimated impact:** effort about an hour plus 1 plan approval and 1 checkpoint; financial cost none; risk low. The other 13 Unverified targets stay open: 6 need a real system, 4 belong to other teams, 3 need the person's decision.
+

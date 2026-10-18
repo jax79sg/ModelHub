@@ -11,6 +11,8 @@
 
 - 2026-10-17T12:10:00Z — Loop-back 2: the person chose Retry with fix for the 61 Unverified targets; the repository-checkable ones (about 35) get checks; the rest stay Unverified.
 
+- 2026-10-18T02:20:00Z — Loop-back 3: the person chose Retry with fix for the one Unverified target with a code fix (platform NFR7.2, free space checked at start); the other 13 stay Unverified.
+
 ## Tradeoffs
 - 2026-10-17T11:12:59Z — Offered the person a loop-back to close the 4 Not Met targets; they accepted the failure instead, so those and the 60 Unverified targets stay open and the stage is presented as not deployment-ready.
 

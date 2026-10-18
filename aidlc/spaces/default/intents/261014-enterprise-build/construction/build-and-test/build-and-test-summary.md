@@ -2,7 +2,7 @@
 
 ## Overall status
 
-Build: success. Tests: 1136 passed, 0 failed, and the CI run on the pushed branch (run 39088051063) passed every build, test, image, scan, smoke-test and rehearsal job. Targets: **174 Met, 14 Unverified, 0 Not Met** of 188 (after loop-backs 1 and 2). By the stage's failure rule the stage has still not passed: any applicable target that is Unverified is a failure, and no later validation stage in this plan owns the 14 that remain.
+Build: success. Tests: 1137 passed, 0 failed, and the CI run on the pushed branch (run 39088051063) passed every build, test, image, scan, smoke-test and rehearsal job. Targets: **175 Met, 13 Unverified, 0 Not Met** of 188 (after loop-backs 1, 2 and 3). By the stage's failure rule the stage has still not passed: any applicable target that is Unverified is a failure, and no later validation stage in this plan owns the 13 that remain.
 
 ## Test type inventory
 
@@ -15,16 +15,16 @@ Standard strategy: five to eight tests per component plus integration tests at t
 ## Readiness assessment
 
 - Build-ready: yes.
-- Test-ready: yes; all 1136 tests pass, and the CI run on the branch passed (images built and scanned, JFrog CLI present only in the import service image, no secret in any container's logs, whole-stack smoke test and upgrade-and-return rehearsal).
-- Deployment-ready: **no**, until the 14 remaining Unverified targets are checked or knowingly accepted. None of them can be closed from this repository: they need a real Artifactory, a real Keycloak, real browsers, the monitoring team's alerts, the host's firewall, or a decision about the design (listed below).
+- Test-ready: yes; all 1137 tests pass, and the CI run on the branch passed (images built and scanned, JFrog CLI present only in the import service image, no secret in any container's logs, whole-stack smoke test and upgrade-and-return rehearsal).
+- Deployment-ready: **no**, until the 13 remaining Unverified targets are checked or knowingly accepted. None of them can be closed from this repository: they need a real Artifactory, a real Keycloak, real browsers, the monitoring team's alerts, the host's firewall, or a decision about the design (listed below).
 
 ## Known limitations or outstanding items
 
-- Not Met: none. Loop-back 1 closed the four Not Met targets; loop-back 2 added checks for 47 Unverified targets and closed them, and the checks found and fixed real problems: two catalog event codes never logged, a catalog that answered 500 instead of 503 with the database away and reused dropped connections, no stop grace, import service work folders not owner-only, an import command that could report over 2 seconds late.
-- Unverified (14), by what they need:
+- Not Met: none. Loop-back 1 closed the four Not Met targets; loop-backs 2 and 3 added checks for 48 Unverified targets and closed them, and the checks found and fixed real problems: two catalog event codes never logged, a catalog that answered 500 instead of 503 with the database away and reused dropped connections, no stop grace, import service work folders not owner-only, an import command that could report over 2 seconds late, and free space not checked again when an import starts (loop-back 3).
+- Unverified (13), by what they need:
   - A real system: `artifactory-service:NFR7.1` (100 GB import), `NFR7.2` (100 MB/s disk), `import-cli:NFR7.2` (link speed on 1 Gbit/s), `portal:NFR10.1` (Chrome, Edge, Firefox), `artifactory-service:NFR7.6` and `catalog:NFR7.2` (free-space and database size plans).
   - Another team: `catalog:NFR6.3`, `catalog:NFR6.4`, `artifactory-service:NFR6.4` (error-rate measure and alert thresholds belong to central monitoring), `platform:NFR8.1` (containers without a route to the internet is a host firewall matter).
-  - A decision: `catalog:NFR4.1` says 100 MB of documents while NFR7.5 refuses more than 64 MiB (the largest accepted version stores in under 60 s); `artifactory-service:NFR9.2` wants `huggingface_hub` pinned to a release Artifactory supports (up to 1.19.0) while the project is built on 2.2 to 3; `import-cli:NFR7.3` says memory does not grow with the number of pieces, but it grows by under 1 KiB per piece (999,999 pieces stays under 1 GB); `platform:NFR7.2` free space is checked when an import is created, not again when it starts.
+  - A decision (3): `catalog:NFR4.1` says 100 MB of documents while NFR7.5 refuses more than 64 MiB (the largest accepted version stores in under 60 s); `artifactory-service:NFR9.2` wants `huggingface_hub` pinned to a release Artifactory supports (up to 1.19.0) while the project is built on 2.2 to 3; `import-cli:NFR7.3` says memory does not grow with the number of pieces, but it grows by under 1 KiB per piece (999,999 pieces stays under 1 GB).
 - Readings used: `artifactory-stand-in:NFR7.1` was checked with 1,000 versions of which one holds 10,000 files (the target says "up to"); `common:NFR5.11` is met by a `.github/dependabot.yml` and a test of it, switching Dependabot on in the repository settings is the owner's.
 - The rehearsal retags the same images as the new release, so it does not exercise a schema change.
 
@@ -215,7 +215,7 @@ Standard strategy: five to eight tests per component plus integration tests at t
 | platform:NFR3.2 | platform/nfr-requirements/tech-stack-decisions.md | The documented return step is rehearsed once | Holds | .github/workflows/ci.yml (CI matrix): images job rehearsal (upgrade and return) | build-and-test | Met |
 | platform:NFR4.1 | platform/nfr-requirements/tech-stack-decisions.md | AC6.2: upgrade then return keeps the models and trail rows | Holds | .github/workflows/ci.yml (CI matrix): images job rehearsal | build-and-test | Met |
 | platform:NFR7.1 | platform/nfr-requirements/tech-stack-decisions.md | A test restarts and upgrades and finds the data | Holds | .github/workflows/ci.yml (CI matrix): images job rehearsal (data survives) | build-and-test | Met |
-| platform:NFR7.2 | platform/nfr-requirements/tech-stack-decisions.md | Documented minimums checked at start by the service (rule BR1.20 of artifactory… | Not checked | The minimums are documented; the service checks free space at create, not at start | none scheduled (performance-validation and operations stages are skipped) | Unverified |
+| platform:NFR7.2 | platform/nfr-requirements/tech-stack-decisions.md | Documented minimums checked at start by the service (rule BR1.20 of artifactory… | Holds | server/artifactory_service/tests/test_limits_and_resilience.py (free space checked at start as well as at create) | build-and-test | Met |
 | platform:NFR9.3 | platform/nfr-requirements/tech-stack-decisions.md | No new CI product | Holds | .github/workflows/ci.yml (CI matrix): images and server-pack jobs | build-and-test | Met |
 | platform:NFR10.1 | platform/nfr-requirements/tech-stack-decisions.md | None | Holds | Not a CLI concern; nothing to check | build-and-test | Met |
 | system:TestingContract | Testing Contract (tdd, standard) | Existing tests stay green; tests written before code | All suites pass (see test-results.md) | test-results.md | build-and-test | Met |
