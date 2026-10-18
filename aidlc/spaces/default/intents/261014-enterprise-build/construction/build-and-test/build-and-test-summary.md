@@ -2,7 +2,7 @@
 
 ## Overall status
 
-Build: success. Tests: 1150 passed, 0 failed; the CI run on the pushed branch (commit 563fdc5) passed every build, test, image, scan, smoke-test, rehearsal and browser job; the one failing check is GitGuardian, on a fake key-shaped text in a test of an earlier commit (a false positive, to be marked as such in GitGuardian). Targets: **180 Met, 1 Unverified, 0 Not Met** of 181 applicable (7 targets were dropped and 1 narrowed to Chrome by the person on 2026-10-18, see below). By the stage's failure rule the stage has still not passed: an applicable target that is Unverified is a failure. The 1 that remains needs the person's decision and the real Artifactory.
+Build: success. Tests: 1154 passed, 0 failed; the CI run on the pushed branch (commit 99e0bdf) passed every build, test, image, scan, smoke-test, rehearsal and browser job; the one failing check is GitGuardian, on a fake key-shaped text in a test of an earlier commit (a false positive, to be marked as such in GitGuardian). Targets: **181 Met, 0 Unverified, 0 Not Met** of 181 applicable. That count is after the person's decisions of 2026-10-18: 7 targets dropped, 1 narrowed to Chrome and 1 reworded to an exact pin (listed below, each with the original wording). The stage passes on its own rule.
 
 ## Test type inventory
 
@@ -15,8 +15,8 @@ Standard strategy: five to eight tests per component plus integration tests at t
 ## Readiness assessment
 
 - Build-ready: yes.
-- Test-ready: yes; all 1150 tests pass, and CI passed (images built and scanned, JFrog CLI only in the import service image, no secret in any container's logs, the whole stack and an upgrade-and-return rehearsal on a network with no route to the internet, the portal in Chrome).
-- Deployment-ready: **no, with 1 target open** (below). It is not a defect of the code; it waits for the person's decision and a real Artifactory.
+- Test-ready: yes; all 1154 tests pass, and CI passed (images built and scanned, JFrog CLI only in the import service image, no secret in any container's logs, the whole stack and an upgrade-and-return rehearsal on a network with no route to the internet, the portal in Chrome).
+- Deployment-ready: **yes, on the targets as they now stand, with these conditions**: (1) nothing has run against the organisation's real Artifactory or Keycloak, so the first real test must show that `huggingface_hub 2.2.0` and the stand-in's assumptions hold (the guide and the stand-in's checklist list what to look at); (2) the person's changes to the targets (below) are part of what "ready" means: no speed, 100 GB or alert target is checked, and only the current Chrome is covered; (3) GitGuardian's false positive on an old commit needs marking in GitGuardian; (4) the repository secrets for the signed server pack, the Keycloak clients and role, and the TLS certificate are the owners' to provide.
 
 ## Targets dropped by the person
 
@@ -32,18 +32,18 @@ On 2026-10-18 the person dropped targets in two steps, after a review of the Unv
 | import-cli:NFR7.2 | import-cli/nfr-requirements/performance-requirements.md | At least 90% of the measured link speed on a 1 Gbit/s link to the stand-in | Link speed was not measured |
 | import-cli:NFR7.3 | import-cli/nfr-requirements/scalability-requirements.md | Progress and memory do not grow with the number of pieces | Memory grows by under 1 KiB per piece (tests/test_import_limits.py) so 999,999 pieces stays under 1 GB; the target says it does no |
 
-## Target narrowed by the person
+## Targets narrowed or reworded by the person
 
-`portal:NFR10.1` was "Works in the current and previous versions of Chrome, Edge and Firefox". On 2026-10-18 the person answered "Nfr 10.1, just chrome." It is read as the current version of Chrome only, and is Met on that reading: a Playwright test drives Chrome 155 through the real portal and the CI job `browser (chrome)` passed. Previous Chrome versions, Edge and Firefox are not covered.
+- `portal:NFR10.1` was "Works in the current and previous versions of Chrome, Edge and Firefox". On 2026-10-18 the person answered "Nfr 10.1, just chrome." It is read as the current version of Chrome only, and is Met on that reading: a Playwright test drives Chrome 155 through the real portal and the CI job `browser (chrome)` passed. Previous Chrome versions, Edge and Firefox are not covered.
+- `artifactory-service:NFR9.2` was "huggingface_hub is pinned to a release Artifactory supports (up to 1.19.0)". On 2026-10-18 the person chose "Pin exactly, reword target": it now reads "pinned to the exact version tested (2.2.0); that it works with the real Artifactory is checked at the first real Artifactory test". Met on that wording (`deploy/constraints.txt`, used by the image recipe, tested, built in CI). It does not show that 2.2.0 works with the real Artifactory.
 
 ## Known limitations or outstanding items
 
-- Not Met: none. Loop-backs 1 to 5 closed the four Not Met targets and 53 Unverified ones. The checks found and fixed real problems: two catalog event codes never logged, a catalog that answered 500 instead of 503 with the database away and reused dropped connections, no stop grace, import service work folders not owner-only, an import command that could report over 2 seconds late, free space not checked again when an import starts, and (found only by a real Chrome) a Referrer-Policy that made Chrome send `Origin: null` so every portal form was refused, plus a favicon 404 on every page.
-- Unverified (1), with what closes it:
-  - `artifactory-service:NFR9.2` (`huggingface_hub` pinned to a release Artifactory supports, up to 1.19.0): the project is built and tested on 2.2 to 3. The person decides whether to move the project to 1.x or to confirm with the real Artifactory that 2.x works and change the target; either way it is checked against the real Artifactory.
+- Not Met: none. Loop-backs 1 to 6 closed the four Not Met targets and 54 Unverified ones. The checks found and fixed real problems: two catalog event codes never logged, a catalog that answered 500 instead of 503 with the database away and reused dropped connections, no stop grace, import service work folders not owner-only, an import command that could report over 2 seconds late, free space not checked again when an import starts, and (found only by a real Chrome) a Referrer-Policy that made Chrome send `Origin: null` so every portal form was refused, plus a favicon 404 on every page.
+- Unverified: none.
 - Readings used: `artifactory-stand-in:NFR7.1` was checked with 1,000 versions of which one holds 10,000 files (the target says "up to"); `common:NFR5.11` is met by a `.github/dependabot.yml` and a test of it, switching Dependabot on in the repository settings is the owner's; `catalog:NFR7.2` and `artifactory-service:NFR7.6` are planning figures, met by `ops.sh preflight` refusing a server below 540 GB free.
 - The rehearsal retags the same images as the new release, so it does not exercise a schema change.
-- Not tested anywhere, by design or by the person's choice: a real Artifactory, a real Keycloak, previous Chrome versions, Edge and Firefox, the 100 GB import and the speed targets (dropped).
+- Not tested anywhere, by design or by the person's choice: a real Artifactory, a real Keycloak, previous Chrome versions, Edge and Firefox, the 100 GB import and the speed targets (dropped), the alert thresholds (dropped; the rules are delivered in `deploy/monitoring/alerts.json`).
 
 ## Target Verification Matrix
 
@@ -154,7 +154,7 @@ On 2026-10-18 the person dropped targets in two steps, after a review of the Unv
 | artifactory-service:NFR5.9 | artifactory-service/nfr-requirements/security-requirements.… | Oversized pieces are refused with 413 (rule BR1.4) | Holds | server/artifactory_service/tests/test_api.py (413) | build-and-test | Met |
 | artifactory-service:NFR10.1 | artifactory-service/nfr-requirements/tech-stack-decisions.md | Image built on the internet side and moved through the internal registry | Holds | CI images job (run 39088051063): the image built with a checked JFrog CLI, jf --version ran in it, and jf is in no other image; tests/test_deploy_def… | build-and-test | Met |
 | artifactory-service:NFR9.1 | artifactory-service/nfr-requirements/tech-stack-decisions.md | Shared stack; own database user | Holds | server/artifactory_service/pyproject.toml | build-and-test | Met |
-| artifactory-service:NFR9.2 | artifactory-service/nfr-requirements/tech-stack-decisions.md | Versions pinned in the image; verified when a real Artifactory exists | Not checked | The design wants huggingface_hub pinned to a release Artifactory supports (up to 1.19.0); the project is built on 2.2 to 3: a decision for the person | none scheduled (performance-validation and operations stages are skipped) | Unverified |
+| artifactory-service:NFR9.2 | artifactory-service/nfr-requirements/tech-stack-decisions.md | Versions pinned in the image; verified when a real Artifactory exists | Holds | Reworded by the person: huggingface_hub pinned exactly (2.2.0) in deploy/constraints.txt and used by deploy/Dockerfile; tests/test_deploy_definition.… | build-and-test | Met |
 | artifactory-service:NFR9.3 | artifactory-service/nfr-requirements/tech-stack-decisions.md | Shared as a library, not copied | Holds | server/artifactory_service/src/modelhub_artifactory_service/importer.py (reuses src/modelhub verify and unpack) | build-and-test | Met |
 | artifactory-service:NFR9.4 | artifactory-service/nfr-requirements/tech-stack-decisions.md | The stand-in's failure switches drive the restart tests | Holds | tests run against the stand-in and a real PostgreSQL | build-and-test | Met |
 | artifactory-service:NFR8.1 | artifactory-service/nfr-requirements/tech-stack-decisions.md | None to the internet; the JFrog CLI's update and telemetry checks are switched … | Holds | server/artifactory_service/tests/test_limits_and_resilience.py (non-local sockets blocked; update and telemetry checks switched off in the image (tes… | build-and-test | Met |

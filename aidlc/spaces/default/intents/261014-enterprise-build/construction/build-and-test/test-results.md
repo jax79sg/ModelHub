@@ -10,7 +10,7 @@ Re-run after loop-back 1 on 2026-10-17 from the project root; each distinct comm
 
 | Command | Passed | Failed | Skipped |
 |---|---|---|---|
-| `pytest tests -q` (CLI, import command, pack, deployment definition, log search, loop guard) | 486 | 0 | 6 deselected (network tests) |
+| `pytest tests -q` (CLI, import command, pack, deployment definition, log search, loop guard) | 490 | 0 | 6 deselected (network tests) |
 | `pytest web/tests -q` (prototype web app) | 24 | 0 | 0 |
 | `pytest server/common -q` | 99 | 0 | 0 |
 | `pytest server/catalog -q` | 154 | 0 | 0 |
@@ -19,15 +19,15 @@ Re-run after loop-back 1 on 2026-10-17 from the project root; each distinct comm
 | `pytest server/portal -q` | 92 | 0 | 0 |
 | `pytest server/testkit -q` | 15 | 0 | 0 |
 | `pytest server/e2e -q` (whole stack, Chrome) | 2 | 0 | 0 |
-| **Total** | **1150** | **0** | |
+| **Total** | **1154** | **0** | |
 
 The per-unit commands in each unit's `unit-test-instructions.md` are subsets of these runs (for example `tests/test_import_cli.py` is part of `pytest tests`), so no test is counted twice.
 
 ## Failure details
 
-No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 1 is Unverified, out of 181 applicable targets (7 dropped and 1 narrowed by the person on 2026-10-18; see `build-and-test-summary.md`). Loop-backs 2 to 5 closed 53 Unverified targets. The one left: `artifactory-service:NFR9.2` (the person's decision and the real Artifactory). The person dropped the two alert targets (`catalog:NFR6.4`, `artifactory-service:NFR6.4`) with "Drop the two alert targets".
+No test failed. 181 of 181 applicable targets are Met, 0 Not Met, 0 Unverified (after the person's decisions of 2026-10-18: 7 dropped, 1 narrowed to Chrome, 1 reworded to an exact pin; see `build-and-test-summary.md`). Loop-backs 2 to 6 closed 54 Unverified targets.
 
-CI on the pushed branch (commit 563fdc5): every build, test, stand-in, web, offline-pack, lint, server, image, smoke and browser job passes, and CodeQL passes. GitGuardian fails on a fake key-shaped text in a test of an earlier commit (no longer built from literal text); it needs marking as a false positive in GitGuardian.
+CI on the pushed branch (commit 99e0bdf): every build, test, stand-in, web, offline-pack, lint, server, image, smoke and browser job passes, and CodeQL passes. GitGuardian fails on a fake key-shaped text in a test of an earlier commit (no longer built from literal text); it needs marking as a false positive in GitGuardian.
 
 ## Coverage report
 
@@ -91,3 +91,4 @@ Loop-back 5 (2026-10-18, chosen by the person: "Loop-back 5: close what I can") 
 - **Planned fix:** a constraints file `deploy/constraints.txt` pinning `huggingface_hub==2.2.0` that the image recipe installs with, a test that the pin is exact, used by the recipe and equal to the version the tests ran on, and a line in the operator guide naming the version check as a first-real-test item.
 - **Estimated impact:** effort about an hour plus 1 plan approval and 1 checkpoint; financial cost none; risk low (the image build proves it in CI). Whether 2.2.0 works with the real Artifactory is not proven by this.
 
+Loop-back 6 (2026-10-18, chosen by the person: "Pin exactly, reword target") closed `artifactory-service:NFR9.2` as reworded.

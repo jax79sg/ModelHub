@@ -11123,3 +11123,700 @@
 **Run floor**: GATE_REJECTED:2026-10-18T06:44:43Z#3
 
 ---
+
+## Checkpoint Verification Recorded
+**Timestamp**: 2026-10-18T06:49:46Z
+**Event**: CHECKPOINT_VERIFICATION_RECORDED
+**Unit**: platform
+**Kind**: unit
+**Stage**: code-generation
+**Stages**: code-generation
+**Verification Id**: 97ad6c8f-dd3e-4f9c-af02-ebb47f23a907
+**Fingerprint**: sha256:93554e9b43ca755edeef51c433bd6eeace60b111ac30c70b778792f70647cc0e
+**Command SHA-256**: cedb34c82279980dc224d4bec8fb1314de05b1000d50f121758b23747f53a386
+**Exit Code**: 0
+**Verified**: true
+**Run floor**: GATE_REJECTED:2026-10-18T06:44:43Z#3
+
+---
+
+## Decision Recorded
+**Timestamp**: 2026-10-18T06:55:24Z
+**Event**: DECISION_RECORDED
+**Checkpoint**: Construction Unit Approval
+**Unit**: platform
+**Kind**: unit
+**Stage**: code-generation
+**Fingerprint**: sha256:93554e9b43ca755edeef51c433bd6eeace60b111ac30c70b778792f70647cc0e
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+**Options**: Approve,Request Changes
+**Asked Evidence**: {"code-generation":["sha256:061ef64b1f59038aed9c1f0bf9c0d6786d2d60c63b74b1166c9c63acafaf28f6","sha256:12fbfc626176c93a195f63238da9946116abf89a49513014585c6d2c657a1f43"]}
+**Run floors**: {"code-generation":"GATE_REJECTED:2026-10-18T06:44:43Z#3"}
+
+---
+
+## Human Turn
+**Timestamp**: 2026-10-18T06:56:38Z
+**Event**: HUMAN_TURN
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+**Picked**: ["Approve"]
+
+---
+
+## Question Replied
+**Timestamp**: 2026-10-18T06:56:38Z
+**Event**: QUESTION_REPLIED
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+**Question**: platform loop-back 6 is built and verified (97 passed; CI green on the new commit, images built with the pin). huggingface_hub is now pinned exactly to 2.2.0 in every image (deploy/constraints.txt, used by the Dockerfile), with tests, and the guide lists 'does 2.2.0 work with our Artifactory' as the first real Artifactory test. This does not show it works there. Approve this unit?
+**Reply**: Approve
+
+---
+
+## Gate Approved
+**Timestamp**: 2026-10-18T06:56:42Z
+**Event**: GATE_APPROVED
+**Unit**: platform
+**Stage**: code-generation
+**Stages**: code-generation
+**Gate Stages**: code-generation
+**Gate Scope**: unit-end
+**Checkpoint**: construction-unit
+**Fingerprint**: sha256:93554e9b43ca755edeef51c433bd6eeace60b111ac30c70b778792f70647cc0e
+**Run floor**: GATE_REJECTED:2026-10-18T06:44:43Z#3
+**Run floors**: {"code-generation":"GATE_REJECTED:2026-10-18T06:44:43Z#3"}
+**Verification Command SHA-256**: cedb34c82279980dc224d4bec8fb1314de05b1000d50f121758b23747f53a386
+**Verification Id**: 97ad6c8f-dd3e-4f9c-af02-ebb47f23a907
+**Approved Evidence**: {"code-generation":["sha256:061ef64b1f59038aed9c1f0bf9c0d6786d2d60c63b74b1166c9c63acafaf28f6","sha256:12fbfc626176c93a195f63238da9946116abf89a49513014585c6d2c657a1f43"]}
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+**User Input**: Approve
+**Person Reply**: Approve
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:54Z
+**Event**: SENSOR_FIRED
+**Fire id**: bc84b657
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/portal/code-generation/code-generation-plan.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:54Z
+**Event**: SENSOR_PASSED
+**Fire id**: bc84b657
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/portal/code-generation/code-generation-plan.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:54Z
+**Event**: SENSOR_FIRED
+**Fire id**: 7a650309
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/portal/code-generation/unit-test-instructions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:54Z
+**Event**: SENSOR_PASSED
+**Fire id**: 7a650309
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/portal/code-generation/unit-test-instructions.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:54Z
+**Event**: SENSOR_FIRED
+**Fire id**: d8f70b1a
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/portal/code-generation/code-summary.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:54Z
+**Event**: SENSOR_PASSED
+**Fire id**: d8f70b1a
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/portal/code-generation/code-summary.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:54Z
+**Event**: SENSOR_FIRED
+**Fire id**: e0f5c3ee
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/portal/code-generation/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:54Z
+**Event**: SENSOR_PASSED
+**Fire id**: e0f5c3ee
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/portal/code-generation/traceability.json
+**Duration ms**: 56
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_FIRED
+**Fire id**: ac2c2da3
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/catalog/code-generation/code-generation-plan.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_PASSED
+**Fire id**: ac2c2da3
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/catalog/code-generation/code-generation-plan.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_FIRED
+**Fire id**: cdd4e995
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/catalog/code-generation/unit-test-instructions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_PASSED
+**Fire id**: cdd4e995
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/catalog/code-generation/unit-test-instructions.md
+**Duration ms**: 57
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_FIRED
+**Fire id**: 2810f6fc
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/catalog/code-generation/code-summary.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_PASSED
+**Fire id**: 2810f6fc
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/catalog/code-generation/code-summary.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_FIRED
+**Fire id**: ae6b26b9
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/catalog/code-generation/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_PASSED
+**Fire id**: ae6b26b9
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/catalog/code-generation/traceability.json
+**Duration ms**: 53
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_FIRED
+**Fire id**: e692fc8d
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/platform/code-generation/code-generation-plan.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_PASSED
+**Fire id**: e692fc8d
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/platform/code-generation/code-generation-plan.md
+**Duration ms**: 55
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_FIRED
+**Fire id**: cf631888
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/platform/code-generation/unit-test-instructions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:55Z
+**Event**: SENSOR_PASSED
+**Fire id**: cf631888
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/platform/code-generation/unit-test-instructions.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_FIRED
+**Fire id**: 218bcd38
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/platform/code-generation/code-summary.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_PASSED
+**Fire id**: 218bcd38
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/platform/code-generation/code-summary.md
+**Duration ms**: 53
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_FIRED
+**Fire id**: 434e733c
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/platform/code-generation/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_PASSED
+**Fire id**: 434e733c
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/platform/code-generation/traceability.json
+**Duration ms**: 53
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_FIRED
+**Fire id**: 43749ead
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/common/code-generation/code-generation-plan.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_PASSED
+**Fire id**: 43749ead
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/common/code-generation/code-generation-plan.md
+**Duration ms**: 53
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_FIRED
+**Fire id**: d05fbd76
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/common/code-generation/unit-test-instructions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_PASSED
+**Fire id**: d05fbd76
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/common/code-generation/unit-test-instructions.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_FIRED
+**Fire id**: 5c445037
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/common/code-generation/code-summary.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_PASSED
+**Fire id**: 5c445037
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/common/code-generation/code-summary.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_FIRED
+**Fire id**: 874d30e8
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/common/code-generation/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:56Z
+**Event**: SENSOR_PASSED
+**Fire id**: 874d30e8
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/common/code-generation/traceability.json
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: a88d0a9a
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-service/code-generation/code-generation-plan.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: a88d0a9a
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-service/code-generation/code-generation-plan.md
+**Duration ms**: 53
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: 9d325fa8
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-service/code-generation/unit-test-instructions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: 9d325fa8
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-service/code-generation/unit-test-instructions.md
+**Duration ms**: 53
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: 1feefca5
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-service/code-generation/code-summary.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: 1feefca5
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-service/code-generation/code-summary.md
+**Duration ms**: 53
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: ac6abde5
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-service/code-generation/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: ac6abde5
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-service/code-generation/traceability.json
+**Duration ms**: 52
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: f88f825f
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/import-cli/code-generation/code-generation-plan.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: f88f825f
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/import-cli/code-generation/code-generation-plan.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: 7c671319
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/import-cli/code-generation/unit-test-instructions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: 7c671319
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/import-cli/code-generation/unit-test-instructions.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: 301f3d90
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/import-cli/code-generation/code-summary.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_PASSED
+**Fire id**: 301f3d90
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/import-cli/code-generation/code-summary.md
+**Duration ms**: 58
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_FIRED
+**Fire id**: 76363495
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/import-cli/code-generation/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_PASSED
+**Fire id**: 76363495
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/import-cli/code-generation/traceability.json
+**Duration ms**: 55
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_FIRED
+**Fire id**: aed6c570
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-stand-in/code-generation/code-generation-plan.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_PASSED
+**Fire id**: aed6c570
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-stand-in/code-generation/code-generation-plan.md
+**Duration ms**: 53
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_FIRED
+**Fire id**: e1db22bd
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-stand-in/code-generation/unit-test-instructions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_PASSED
+**Fire id**: e1db22bd
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-stand-in/code-generation/unit-test-instructions.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_FIRED
+**Fire id**: ac9c82d4
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-stand-in/code-generation/code-summary.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_PASSED
+**Fire id**: ac9c82d4
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-stand-in/code-generation/code-summary.md
+**Duration ms**: 54
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_FIRED
+**Fire id**: f6565eaf
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-stand-in/code-generation/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-18T06:56:58Z
+**Event**: SENSOR_PASSED
+**Fire id**: f6565eaf
+**Sensor ID**: required-sections
+**Stage slug**: code-generation
+**Output path**: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-stand-in/code-generation/traceability.json
+**Duration ms**: 54
+
+---
+
+## Stage Awaiting Approval
+**Timestamp**: 2026-10-18T06:57:01Z
+**Event**: STAGE_AWAITING_APPROVAL
+**Stage**: code-generation
+
+---
+
+## Gate Approved
+**Timestamp**: 2026-10-18T06:57:11Z
+**Event**: GATE_APPROVED
+**Stage**: code-generation
+
+---
+
+## Stage Completion
+**Timestamp**: 2026-10-18T06:57:11Z
+**Event**: STAGE_COMPLETED
+**Stage**: code-generation
+**Validation Basis**: {"graphContract":"sha256:ac0ef7ae03ae2fcfab9e2a94500d84c4fe00d00384d1f8dcff92c96b2e1f50de","inputs":[{"artifact":"requirements","contentHash":"sha256:47e4eba84f4407378e2ff76b754ca33c56e860ca42c1c74afb4326a7395fb0f0","instanceCount":1,"presentCount":1,"producer":"requirements-analysis","required":true,"structureHash":"sha256:70f1c8da12e0dfaa8f2c3761122417ace01354d679f1467915dc2ae8d210a671"},{"artifact":"unit-of-work","contentHash":"sha256:6f5876d19075306d229f8ca5f074423e9a32dbba30d6f557d24482a38cbf768d","instanceCount":1,"presentCount":1,"producer":"units-generation","required":true,"structureHash":"sha256:75add963b6675f80284b83800c1ccc3a022f5240283ddcec86a3df8397ded41d"}],"outputs":[{"artifact":"code-generation-plan","contentHash":"sha256:d4610e998c857a8e6371ae45b73792dc8a3378e81025c00128580976694a4307","instanceCount":7,"presentCount":7,"producer":"code-generation","required":true,"structureHash":"sha256:566fa1b32ba8ef8c9daa5eff51f87040e8a5bcd75489a6b2a7ff6afb2637ed95"},{"artifact":"code-summary","contentHash":"sha256:118db72301537d3eae138ef52081539f4d681af1d373f0b34bbce8095b3a351f","instanceCount":7,"presentCount":7,"producer":"code-generation","required":true,"structureHash":"sha256:e26d4c9d535d88f9424a4400e885b84b1d1b257833e3cbe36362a58ceb7afa8c"},{"artifact":"traceability","contentHash":"sha256:8d8220a26a7f7da57fcfd0b3bf16c33feba5321dc50bbdce911de07b52682ba0","instanceCount":7,"presentCount":7,"producer":"code-generation","required":true,"structureHash":"sha256:bf6f25de3c1c2ebbaaeaf8bbf539b29245a4c8ec252098439fc5d220ac3024b4"},{"artifact":"unit-test-instructions","contentHash":"sha256:f4a49b1622a7fb831c6ca4a9f7721d3f63f7e4f74cd2f057549080c14a7480cc","instanceCount":7,"presentCount":7,"producer":"code-generation","required":true,"structureHash":"sha256:85cebc1fe9625dcbdd5486070976d53a28418ebc04e1fbd8b6434feacce64c51"}],"projectType":"brownfield","schema":3}
+**Details**: Stage Code Generation approved by gate
+**Tokens In**: 2060
+**Tokens Out**: 847234
+**Cache Read**: 545448587
+**Cache Write**: 8736049
+**Cost USD**: 152.51
+**By Model**: sonnet-5-5=152.51
+**By Agent**: main=152.51
+**Tokens By Model**: sonnet-5-5=2.1k/847.2k/545.4M/8.7M
+**Tokens By Agent**: main=2.1k/847.2k/545.4M/8.7M
+
+---
+
+## Stage Start
+**Timestamp**: 2026-10-18T06:57:11Z
+**Event**: STAGE_STARTED
+**Stage**: build-and-test
+**Agent**: aidlc-quality-agent
+
+---
