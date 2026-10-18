@@ -14,7 +14,8 @@
     "FR4.5",
     "FR4.6",
     "FR5.5",
-    "NFR2"
+    "NFR2",
+    "FR2.7"
   ],
   "coverage": [
     {
@@ -81,6 +82,11 @@
       "id": "NFR2",
       "status": "OK",
       "target": "server/catalog/tests/test_list_speed.py"
+    },
+    {
+      "id": "FR2.7",
+      "status": "OK",
+      "target": "server/catalog/tests/test_store_put.py"
     }
   ]
 }
