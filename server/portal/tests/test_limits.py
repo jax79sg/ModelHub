@@ -8,6 +8,7 @@ import re
 import socket
 import time
 from concurrent.futures import ThreadPoolExecutor
+from html.parser import HTMLParser
 
 import pytest
 from conftest import BASE, sign_in
@@ -52,14 +53,22 @@ def test_a_model_page_without_pictures_has_a_95th_percentile_under_a_second(big)
 
 
 # --- NFR2.3: page weight and nothing from outside ----------------------------------------------
-ASSET = re.compile(r'(?:src|href)="([^"]+)"')
+class _Assets(HTMLParser):
+    """The files a page asks the browser to load (script, link and image tags)."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.found: list[str] = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ("script", "link", "img"):
+            self.found += [v for k, v in attrs if k in ("src", "href") and v]
 
 
 def assets_of(html: str) -> list[str]:
-    found = []
-    for tag in re.findall(r"<(?:script|link|img)\b[^>]*>", html):
-        found += ASSET.findall(tag)
-    return found
+    parser = _Assets()
+    parser.feed(html)
+    return parser.found
 
 
 @pytest.mark.parametrize(

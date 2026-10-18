@@ -10,22 +10,24 @@ Re-run after loop-back 1 on 2026-10-17 from the project root; each distinct comm
 
 | Command | Passed | Failed | Skipped |
 |---|---|---|---|
-| `pytest tests -q` (CLI, import command, pack, deployment definition, loop guard) | 466 | 0 | 6 deselected (network tests) |
+| `pytest tests -q` (CLI, import command, pack, deployment definition, log search, loop guard) | 480 | 0 | 6 deselected (network tests) |
 | `pytest web/tests -q` (prototype web app) | 24 | 0 | 0 |
-| `pytest server/common -q` | 90 | 0 | 0 |
-| `pytest server/catalog -q` | 125 | 0 | 0 |
+| `pytest server/common -q` | 93 | 0 | 0 |
+| `pytest server/catalog -q` | 154 | 0 | 0 |
 | `pytest server/artifactory_service -q` | 167 | 0 | 0 |
-| `pytest server/stand_in -q` | 86 | 0 | 0 |
-| `pytest server/portal -q` | 83 | 0 | 0 |
+| `pytest server/stand_in -q` | 95 | 0 | 0 |
+| `pytest server/portal -q` | 92 | 0 | 0 |
 | `pytest server/testkit -q` | 15 | 0 | 0 |
 | `pytest server/e2e -q` | 1 | 0 | 0 |
-| **Total** | **1057** | **0** | |
+| **Total** | **1136** | **0** | |
 
 The per-unit commands in each unit's `unit-test-instructions.md` are subsets of these runs (for example `tests/test_import_cli.py` is part of `pytest tests`), so no test is counted twice.
 
 ## Failure details
 
-No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 61 are Unverified, out of 188. See `build-and-test-summary.md`. Loop-back 1 closed three Not Met targets; the fourth (JFrog CLI in the import service image) is Unverified until the CI `images` job builds the image.
+No test failed. The stage does not pass on its target matrix: 0 targets are Not Met and 14 are Unverified, out of 188. See `build-and-test-summary.md`. Loop-back 2 closed 47 Unverified targets, including `artifactory-service:NFR10.1` and `platform:NFR5.1`, which the CI `images` job proved (run 39088051063).
+
+CI on the pushed branch: every build, test, stand-in, web, offline-pack, lint, image and smoke job passes. Two checks are not green: CodeQL (one alert in a new portal test, fixed in the next commit) and GitGuardian (a fake key-shaped text in a new test, no longer built from literal text; the earlier commit may still need marking as a false positive in GitGuardian).
 
 ## Coverage report
 
@@ -51,3 +53,4 @@ On 2026-10-17 the person was shown the halt-and-ask for this result (4 Not Met, 
 - **Planned fix:** add executable checks for the repository-checkable Unverified targets (timings, parallel callers, many pieces and bundles, hostile text in every filter, token never in logs, no outside connection, JFrog CLI image); no target is weakened.
 - **Estimated impact:** effort about 1 to 2 days plus up to 7 plan approvals and checkpoints; financial cost none; risk low. About 26 targets stay Unverified and need a real environment or an accepted-by-name decision.
 
+The person chose **Retry with fix** for the 61 Unverified targets: loop-back 2 reopened Code Generation for all seven units; all seven were replanned, approved, built, verified and approved again.
