@@ -10,7 +10,9 @@
     "FR6.6",
     "AC6.2",
     "NFR1",
-    "NFR5"
+    "NFR5",
+    "NFR10.1",
+    "NFR8.1"
   ],
   "coverage": [
     {
@@ -57,6 +59,16 @@
       "id": "NFR5",
       "status": "OK",
       "target": "tests/test_deploy_definition.py"
+    },
+    {
+      "id": "NFR10.1",
+      "status": "OK",
+      "target": "deploy/Dockerfile"
+    },
+    {
+      "id": "NFR8.1",
+      "status": "OK",
+      "target": "deploy/Dockerfile"
     }
   ]
 }

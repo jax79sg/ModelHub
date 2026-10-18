@@ -8,14 +8,15 @@
 
 ## Steps
 
-- [x] Step 1. Project structure and production configuration: `server/catalog/pyproject.toml`, package `modelhub_catalog`. (NFR9)
-- [x] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest server/catalog -q`. (NFR9)
-- [x] Step 3. Data model / database - Red, Green, Refactor: numbered migration under an advisory lock, the schema (models, versions, files, documents, refs, import records, tokens), the limited running role. (FR2.1, FR2.2, FR2.3, NFR5)
-- [x] Step 4. Repository / data access - Red, Green, Refactor: store one version, its files, documents and trail row in one transaction; repeat is unchanged, a different record is a conflict; mark removed. (FR2.4, FR2.5, FR2.6, FR5.5)
-- [x] Step 5. Business logic - Red, Green, Refactor: list with filters, facets, sort, full-text search, paging; the list never reads documents; personal tokens (made once, hashed, expire, revoke, introspection). (FR3.4, FR3.5, FR4.4, FR4.5, FR4.6, NFR2)
-- [x] Step 6. API / endpoint - Red, Green, Refactor: the C2 and C3 routes, documents served as data, service-only writes, retention and trail lists. (FR3.1, FR3.2)
-- [x] Step 7. Start-up and environment: settings and secrets, migration role, health. (FR6.4, FR6.5)
-- [x] Step 8. Documentation and traceability: module docstrings naming the rules. (NFR9)
+- [ ] Step 1. Project structure and production configuration: `server/catalog/pyproject.toml`, package `modelhub_catalog`. (NFR9)
+- [ ] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest server/catalog -q`. (NFR9)
+- [ ] Step 3. Data model / database - Red, Green, Refactor: numbered migration under an advisory lock, the schema (models, versions, files, documents, refs, import records, tokens), the limited running role. (FR2.1, FR2.2, FR2.3, NFR5)
+- [ ] Step 4. Repository / data access - Red, Green, Refactor: store one version, its files, documents and trail row in one transaction; repeat is unchanged, a different record is a conflict; mark removed. (FR2.4, FR2.5, FR2.6, FR5.5)
+- [ ] Step 5. Business logic - Red, Green, Refactor: list with filters, facets, sort, full-text search, paging; the list never reads documents; personal tokens (made once, hashed, expire, revoke, introspection). (FR3.4, FR3.5, FR4.4, FR4.5, FR4.6, NFR2)
+- [ ] Step 6. API / endpoint - Red, Green, Refactor: the C2 and C3 routes, documents served as data, service-only writes, retention and trail lists. (FR3.1, FR3.2)
+- [ ] Step 7. Start-up and environment: settings and secrets, migration role, health. (FR6.4, FR6.5)
+- [ ] Step 8. Documentation and traceability: module docstrings naming the rules. (NFR9)
+- [x] Step 9. Loop-back 2 (Build and Test, Unverified targets that can be checked here), Red then Green then Refactor: tests that every fixed event code is logged (NFR6.5); the list at 1,000 models and 10,000 versions with 95 of 100 requests under 1 second, also with 20 callers in parallel (NFR2.1, NFR7.1, NFR7.3); the tables a list reads, documents never among them (NFR2.2); single-record time at the 95th percentile under 300 ms (NFR2.4); first byte of a 16 MiB document under 1 second (NFR2.5); a version with 10,000 files and 100 MB of documents stored in under 60 seconds (NFR4.1); no crash with the database down and recovery when it returns (NFR4.3); stop grace of 30 seconds with rollback of an in-flight store (NFR4.4); a second copy started without change (NFR7.4); hostile text in every filter (NFR5.7); no connection outside the machine (NFR8.1). Stays Unverified and named: error-rate dashboard and alert thresholds (monitoring team) and the 100 GB size plan (real system). No target is weakened.
 
 ## Testing Contract
 

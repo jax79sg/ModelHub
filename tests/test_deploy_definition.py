@@ -171,3 +171,34 @@ def test_the_env_example_has_no_secret_values():
 def test_the_image_uses_ordinary_large_file_uploads_and_sends_no_telemetry():
     # Artifactory takes Git LFS uploads; the newer Xet transfer is not assumed (contract C5).
     assert "HF_HUB_DISABLE_XET=1" in DOCKERFILE and "HF_HUB_DISABLE_TELEMETRY=1" in DOCKERFILE
+
+
+# --- the JFrog CLI in the import service image only (NFR10.1, NFR8.1) -------------------------
+def test_the_import_service_image_carries_a_pinned_checked_jfrog_cli():
+    assert re.search(r"^ARG JF_VERSION=\d+\.\d+\.\d+$", DOCKERFILE, re.MULTILINE)
+    for arch in ("AMD64", "ARM64"):
+        assert re.search(rf"^ARG JF_SHA256_{arch}=[0-9a-f]{{64}}$", DOCKERFILE, re.MULTILINE), arch
+    assert "sha256sum -c" in DOCKERFILE
+    assert "releases.jfrog.io/artifactory/jfrog-cli/v2-jf/${JF_VERSION}" in DOCKERFILE
+
+
+def test_the_jfrog_cli_is_installed_for_the_import_service_unit_and_no_other():
+    block = DOCKERFILE[DOCKERFILE.index("JF_VERSION") :]
+    assert '"${UNIT}" = "artifactory_service"' in block
+    for other in ("catalog", "portal"):
+        assert f'"${{UNIT}}" = "{other}"' not in block
+
+
+def test_the_jfrog_cli_does_not_check_for_updates_or_report_usage():
+    assert "JFROG_CLI_AVOID_NEW_VERSION_WARNING=true" in DOCKERFILE
+    assert "JFROG_CLI_REPORT_USAGE=false" in DOCKERFILE
+    assert "JFROG_CLI_HOME_DIR=/tmp/.jfrog" in DOCKERFILE  # the root file system is read-only
+
+
+def test_the_ci_image_job_proves_the_cli_is_there_and_only_there():
+    ci = (DEPLOY.parent / ".github" / "workflows" / "ci.yml").read_text()
+    assert "jf --version" in ci
+    assert (
+        "modelhub/artifactory-service"
+        in ci[ci.index("jf --version") - 400 : ci.index("jf --version") + 400]
+    )

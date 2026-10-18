@@ -2,20 +2,22 @@
 
 ## Summary
 
-- Builds: `modelhub login`, `logout` and `import` (verify here, send to the import service piece by piece, report each model), already built and merged in PR #15; this plan replays the unit through the workflow and checks it
+- Builds: `modelhub login`, `logout` and `import` (verify here, send to the import service piece by piece, report each model), already built and merged in PR #15, now reopened by Build and Test to close one Not Met target (no run record); this plan replays the unit through the workflow, adds that fix and checks it
 - Touches: `src/modelhub/importer.py`, `settings.py`, `cli.py`, a small option in `verify.py`, `tests/test_import_cli.py`, `tests/fake_import_service.py`, the README and the `httpx` dependency
 - Tests: 29 new pytest tests against a fake import service, plus an end-to-end test of this client against the real service (in the artifactory-service unit); the existing CLI tests stay green
 
 ## Steps
 
-- [x] Step 1. Project structure and production configuration: `httpx` as a direct dependency, `importer.py` and `settings.py` modules. (NFR10)
-- [x] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest tests/test_import_cli.py -q`. (NFR9)
-- [x] Step 3. Business logic - Red, Green, Refactor: saved settings (private file, https or local http only, token typed with no echo, never printed), environment overrides. (FR1.2, FR1.11)
-- [x] Step 4. Business logic - Red, Green, Refactor: find bundles, verify here first, create, send only the missing pieces one at a time with their checksum, start, watch, report each model and the exit status. (FR1.1, FR1.4, FR1.10, FR1.11)
-- [x] Step 5. Business logic - Red, Green, Refactor: retries 1, 2, 4, 8, 16 s with jitter, no retry for answers that cannot improve, busy waiting up to 30 minutes, 401 and 426 stop the run, Ctrl-C leaves the import to resume. (FR1.9, FR1.12, NFR4)
-- [x] Step 6. API / endpoint - Red, Green, Refactor: the commands `login`, `logout`, `import` (with `--from-store` reserved) and the refusal of a token option. (FR8.1, FR1.2)
-- [x] Step 7. Environment/build configuration: runs on Linux, Windows and macOS in CI. (NFR10)
-- [x] Step 8. Documentation and traceability: the README section on login, import and logout. (FR1.13)
+- [ ] Step 1. Project structure and production configuration: `httpx` as a direct dependency, `importer.py` and `settings.py` modules. (NFR10)
+- [ ] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest tests/test_import_cli.py -q`. (NFR9)
+- [ ] Step 3. Business logic - Red, Green, Refactor: saved settings (private file, https or local http only, token typed with no echo, never printed), environment overrides. (FR1.2, FR1.11)
+- [ ] Step 4. Business logic - Red, Green, Refactor: find bundles, verify here first, create, send only the missing pieces one at a time with their checksum, start, watch, report each model and the exit status. (FR1.1, FR1.4, FR1.10, FR1.11)
+- [ ] Step 5. Business logic - Red, Green, Refactor: retries 1, 2, 4, 8, 16 s with jitter, no retry for answers that cannot improve, busy waiting up to 30 minutes, 401 and 426 stop the run, Ctrl-C leaves the import to resume. (FR1.9, FR1.12, NFR4)
+- [ ] Step 6. API / endpoint - Red, Green, Refactor: the commands `login`, `logout`, `import` (with `--from-store` reserved) and the refusal of a token option. (FR8.1, FR1.2)
+- [ ] Step 7. Environment/build configuration: runs on Linux, Windows and macOS in CI. (NFR10)
+- [ ] Step 8. Documentation and traceability: the README section on login, import and logout. (FR1.13)
+- [ ] Step 9. Loop-back 1 (Build and Test, target import-cli NFR6.3), Red then Green then Refactor: the import command writes the existing run record (`run-record.json`) with one line per model (model, commit, result, reason, service code), never the token, in the folder the run is started from, like the other commands do. (NFR6.3)
+- [x] Step 10. Loop-back 2 (Build and Test, Unverified targets that can be checked here), Red then Green then Refactor: tests that the report comes within 2 seconds of the service's done (NFR1.1, the wait made adaptive if the fixed 2-second poll can be late); the import process killed during create, during a piece and during the wait, then run again to a correct result (NFR4.2); a bundle with very many pieces and a list of 50 bundles with memory that does not grow (NFR7.3, NFR7.4); memory with a 200 GB declaration read in blocks of at most 8 MiB (NFR7.1); only the configured server contacted, with every other socket blocked (NFR5.6, NFR8.1). Stays Unverified and named: link speed on a real 1 Gbit/s link (NFR7.2). No target is weakened.
 
 ## Testing Contract
 

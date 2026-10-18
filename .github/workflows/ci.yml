@@ -235,6 +235,14 @@ jobs:
           bad = [m for m in ('modelhub_stand_in', 'modelhub_testkit') if importlib.util.find_spec(m)]
           sys.exit('found ' + ', '.join(bad) if bad else 0)"
           done
+      - name: The JFrog CLI is in the import service image and in no other
+        run: |
+          docker run --rm --entrypoint sh modelhub/artifactory-service:$RELEASE -c 'jf --version'
+          for name in catalog portal proxy; do
+            if docker run --rm --entrypoint sh modelhub/$name:$RELEASE -c 'command -v jf'; then
+              echo "jf found in $name"; exit 1
+            fi
+          done
       - name: No image carries a secret-looking environment value
         run: |
           for name in catalog artifactory-service portal proxy; do

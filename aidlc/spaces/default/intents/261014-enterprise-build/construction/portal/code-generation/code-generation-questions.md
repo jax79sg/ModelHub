@@ -14,8 +14,8 @@ Approve the code plan for portal?
 Full plan: aidlc/spaces/default/intents/261014-enterprise-build/construction/portal/code-generation/code-generation-plan.md
 Test instructions: aidlc/spaces/default/intents/261014-enterprise-build/construction/portal/code-generation/unit-test-instructions.md
 
-[Approval Fingerprint]: sha256:v3:ab8d24de0bc3b88343f05f57760210ab66cc5106bdd091039566be9b9b55c638
-[Planned Source]: 1ef51dc81015e436a7122e64ace7e9566a6142dd67623879d22bf9797f5d3686
+[Approval Fingerprint]: sha256:v3:8d197c2fca588abe681c07f75768e912a56621cccd8d3790924e5e9080c89dbb
+[Planned Source]: c91dd97ed17180c4bd587b2307a5ecc9c9a9cc6a37f7740c93777be19f10d45e
 
 - A. Approve Plan
 - B. Request Changes

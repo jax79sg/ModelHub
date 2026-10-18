@@ -8,15 +8,16 @@
 
 ## Steps
 
-- [x] Step 1. Project structure and production configuration: `server/portal/pyproject.toml`, package `modelhub_portal`, start-up from settings and the sign-in secret file. (FR6.4)
-- [x] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest server/portal -q`. (NFR9)
-- [x] Step 3. Business logic - Red, Green, Refactor: sign-in (authorisation code with a proof key, state and nonce), server-side sessions with idle limit and token refresh, form tokens and the origin check. (FR3.1, FR3.8, NFR5)
-- [x] Step 4. Repository / data access - Red, Green, Refactor: the Catalog client and the retention-service client, always with the person's own token; plain "cannot be reached" handling. (FR3.2, FR3.8)
-- [x] Step 5. API / endpoint - Red, Green, Refactor: models list with filters, search, sort and paging; model, files, file and commits pages; the trail merged with retention decisions. (FR3.3 to FR3.6, FR2.4, FR2.7, FR2.8, FR5.7)
-- [x] Step 6. API / endpoint - Red, Green, Refactor: personal tokens (shown once, list, revoke) and the administrator screens for retention and trusted keys, refused for everyone else. (FR4.1 to FR4.6, FR5.1 to FR5.6)
-- [x] Step 7. Frontend behavior - Red, Green, Refactor: safe README rendering, pictures served as data, security headers, no route that serves a model file. (FR3.7, NFR5)
-- [x] Step 8. Environment/build configuration: the `server` CI job installs `web` and runs this unit. (NFR9)
-- [x] Step 9. Documentation and traceability: module docstrings naming the rules. (NFR9)
+- [ ] Step 1. Project structure and production configuration: `server/portal/pyproject.toml`, package `modelhub_portal`, start-up from settings and the sign-in secret file. (FR6.4)
+- [ ] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest server/portal -q`. (NFR9)
+- [ ] Step 3. Business logic - Red, Green, Refactor: sign-in (authorisation code with a proof key, state and nonce), server-side sessions with idle limit and token refresh, form tokens and the origin check. (FR3.1, FR3.8, NFR5)
+- [ ] Step 4. Repository / data access - Red, Green, Refactor: the Catalog client and the retention-service client, always with the person's own token; plain "cannot be reached" handling. (FR3.2, FR3.8)
+- [ ] Step 5. API / endpoint - Red, Green, Refactor: models list with filters, search, sort and paging; model, files, file and commits pages; the trail merged with retention decisions. (FR3.3 to FR3.6, FR2.4, FR2.7, FR2.8, FR5.7)
+- [ ] Step 6. API / endpoint - Red, Green, Refactor: personal tokens (shown once, list, revoke) and the administrator screens for retention and trusted keys, refused for everyone else. (FR4.1 to FR4.6, FR5.1 to FR5.6)
+- [ ] Step 7. Frontend behavior - Red, Green, Refactor: safe README rendering, pictures served as data, security headers, no route that serves a model file. (FR3.7, NFR5)
+- [ ] Step 8. Environment/build configuration: the `server` CI job installs `web` and runs this unit. (NFR9)
+- [ ] Step 9. Documentation and traceability: module docstrings naming the rules. (NFR9)
+- [x] Step 10. Loop-back 2 (Build and Test, Unverified targets that can be checked here), Red then Green then Refactor: tests of page time at 1,000 models with 95 of 100 requests under 1 second and the 95th percentile under 1 second (NFR2.1, NFR2.2); page weight under 300 KB without README pictures and no file from outside (NFR2.3); portal-side sign-in time under 500 ms (NFR2.4); 20 people at once within the same targets (NFR7.1); no connection to the internet and no CDN, font or avatar from outside (NFR8.1). Stays Unverified and named: Chrome, Edge and Firefox (NFR10.1). No target is weakened.
 
 ## Testing Contract
 

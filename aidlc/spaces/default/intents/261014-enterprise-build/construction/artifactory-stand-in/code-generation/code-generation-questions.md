@@ -14,8 +14,8 @@ Approve the code plan for artifactory-stand-in?
 Full plan: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-stand-in/code-generation/code-generation-plan.md
 Test instructions: aidlc/spaces/default/intents/261014-enterprise-build/construction/artifactory-stand-in/code-generation/unit-test-instructions.md
 
-[Approval Fingerprint]: sha256:v3:dc015bc44e6daf1579c349c0e0bd77d1c410dd802d106ef5cf5125cbcac1f383
-[Planned Source]: 1ef51dc81015e436a7122e64ace7e9566a6142dd67623879d22bf9797f5d3686
+[Approval Fingerprint]: sha256:v3:7e57fdf9f23cde51c4d31cb629789caf56c16054787366b86b438c8bbd35a237
+[Planned Source]: 24ce113a5a8ab7e1d11d51fadf98914dad614ad7974ad6918a3906543e1162bc
 
 - A. Approve Plan
 - B. Request Changes

@@ -2,20 +2,22 @@
 
 ## Summary
 
-- Builds: how the server stack is packaged and run (images, Compose file, proxy, operator guide), the signed server pack, the whole-stack check and the Docker smoke test with the upgrade-and-return rehearsal, already built and merged in PRs #16 and #19; this plan replays the unit through the workflow and checks it
+- Builds: how the server stack is packaged and run (images, Compose file, proxy, operator guide), the signed server pack, the whole-stack check and the Docker smoke test with the upgrade-and-return rehearsal, already built and merged in PRs #16 and #19, now reopened by Build and Test to close one Not Met target (no JFrog CLI in the import service image); this plan replays the unit through the workflow, adds that fix and checks it
 - Touches: `deploy/`, `src/modelhub/serverpack.py` and the `pack` commands in `cli.py`, `.github/workflows/ci.yml`, `.dockerignore`, `server/e2e/`, the loop guard in `.claude/loop/` with its test and the working-agreement doc
 - Tests: 52 pytest tests on the deployment files, the pack tools (with a stubbed `docker`) and the loop guard, the whole-stack check on real ports, and the CI `images` job (image build, scan, smoke test, rehearsal)
 
 ## Steps
 
-- [x] Step 1. Project structure and production configuration: `deploy/Dockerfile` (one recipe for the three services, non-root), `deploy/proxy/` (TLS, routing, JSON log), `deploy/compose.yaml`, `deploy/env.example`. (FR6.1, FR6.4, FR6.5, NFR5)
-- [x] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest tests/test_deploy_definition.py tests/test_build_pack.py tests/test_serverpack.py -q`. (NFR9)
-- [x] Step 3. Business logic - Red, Green, Refactor: the signed server pack (`modelhub pack sign|verify`, `build-pack.sh`, `ops.sh load-images`). (FR6.2)
-- [x] Step 4. API / endpoint - Red, Green, Refactor: the operator script and guide: preflight, secrets, first install, upgrade and return. (FR6.6)
-- [x] Step 5. Integration - Red, Green, Refactor: the whole-stack check on real ports (`server/e2e`) and the sign-in stand-in server. (NFR1, AC4.2)
-- [x] Step 6. Environment/build configuration: the CI `images` job (build, stand-in absence, secret and user checks, scan, smoke test, rehearsal) and the `server-pack` job. (FR6.3, FR6.6, NFR5)
-- [x] Step 7. Workflow tooling: the loop guard hook, status line and working agreement that keep work on the AI-DLC loop. (process)
-- [x] Step 8. Documentation and traceability: `deploy/README.md`, `docs/traceability.md`. (NFR9)
+- [ ] Step 1. Project structure and production configuration: `deploy/Dockerfile` (one recipe for the three services, non-root), `deploy/proxy/` (TLS, routing, JSON log), `deploy/compose.yaml`, `deploy/env.example`. (FR6.1, FR6.4, FR6.5, NFR5)
+- [ ] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest tests/test_deploy_definition.py tests/test_build_pack.py tests/test_serverpack.py -q`. (NFR9)
+- [ ] Step 3. Business logic - Red, Green, Refactor: the signed server pack (`modelhub pack sign|verify`, `build-pack.sh`, `ops.sh load-images`). (FR6.2)
+- [ ] Step 4. API / endpoint - Red, Green, Refactor: the operator script and guide: preflight, secrets, first install, upgrade and return. (FR6.6)
+- [ ] Step 5. Integration - Red, Green, Refactor: the whole-stack check on real ports (`server/e2e`) and the sign-in stand-in server. (NFR1, AC4.2)
+- [ ] Step 6. Environment/build configuration: the CI `images` job (build, stand-in absence, secret and user checks, scan, smoke test, rehearsal) and the `server-pack` job. (FR6.3, FR6.6, NFR5)
+- [ ] Step 7. Workflow tooling: the loop guard hook, status line and working agreement that keep work on the AI-DLC loop. (process)
+- [ ] Step 8. Documentation and traceability: `deploy/README.md`, `docs/traceability.md`. (NFR9)
+- [ ] Step 9. Loop-back 1 (Build and Test, target artifactory-service NFR10.1, image side), Red then Green then Refactor: the import service image carries a pinned JFrog CLI (`jf`), downloaded on the internet side at build time from JFrog's release site for the image's CPU type and checked against a pinned SHA-256; the other images do not get it; the CLI's update check and usage reporting are switched off in the image; the default upload path stays `huggingface_hub`. A check of the Dockerfile and the CI image job (`jf --version` in the image) prove it. (NFR10.1, NFR8.1)
+- [x] Step 10. Loop-back 2 (Build and Test, platform NFR5.1), Red then Green then Refactor: a log search `deploy/smoke/check_logs.py` that reads the logs of every container and fails if any secret value (every file under the secrets folder, plus the pack signing key material) appears in them, tested with sample logs that hold and do not hold a secret; the Docker smoke test in CI runs it after the rehearsal. Stays Unverified and named: NFR8.1 containers without a route to the internet (a host firewall matter, Compose cannot enforce it because the containers must reach Artifactory and Keycloak) and NFR7.2 free space also checked at start (a change in artifactory-service, left for the person to decide). No target is weakened. (NFR5.1)
 
 ## Testing Contract
 

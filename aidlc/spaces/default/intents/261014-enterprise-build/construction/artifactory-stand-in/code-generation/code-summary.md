@@ -20,6 +20,10 @@ A test-only imitation of Artifactory's Hugging Face repository, built before thi
 
 86 tests (`server/stand_in/tests/`): rules, switches and register, and integration tests with the real `huggingface_hub` client. Run on Linux in the server job and on Windows and macOS in the `stand-in` job. Re-run for this replay: 86 passed.
 
+## Loop-back 2
+
+Build and Test left nine stand-in targets Unverified; they are now checked by nine tests in `server/stand_in/tests/test_limits_and_hygiene.py`: start to first answer under 2 s (NFR9.1), 95th percentile of calls that move no content under 50 ms over 200 calls (NFR9.2), a 1 TiB declaration accepted with traced memory under 500 MB (NFR9.3), 1,000 stored versions of which one holds 10,000 files (NFR7.1; the target says "up to", so 1,000 versions of 10,000 files each, about 10 million files, was not tried), eight concurrent uploads to different versions without mix-up (NFR7.2), the token and file content in no call record and no log (NFR5.3), a token in the environment never used and no environment read in the source (NFR5.6), and a full round trip with every non-local connection refused (NFR8.1). The stand-in run on its own now logs one JSON line per call in the shared shape (ts, level, service, event, message, status), with no token or body (NFR6.1). No target was weakened.
+
 ## Deviations from the plan
 
 None for the unit itself. This record was written afterwards, in a replay through the engine; the unit was built earlier without it (see the stage diary).

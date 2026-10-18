@@ -14,8 +14,8 @@ Approve the code plan for catalog?
 Full plan: aidlc/spaces/default/intents/261014-enterprise-build/construction/catalog/code-generation/code-generation-plan.md
 Test instructions: aidlc/spaces/default/intents/261014-enterprise-build/construction/catalog/code-generation/unit-test-instructions.md
 
-[Approval Fingerprint]: sha256:v3:ede3e179a1e1f75cc285396d6a1f002ad91d7bf1279d52fcb21d0c79d713c74b
-[Planned Source]: 1ef51dc81015e436a7122e64ace7e9566a6142dd67623879d22bf9797f5d3686
+[Approval Fingerprint]: sha256:v3:a4b3aa3cd8863b0a07792011ffc44eb5043e80de7193131ef06e82703f4ba495
+[Planned Source]: 0d8622f570d2053475376becfb761c30f1ab14a4b27f4c5bcda54d94b6203a8c
 
 - A. Approve Plan
 - B. Request Changes

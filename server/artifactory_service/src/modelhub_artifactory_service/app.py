@@ -292,6 +292,14 @@ def create_app(
             raise _error(422, "invalid_key", str(exc)) from exc
         except KeyExists as exc:
             raise _error(409, "key_exists", "This key is already trusted.") from exc
+        log.info(
+            "key_added",
+            extra={
+                "event": "key_added",
+                "fingerprint": added["fingerprint"],
+                "personId": person.person_id,
+            },
+        )
         return JSONResponse(
             {"keyId": added["key_id"], "fingerprint": added["fingerprint"], "name": added["label"]},
             status_code=201,
@@ -302,6 +310,14 @@ def create_app(
         for key in keys.list():
             if key_id in (key["key_id"], key["fingerprint"]):
                 keys.revoke(key["fingerprint"], person.person_name)
+                log.info(
+                    "key_revoked",
+                    extra={
+                        "event": "key_revoked",
+                        "fingerprint": key["fingerprint"],
+                        "personId": person.person_id,
+                    },
+                )
                 break
         return Response(status_code=204)
 

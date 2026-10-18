@@ -53,6 +53,9 @@
     },
     {
       "path": "server/catalog/tests/test_store_read.py"
+    },
+    {
+      "path": "server/catalog/tests/test_limits_and_events.py"
     }
   ]
 }

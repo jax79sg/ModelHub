@@ -277,6 +277,16 @@ class Gateway:
             directory = "/".join(parts[: at + 1])
         return found, directory
 
+    def ping(self) -> bool:
+        """True when Artifactory answers and accepts the credential for this repository."""
+        try:
+            response = self._http.get(
+                f"{self._base}/artifactory/api/storage/{self._key}", headers=self._headers()
+            )
+        except httpx.HTTPError:
+            return False
+        return response.status_code == 200
+
     # -- delete ---------------------------------------------------------------------------------
     def delete_version(self, listing: VersionListing) -> str:
         """Delete a listed version. ``deleted``, or ``gone`` when it was already not there."""

@@ -10,7 +10,8 @@
     "FR1.11",
     "FR1.13",
     "FR8.1",
-    "NFR10"
+    "NFR10",
+    "NFR6.3"
   ],
   "coverage": [
     {
@@ -57,6 +58,11 @@
       "id": "NFR10",
       "status": "OK",
       "target": "tests/test_import_cli.py"
+    },
+    {
+      "id": "NFR6.3",
+      "status": "OK",
+      "target": "src/modelhub/cli.py"
     }
   ]
 }

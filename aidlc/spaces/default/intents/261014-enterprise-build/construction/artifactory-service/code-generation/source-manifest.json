@@ -73,6 +73,9 @@
       "path": "server/artifactory_service/tests/test_main.py"
     },
     {
+      "path": "server/artifactory_service/tests/test_operability.py"
+    },
+    {
       "path": "server/artifactory_service/tests/test_pure.py"
     },
     {
@@ -86,6 +89,42 @@
     },
     {
       "path": "src/modelhub/signing.py"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/app.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_limits_and_resilience.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/relay.py"
+    },
+    {
+      "path": "server/testkit/pyproject.toml"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/__init__.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/bundles.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/issuer.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/keycloak.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/postgres.py"
+    },
+    {
+      "path": "server/testkit/tests/test_bundles.py"
+    },
+    {
+      "path": "server/testkit/tests/test_issuer.py"
+    },
+    {
+      "path": "server/testkit/tests/test_postgres.py"
     }
   ]
 }

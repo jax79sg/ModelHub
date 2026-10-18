@@ -24,7 +24,9 @@
     "FR5.6",
     "FR5.7",
     "FR6.4",
-    "AC1.2"
+    "AC1.2",
+    "NFR6.2",
+    "NFR6.5"
   ],
   "coverage": [
     {
@@ -141,6 +143,16 @@
       "id": "AC1.2",
       "status": "OK",
       "target": "server/artifactory_service/tests/test_cli_end_to_end.py"
+    },
+    {
+      "id": "NFR6.2",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/main.py"
+    },
+    {
+      "id": "NFR6.5",
+      "status": "OK",
+      "target": "server/artifactory_service/src/modelhub_artifactory_service/importer.py"
     }
   ]
 }

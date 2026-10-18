@@ -125,6 +125,7 @@ class CatalogStore:
         clock: Callable[[], datetime] = _utc_now,
         pool_size: int = 10,
         statement_timeout_ms: int = 5000,
+        reconnect_timeout_s: float = 30,
     ) -> None:
         self._pepper = pepper
         self._clock = clock
@@ -133,6 +134,10 @@ class CatalogStore:
             min_size=1,
             max_size=pool_size,
             timeout=5,
+            # waits grow 1, 2, 4 ... seconds up to this long, then a request starts them again, so
+            # the service stays up with the database away and comes back by itself (NFR4.3)
+            reconnect_timeout=reconnect_timeout_s,
+            check=ConnectionPool.check_connection,  # a connection the database dropped is replaced
             kwargs={
                 "row_factory": dict_row,
                 "options": f"-c statement_timeout={statement_timeout_ms} -c timezone=UTC",

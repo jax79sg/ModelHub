@@ -26,6 +26,9 @@
     },
     {
       "path": "README.md"
+    },
+    {
+      "path": "tests/test_import_limits.py"
     }
   ]
 }

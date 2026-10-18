@@ -19,6 +19,10 @@ The portal, built and merged before this replay (PRs #14, #17, #18).
 
 83 tests in `server/portal/tests/` against the real Catalog on PostgreSQL, re-run for this replay, and the whole-stack check on real ports.
 
+## Loop-back 2
+
+Build and Test left seven portal targets Unverified; six are now checked by nine tests in `server/portal/tests/test_limits.py` (portal suite: 92 passed), with 1,000 models written into the real Catalog by a new helper `server/testkit/src/modelhub_testkit/catalog_data.py`. 95 of 100 list requests under 1 s (NFR2.1); the model page 95th percentile under 1 s (NFR2.2); four pages (list, model, files, tokens) weigh under 300 KB with their style and script and load nothing from outside (NFR2.3); sign-in redirect and callback each under 500 ms at the 95th percentile on the portal's side with the identity provider imitated in process (NFR2.4); 20 callers at once keep the list target (NFR7.1); a signed-in visit with every non-local socket blocked works (NFR8.1). These checks found no defect: the portal already met these targets, so the tests are guards. Still Unverified and named: NFR10.1 Chrome, Edge and Firefox (needs real browsers). No target was weakened.
+
 ## Deviations from the plan
 
 None for the unit. This record was written afterwards, in a replay through the engine; the unit was built earlier without it (see the stage diary).

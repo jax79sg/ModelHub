@@ -57,6 +57,15 @@ class ServiceError(Exception):
         self.status, self.code, self.message, self.retryable = status, code, message, retryable
 
 
+def _owner_only(*folders: Path) -> None:
+    """Only the service's own user may read or enter a folder that holds received data."""
+    for folder in folders:
+        try:
+            folder.chmod(0o700)
+        except OSError:  # a system without these mode bits (Windows): the folder's owner rules
+            pass
+
+
 def _utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -105,6 +114,7 @@ class Importer:
         self.free_bytes = lambda path: shutil.disk_usage(path).free
         self._cancel_requested: set[str] = set()
         self.work.mkdir(parents=True, exist_ok=True)
+        _owner_only(self.work)
 
     # -- reading ------------------------------------------------------------------------------
     def _row(self, import_id: str) -> dict | None:
@@ -269,14 +279,17 @@ class Importer:
             self._delete(import_id)
             raise self._map(exc) from exc
         if plan == "skip":
+            self._event("import_skipped", import_id, row["model_id"], row["commit"], owner_id)
             self._record_trail(
                 row, key, tool_version, computer, check_results, description_bytes, "skipped"
             )
             self._end(import_id, "skipped", plan="skip", outcome="skipped")
             return self.get(import_id, owner_id)
         self._set(import_id, plan=plan)
+        self._event("import_created", import_id, row["model_id"], row["commit"], owner_id)
         in_dir = self.work / import_id / "in"
         in_dir.mkdir(parents=True)
+        _owner_only(in_dir.parent, in_dir)  # received data is for this service alone (NFR5.5)
         (in_dir / "bundle.bundle.json").write_bytes(description_bytes)
         (in_dir / "bundle.bundle.sig").write_bytes(signature_bytes)
         return self.get(import_id, owner_id)
@@ -456,6 +469,9 @@ class Importer:
                 error_message="Cancelled by the person who started it.",
                 retryable=True,
             )
+            self._event(
+                "import_cancelled", import_id, job["model_id"], job["commit"], job["owner_id"]
+            )
             return
         except Exception as exc:
             error = exc if isinstance(exc, ServiceError) else self._map(exc)
@@ -469,9 +485,44 @@ class Importer:
                 error_message=error.message,
                 retryable=error.retryable,
             )
+            self._event(
+                "import_failed",
+                import_id,
+                job["model_id"],
+                job["commit"],
+                job["owner_id"],
+                code=error.code,
+            )
             return
         self._cancel_requested.discard(import_id)
         self._end(import_id, "done", plan=plan, outcome=outcome)
+        self._event(
+            "import_done",
+            import_id,
+            job["model_id"],
+            job["commit"],
+            job["owner_id"],
+            outcome=outcome,
+            plan=plan,
+        )
+
+    @staticmethod
+    def _event(
+        event: str, import_id: str, model_id: str, commit: str, person_id: str, **more
+    ) -> None:
+        """One log line with a fixed event code. It holds ids and codes only: no token, no
+        secret, no text that came from Artifactory."""
+        logger.info(
+            event,
+            extra={
+                "event": event,
+                "importId": import_id,
+                "model": model_id,
+                "commit": commit,
+                "personId": person_id,
+                **more,
+            },
+        )
 
     @staticmethod
     def _map(exc: Exception) -> ServiceError:
@@ -585,8 +636,10 @@ class Importer:
         job = self._owned(import_id, owner_id)
         if job["state"] in OPEN:
             self._end(import_id, "cancelled")
+            self._event("import_cancelled", import_id, job["model_id"], job["commit"], owner_id)
         elif job["state"] in RUNNING:
             self._cancel_requested.add(import_id)
+            return self.get(import_id, owner_id)
         else:
             raise ServiceError(409, "wrong_state", "This import has already ended.")
         return self.get(import_id, owner_id)
@@ -606,6 +659,14 @@ class Importer:
                 error_message="Cancelled after a day with no activity.",
                 retryable=True,
             )
+            logger.info(
+                "import_cancelled",
+                extra={
+                    "event": "import_cancelled",
+                    "importId": row["import_id"],
+                    "code": "idle_timeout",
+                },
+            )
         return len(rows)
 
     def sweep_restart(self) -> int:
@@ -621,6 +682,14 @@ class Importer:
                 error_code="interrupted",
                 error_message="The service restarted while this import was running; run it again.",
                 retryable=True,
+            )
+            logger.info(
+                "import_failed",
+                extra={
+                    "event": "import_failed",
+                    "importId": row["import_id"],
+                    "code": "interrupted",
+                },
             )
         with self.pool.connection() as conn:
             live = {

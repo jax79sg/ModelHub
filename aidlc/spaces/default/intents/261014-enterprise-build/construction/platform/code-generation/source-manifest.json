@@ -89,6 +89,12 @@
     },
     {
       "path": "tests/test_serverpack.py"
+    },
+    {
+      "path": "deploy/smoke/check_logs.py"
+    },
+    {
+      "path": "tests/test_smoke_logs.py"
     }
   ]
 }

@@ -44,6 +44,9 @@
     },
     {
       "path": "server/stand_in/tests/test_switches_and_register.py"
+    },
+    {
+      "path": "server/stand_in/tests/test_limits_and_hygiene.py"
     }
   ]
 }

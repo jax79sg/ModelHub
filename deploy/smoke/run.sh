@@ -58,4 +58,10 @@ stop "$TO"
 up "$FROM"
 drive "$FROM" check
 
+step "no secret may be in the logs of any container"
+LOGS=$(mktemp)
+MODELHUB_VERSION=$FROM POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" logs --no-color >"$LOGS" 2>&1
+python3 smoke/check_logs.py secrets "$LOGS" || { rm -f "$LOGS"; exit 1; }
+rm -f "$LOGS"
+
 step "smoke test and rehearsal passed"

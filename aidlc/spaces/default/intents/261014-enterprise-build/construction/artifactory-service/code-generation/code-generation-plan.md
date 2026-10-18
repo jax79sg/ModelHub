@@ -2,21 +2,23 @@
 
 ## Summary
 
-- Builds: the import service (import jobs, the C1 import API, trusted keys, retention, the Artifactory gateway and Catalog client), already built and merged in PR #13 and widened in PR #20; this plan replays the unit through the workflow and checks it
+- Builds: the import service (import jobs, the C1 import API, trusted keys, retention, the Artifactory gateway and Catalog client), already built and merged in PR #13 and widened in PR #20, now reopened by Build and Test to close two Not Met targets (degraded readiness, fixed event codes); this plan replays the unit through the workflow, adds those two fixes and checks it
 - Touches: `server/artifactory_service/` (package `modelhub_artifactory_service`, numbered SQL step, tests in `server/artifactory_service/tests/`), and small hooks in `src/modelhub/` it reuses (`verify`, `unpack`, `signing`)
 - Tests: 154 pytest tests on real PostgreSQL, the Artifactory stand-in and the real Catalog, including an end-to-end run of the program's own import client
 
 ## Steps
 
-- [x] Step 1. Project structure and production configuration: `server/artifactory_service/pyproject.toml`, package `modelhub_artifactory_service`. (NFR9)
-- [x] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest server/artifactory_service -q`. (NFR9)
-- [x] Step 3. Data model / database - Red, Green, Refactor: the service's own schema (jobs, received pieces, model locks, trusted keys, retention), numbered step under a lock, the limited role. (FR1.12, FR1.14, FR5.1, NFR5)
-- [x] Step 4. Repository / data access - Red, Green, Refactor: the gateway (list a version with prefix discovery, delete, upload through `huggingface_hub` or `jf`, errors that never echo a credential) and the Catalog client with the service token. (FR1.6, FR1.8, FR1.9)
-- [x] Step 5. Business logic - Red, Green, Refactor: names, signature against trusted keys, disk check, per-model lock, the plan decision (skip, repair, finish, full), pieces consumed as read, upload with retries, record in the Catalog, cancel, idle and restart sweeps. (FR1.1 to FR1.14, FR2.1 to FR2.8)
-- [x] Step 6. Business logic - Red, Green, Refactor: retention (period, due list, keep, two-step removal) and trusted keys. (FR5.1 to FR5.7, FR4.2)
-- [x] Step 7. API / endpoint - Red, Green, Refactor: the C1 and C4 routes, personal-token check through the Catalog, the 426 rule, administrator-only changes. (FR1.2, FR4.3, FR4.5)
-- [x] Step 8. Start-up and environment: settings and secret files, migration role, idle sweep. (FR6.4, FR6.5)
-- [x] Step 9. Documentation and traceability: module docstrings naming the rules; the plan-decision deviation recorded in the code summary. (NFR9)
+- [ ] Step 1. Project structure and production configuration: `server/artifactory_service/pyproject.toml`, package `modelhub_artifactory_service`. (NFR9)
+- [ ] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest server/artifactory_service -q`. (NFR9)
+- [ ] Step 3. Data model / database - Red, Green, Refactor: the service's own schema (jobs, received pieces, model locks, trusted keys, retention), numbered step under a lock, the limited role. (FR1.12, FR1.14, FR5.1, NFR5)
+- [ ] Step 4. Repository / data access - Red, Green, Refactor: the gateway (list a version with prefix discovery, delete, upload through `huggingface_hub` or `jf`, errors that never echo a credential) and the Catalog client with the service token. (FR1.6, FR1.8, FR1.9)
+- [ ] Step 5. Business logic - Red, Green, Refactor: names, signature against trusted keys, disk check, per-model lock, the plan decision (skip, repair, finish, full), pieces consumed as read, upload with retries, record in the Catalog, cancel, idle and restart sweeps. (FR1.1 to FR1.14, FR2.1 to FR2.8)
+- [ ] Step 6. Business logic - Red, Green, Refactor: retention (period, due list, keep, two-step removal) and trusted keys. (FR5.1 to FR5.7, FR4.2)
+- [ ] Step 7. API / endpoint - Red, Green, Refactor: the C1 and C4 routes, personal-token check through the Catalog, the 426 rule, administrator-only changes. (FR1.2, FR4.3, FR4.5)
+- [ ] Step 8. Start-up and environment: settings and secret files, migration role, idle sweep. (FR6.4, FR6.5)
+- [ ] Step 9. Documentation and traceability: module docstrings naming the rules; the plan-decision deviation recorded in the code summary. (NFR9)
+- [ ] Step 10. Loop-back 1 (Build and Test, targets artifactory-service NFR6.2 and NFR6.5), Red then Green then Refactor for (a) `/readyz` reporting Artifactory and the Catalog as degraded (never critical) and (b) the fixed event codes `import_created`, `import_skipped`, `import_done`, `import_failed`, `import_cancelled`, `key_added`, `key_revoked` and `retention_decided` logged with no secret, token or raw Artifactory output. (NFR6.2, NFR6.5)
+- [x] Step 11. Loop-back 2 (Build and Test, Unverified targets that can be checked here), Red then Green then Refactor: tests for short calls at the 95th percentile under 1 second (NFR2.1) and with 20 callers at once (NFR7.7); per-piece overhead under 100 ms (NFR4.1); the service stopped at each state of an import and rerun with no half-finished result (NFR4.2); Artifactory or the Catalog down and back as a whole (NFR3.2); server memory with pieces and files streamed in blocks of at most 8 MiB on a large bundle (NFR7.3); the credential in no log and no process listing (NFR5.2); owner-only permission on the work folder (NFR5.5); no connection outside the machine (NFR8.1); exact pins for `jf` and `huggingface_hub` in the image (NFR9.2). Stays Unverified and named: alert thresholds (monitoring team), a 100 GB import and disk speed on a real Artifactory (NFR7.1, NFR7.2), free-space planning (NFR7.6), and the JFrog CLI download until CI builds the image (NFR10.1). No target is weakened.
 
 ## Testing Contract
 

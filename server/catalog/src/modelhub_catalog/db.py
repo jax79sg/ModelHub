@@ -7,12 +7,14 @@ is refused.
 
 from __future__ import annotations
 
+import logging
 import re
 from importlib import resources
 
 import psycopg
 from psycopg import sql
 
+log = logging.getLogger("modelhub.catalog")
 LOCK_KEY = 7_340_001  # one advisory lock for "the Catalog is changing its tables"
 
 
@@ -56,6 +58,10 @@ def migrate(url: str) -> list[int]:
                         "insert into schema_steps(step, applied_at) values (%s, now())", (number,)
                     )
                 applied.append(number)
+                log.info(
+                    "upgrade step applied",
+                    extra={"event": "migration_applied", "step": number},
+                )
         finally:
             conn.execute("select pg_advisory_unlock(%s)", (LOCK_KEY,))
     return applied

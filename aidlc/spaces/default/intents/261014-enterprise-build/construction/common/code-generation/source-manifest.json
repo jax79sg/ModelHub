@@ -77,6 +77,12 @@
     },
     {
       "path": "server/testkit/tests/test_postgres.py"
+    },
+    {
+      "path": ".github/dependabot.yml"
+    },
+    {
+      "path": "server/common/tests/test_limits.py"
     }
   ]
 }

@@ -8,14 +8,15 @@
 
 ## Steps
 
-- [x] Step 1. Project structure and production configuration: `server/stand_in/pyproject.toml`, package `modelhub_stand_in`, entry `python -m modelhub_stand_in`. (FR7.1)
-- [x] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest server/stand_in -q`. (NFR9)
-- [x] Step 3. Data model - Red, Green, Refactor: the in-memory store of repositories, versions, files and checksums, with the invented layouts (flat, nested). (FR7.1, FR7.2)
-- [x] Step 4. Business logic - Red, Green, Refactor: naming rules, 409 on an existing version without overwrite permission, revisions as commit hashes, size limits, the switches that make it fail on purpose. (FR7.2)
-- [x] Step 5. API / endpoint - Red, Green, Refactor: the calls `jf hf upload` and the `huggingface_hub` library make (create repository, pre-upload, commit, large-file batch), listing, checksums, deletion. (FR7.1)
-- [x] Step 6. Server wrapper and command line: `StandIn` context manager on a free local port, token from the caller, local-only unless explicitly allowed. (FR7.1)
-- [x] Step 7. Environment/build configuration: Windows and macOS CI jobs for this unit. (NFR10)
-- [x] Step 8. Documentation and traceability: `assumptions.json`, the register and its checklist for a real Artifactory. (FR7.2, FR7.3)
+- [ ] Step 1. Project structure and production configuration: `server/stand_in/pyproject.toml`, package `modelhub_stand_in`, entry `python -m modelhub_stand_in`. (FR7.1)
+- [ ] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest server/stand_in -q`. (NFR9)
+- [ ] Step 3. Data model - Red, Green, Refactor: the in-memory store of repositories, versions, files and checksums, with the invented layouts (flat, nested). (FR7.1, FR7.2)
+- [ ] Step 4. Business logic - Red, Green, Refactor: naming rules, 409 on an existing version without overwrite permission, revisions as commit hashes, size limits, the switches that make it fail on purpose. (FR7.2)
+- [ ] Step 5. API / endpoint - Red, Green, Refactor: the calls `jf hf upload` and the `huggingface_hub` library make (create repository, pre-upload, commit, large-file batch), listing, checksums, deletion. (FR7.1)
+- [ ] Step 6. Server wrapper and command line: `StandIn` context manager on a free local port, token from the caller, local-only unless explicitly allowed. (FR7.1)
+- [ ] Step 7. Environment/build configuration: Windows and macOS CI jobs for this unit. (NFR10)
+- [ ] Step 8. Documentation and traceability: `assumptions.json`, the register and its checklist for a real Artifactory. (FR7.2, FR7.3)
+- [x] Step 9. Loop-back 2 (Build and Test, Unverified targets that can be checked here), Red then Green then Refactor: tests for start-to-first-answer time, 95th percentile of non-content calls, a 1 TiB virtual file within the memory limit, 1,000 versions of 10,000 files listed, 8 concurrent uploads, the token never in the call record or logs, the environment never read for the token, and no connection outside the machine; the stand-in logs in the shared JSON shape. No target is weakened. (NFR6.1, NFR9.1, NFR9.2, NFR9.3, NFR7.1, NFR7.2, NFR5.3, NFR5.6, NFR8.1)
 
 ## Testing Contract
 

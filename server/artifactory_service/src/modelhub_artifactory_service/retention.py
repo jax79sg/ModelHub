@@ -7,6 +7,7 @@ decision does only what is still left to do.
 
 from __future__ import annotations
 
+import logging
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -15,6 +16,8 @@ from modelhub_artifactory_service.catalog_client import (
     CatalogUnavailable,
 )
 from modelhub_artifactory_service.gateway import ArtifactoryUnreachable, UploadError
+
+log = logging.getLogger("modelhub.retention")
 
 
 class RetentionError(Exception):
@@ -141,6 +144,17 @@ class Retention:
         if not version or version.get("state") != "imported":
             raise RetentionError(409, "not_removable", "This version is not an imported version.")
         decision_id = uuid.uuid4().hex
+        log.info(
+            "retention_decided",
+            extra={
+                "event": "retention_decided",
+                "decisionId": decision_id,
+                "model": model_id,
+                "commit": commit,
+                "decision": decision,
+                "personId": by_id,
+            },
+        )
         resume = decision == "remove" and self._files_already_deleted(model_id, commit)
         outcome = "done" if decision == "keep" else "failed"
         self._store(decision_id, model_id, commit, decision, by_id, by_name, outcome, None, None)

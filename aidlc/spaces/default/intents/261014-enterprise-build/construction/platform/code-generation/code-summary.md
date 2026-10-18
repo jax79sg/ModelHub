@@ -19,6 +19,14 @@ How the server stack is packaged and run, built and merged before this replay (P
 
 Re-run for this replay: the deployment, pack and loop-guard tests pass; the whole-stack check passed at the stand-in checkpoint; the Docker parts ran green in CI (`images` job).
 
+## Loop-back 1 (from Build and Test)
+
+Build and Test found the import service image lacked the JFrog CLI the design names (NFR10.1). `deploy/Dockerfile` now installs a pinned JFrog CLI (2.122.0, downloaded from JFrog's release site on the internet side for the image's CPU type and checked against a pinned SHA-256) into the import service image only; the CLI's update check and usage reporting are switched off and its home is on the writable temporary folder. The default upload path stays `huggingface_hub`. Four new checks in `tests/test_deploy_definition.py` cover the pinning, the unit restriction, the switches and the CI step; the CI image job runs `jf --version` in the service image and fails if `jf` is in any other image. Not proven until CI builds the image: the download and checksum step.
+
+## Loop-back 2
+
+Build and Test left platform NFR5.1 only partly proven (images and environment were searched in CI, the logs of the containers were not). `deploy/smoke/check_logs.py` now reads the logs of every container after the rehearsal and fails if any secret value appears in them (one-line secrets whole, keys line by line without BEGIN and END lines, values under 8 characters left out), naming only the secret's file; `deploy/smoke/run.sh` runs it before it reports success; six tests in `tests/test_smoke_logs.py` cover pass, fail, key lines, BEGIN lines, missing input and the wiring (CLI suite: 480 passed). The search itself runs in CI only, on a Docker host, so NFR5.1 is Met by tests of the search plus the CI step, and is proven end to end when CI runs. Still Unverified and named: NFR8.1 containers without a route to the internet (a host firewall matter; Compose cannot enforce it because the containers must reach Artifactory and Keycloak) and NFR7.2 free space also checked at start (the service checks at create; adding a check at start changes artifactory-service, left for the person to decide). No target was weakened.
+
 ## Deviations from the plan
 
 The upgrade-and-return rehearsal retags the same images as the new release, so it shows the procedure and data survival but not a schema change. This record was also written afterwards, in a replay through the engine; the unit was built earlier without it (see the stage diary).

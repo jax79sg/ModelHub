@@ -104,6 +104,42 @@
     },
     {
       "path": "server/portal/tests/test_signin.py"
+    },
+    {
+      "path": "server/portal/tests/test_limits.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/catalog_data.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/relay.py"
+    },
+    {
+      "path": "server/testkit/pyproject.toml"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/__init__.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/bundles.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/issuer.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/keycloak.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/postgres.py"
+    },
+    {
+      "path": "server/testkit/tests/test_bundles.py"
+    },
+    {
+      "path": "server/testkit/tests/test_issuer.py"
+    },
+    {
+      "path": "server/testkit/tests/test_postgres.py"
     }
   ]
 }

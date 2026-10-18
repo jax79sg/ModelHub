@@ -1,0 +1,39 @@
+# Dependency updates (NFR5.11): every Python package, the workflows and the image recipe.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pip
+    directory: "/server/artifactory_service"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pip
+    directory: "/server/catalog"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pip
+    directory: "/server/common"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pip
+    directory: "/server/portal"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pip
+    directory: "/server/stand_in"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pip
+    directory: "/server/testkit"
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+  - package-ecosystem: docker
+    directory: "/deploy"
+    schedule:
+      interval: weekly

@@ -14,8 +14,8 @@ Approve the code plan for common?
 Full plan: aidlc/spaces/default/intents/261014-enterprise-build/construction/common/code-generation/code-generation-plan.md
 Test instructions: aidlc/spaces/default/intents/261014-enterprise-build/construction/common/code-generation/unit-test-instructions.md
 
-[Approval Fingerprint]: sha256:v3:a8066e6b559fc30228a08330f6a33d5d1c45dbb278264de7e22e119c3770c554
-[Planned Source]: 1ef51dc81015e436a7122e64ace7e9566a6142dd67623879d22bf9797f5d3686
+[Approval Fingerprint]: sha256:v3:c690d076936cb068966bd7ef2819e1e50f54d489595ca6c24d6f9ea4a33611e2
+[Planned Source]: 3b61dff3133a414aaf85632dde6bf8e3fa5112cca06ecb6c83882bd51ebb7817
 
 - A. Approve Plan
 - B. Request Changes

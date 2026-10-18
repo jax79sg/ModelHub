@@ -8,13 +8,14 @@
 
 ## Steps
 
-- [x] Step 1. Project structure and production configuration: `server/common/pyproject.toml`, package `modelhub_common`. (NFR9)
-- [x] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest server/common -q`. (NFR9)
-- [x] Step 3. Business logic - Red, Green, Refactor: the token check (RS256 and ES256 only, issuer, audience, expiry, the key set with a limited refresh), administrator role, service identity. (FR4.1, FR4.2, FR4.3)
-- [x] Step 4. Business logic - Red, Green, Refactor: configuration and secrets from files, a start-up error that names every missing item and shows no value; structured JSON logs that redact secrets. (FR6.4, FR6.5)
-- [x] Step 5. API / endpoint - Red, Green, Refactor: the guard (default-deny middleware, `/healthz`, `/readyz`, plain error bodies, request id, open path prefixes for the import routes). (FR3.1, NFR5)
-- [x] Step 6. Environment/build configuration: the `server` CI job runs this unit with the others. (NFR9)
-- [x] Step 7. Documentation and traceability: module docstrings naming the rules. (NFR9)
+- [ ] Step 1. Project structure and production configuration: `server/common/pyproject.toml`, package `modelhub_common`. (NFR9)
+- [ ] Step 2. Verify the test runner and record the unit-scoped command: `.venv/bin/python -m pytest server/common -q`. (NFR9)
+- [ ] Step 3. Business logic - Red, Green, Refactor: the token check (RS256 and ES256 only, issuer, audience, expiry, the key set with a limited refresh), administrator role, service identity. (FR4.1, FR4.2, FR4.3)
+- [ ] Step 4. Business logic - Red, Green, Refactor: configuration and secrets from files, a start-up error that names every missing item and shows no value; structured JSON logs that redact secrets. (FR6.4, FR6.5)
+- [ ] Step 5. API / endpoint - Red, Green, Refactor: the guard (default-deny middleware, `/healthz`, `/readyz`, plain error bodies, request id, open path prefixes for the import routes). (FR3.1, NFR5)
+- [ ] Step 6. Environment/build configuration: the `server` CI job runs this unit with the others. (NFR9)
+- [ ] Step 7. Documentation and traceability: module docstrings naming the rules. (NFR9)
+- [x] Step 8. Loop-back 2 (Build and Test, Unverified targets that can be checked here), Red then Green then Refactor: a test of the time per request with a cached key, a test that the library makes no connection outside the machine (other sockets blocked), and a Dependabot configuration (`.github/dependabot.yml`: Python packages and GitHub Actions, weekly) with a test that it covers the project's packages; no target is weakened. (NFR5.9, NFR8.1, NFR5.11)
 
 ## Testing Contract
 
