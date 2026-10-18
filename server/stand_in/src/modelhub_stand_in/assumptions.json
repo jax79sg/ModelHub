@@ -75,7 +75,7 @@
     "id": "A9",
     "behaviour": "Two invented layouts stand in for the real one: flat (<org>/<model>/<revision>/<file>) and nested (<org>/<model>/revisions/<revision>/files/<file>).",
     "basis": "invented",
-    "source": "The Machine Learning layout is not documented on the pages read (open item X1)",
+    "source": "The Machine Learning layout is not documented on the pages read (open item X1); JFrog's Hugging Face page only hints at <repo>/models/<org>/<model>/... and the gateway also tries that prefix",
     "confirm_on_real": true,
     "check": "List a real version and record the real layout; the gateway must not depend on either invented one.",
     "answers": []

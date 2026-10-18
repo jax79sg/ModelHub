@@ -1,0 +1,88 @@
+{
+  "stage": "code-generation",
+  "unit": "common",
+  "version": 1,
+  "writes": [
+    {
+      "path": "server/common/pyproject.toml"
+    },
+    {
+      "path": "server/common/src/modelhub_common/__init__.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/config.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/guard.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/health.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/keys.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/logs.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/secrets.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/tokens.py"
+    },
+    {
+      "path": "server/common/tests/conftest.py"
+    },
+    {
+      "path": "server/common/tests/test_guard.py"
+    },
+    {
+      "path": "server/common/tests/test_health.py"
+    },
+    {
+      "path": "server/common/tests/test_keys.py"
+    },
+    {
+      "path": "server/common/tests/test_logs.py"
+    },
+    {
+      "path": "server/common/tests/test_secrets_settings.py"
+    },
+    {
+      "path": "server/common/tests/test_tokens.py"
+    },
+    {
+      "path": "server/testkit/pyproject.toml"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/__init__.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/bundles.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/issuer.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/keycloak.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/postgres.py"
+    },
+    {
+      "path": "server/testkit/tests/test_bundles.py"
+    },
+    {
+      "path": "server/testkit/tests/test_issuer.py"
+    },
+    {
+      "path": "server/testkit/tests/test_postgres.py"
+    },
+    {
+      "path": ".github/dependabot.yml"
+    },
+    {
+      "path": "server/common/tests/test_limits.py"
+    }
+  ]
+}

@@ -12,6 +12,7 @@ import base64
 import hashlib
 import hmac
 import json
+import logging
 import re
 import time
 import uuid
@@ -26,6 +27,7 @@ from .rules import is_commit_hash, safe_relative_path, validate_names
 from .store import Store, StoredFile, Version, sha256_hex
 from .switches import Switch, SwitchTable
 
+log = logging.getLogger("modelhub.stand_in")
 HF = "/artifactory/api/huggingfaceml/{repo_key}"
 BLOCK = 64 * 1024
 
@@ -98,6 +100,8 @@ class State:
                     "switch_fired": switch.kind if switch else None,
                 }
             )
+        # One line per call; the path and status only, never the token or a body (rule BR1.11).
+        log.info("%s %s %s", method, path, status, extra={"event": "request", "status": status})
 
 
 def create_app(state: State) -> FastAPI:
@@ -469,8 +473,8 @@ def create_app(state: State) -> FastAPI:
                                 "sha2": f.sha256,
                             }
                         )
-        if not files:
-            return not_found()
+        if not files and prefix != "/":
+            return not_found()  # a folder that holds nothing; the repository itself always exists
         return {"uri": prefix, "files": sorted(files, key=lambda x: x["uri"])}
 
     @app.delete("/artifactory/{repo_key}/{path:path}")

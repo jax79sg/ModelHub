@@ -1,0 +1,38 @@
+{
+  "stage": "code-generation",
+  "unit": "artifactory-stand-in",
+  "upstream_ids": [
+    "FR7.1",
+    "FR7.2",
+    "FR7.3",
+    "NFR9",
+    "NFR10"
+  ],
+  "coverage": [
+    {
+      "id": "FR7.1",
+      "status": "OK",
+      "target": "server/stand_in/src/modelhub_stand_in/app.py"
+    },
+    {
+      "id": "FR7.2",
+      "status": "OK",
+      "target": "server/stand_in/src/modelhub_stand_in/assumptions.json"
+    },
+    {
+      "id": "FR7.3",
+      "status": "OK",
+      "target": "server/stand_in/src/modelhub_stand_in/register.py"
+    },
+    {
+      "id": "NFR9",
+      "status": "OK",
+      "target": "server/stand_in/tests/test_hf_client.py"
+    },
+    {
+      "id": "NFR10",
+      "status": "OK",
+      "target": "server/stand_in/tests/test_rules.py"
+    }
+  ]
+}

@@ -18,6 +18,7 @@ from modelhub_common.config import (
     load_config,
     load_secrets,
 )
+from modelhub_common.health import HealthCheck
 from modelhub_common.keys import http_fetcher
 from modelhub_common.logs import configure_logging
 from modelhub_common.secrets import Secret
@@ -127,6 +128,10 @@ def build_app(
         issuer=issuer,
         audience=cfg["MODELHUB_AUDIENCE"],
         min_client_version=cfg["MODELHUB_MIN_CLIENT_VERSION"],
+        extra_checks=[
+            HealthCheck("artifactory", gateway.ping),
+            HealthCheck("catalog", catalog.ping),
+        ],
     )
     app.state.settings = cfg
     return app

@@ -3,11 +3,32 @@
 from __future__ import annotations
 
 import argparse
+import json
+import logging
 import sys
 import time
+from datetime import datetime, timezone
 
 from .register import checklist_markdown
 from .server import StandIn
+
+
+class JsonLines(logging.Formatter):
+    """The shared log shape (contract C7): ts, level, service, event, message, plus extras."""
+
+    def format(self, record: logging.LogRecord) -> str:
+        line = {
+            "ts": datetime.fromtimestamp(record.created, tz=timezone.utc)
+            .isoformat(timespec="milliseconds")
+            .replace("+00:00", "Z"),
+            "level": record.levelname.lower(),
+            "service": "stand-in",
+            "event": getattr(record, "event", "log"),
+            "message": record.getMessage(),
+        }
+        if hasattr(record, "status"):
+            line["status"] = record.status
+        return json.dumps(line)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -30,6 +51,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if not args.token:
         parser.error("--token is required")
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(JsonLines())
+    logger = logging.getLogger("modelhub.stand_in")
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
     with StandIn(
         token=args.token,
         repo_key=args.repo_key,

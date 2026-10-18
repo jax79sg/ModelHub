@@ -58,4 +58,31 @@ stop "$TO"
 up "$FROM"
 drive "$FROM" check
 
+step "no route out: a product container cannot reach the internet"
+inside() { # inside <service> <command...>: run a command in a running product container
+  MODELHUB_VERSION=$FROM POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" exec -T "$@"
+}
+for name in catalog portal artifactory-service; do
+  # the control: the container is running and reaches the database inside the network ...
+  inside "$name" python -c "import socket; socket.create_connection(('database', 5432), 3).close()" \
+    || { echo "Problem: $name cannot reach the database, so the check below would prove nothing"; exit 1; }
+  # ... and the test: it cannot reach an address on the internet
+  if inside "$name" python -c "import socket; socket.create_connection(('1.1.1.1', 443), 3).close()" >/dev/null 2>&1; then
+    echo "Problem: $name can reach the internet"; exit 1
+  fi
+  echo "$name reaches the database and cannot reach the internet"
+done
+inside proxy curl --fail --silent --insecure https://127.0.0.1:8443/healthz >/dev/null \
+  || { echo "Problem: the proxy does not answer, so the check below would prove nothing"; exit 1; }
+if inside proxy curl --silent --max-time 3 https://1.1.1.1 >/dev/null 2>&1; then
+  echo "Problem: proxy can reach the internet"; exit 1
+fi
+echo "proxy answers and cannot reach the internet"
+
+step "no secret may be in the logs of any container"
+LOGS=$(mktemp)
+MODELHUB_VERSION=$FROM POSTGRES_IMAGE=$POSTGRES_IMAGE docker compose "${C[@]}" logs --no-color >"$LOGS" 2>&1
+python3 smoke/check_logs.py secrets "$LOGS" || { rm -f "$LOGS"; exit 1; }
+rm -f "$LOGS"
+
 step "smoke test and rehearsal passed"

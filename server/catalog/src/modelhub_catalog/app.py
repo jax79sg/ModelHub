@@ -10,6 +10,8 @@ import json
 import logging
 from collections.abc import Callable
 
+import psycopg
+import psycopg_pool
 from fastapi import Depends, FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import JSONResponse, Response
 from modelhub_common.guard import (
@@ -79,6 +81,16 @@ def create_app(
     app = FastAPI(title="modelhub Catalog", docs_url=None, redoc_url=None, openapi_url=None)
     install_guard(app, verifier, "catalog", registry, keys)
 
+    @app.exception_handler(psycopg.OperationalError)
+    @app.exception_handler(psycopg_pool.PoolTimeout)
+    async def database_unreachable(request: Request, exc: Exception):
+        # The database is away: stay up, answer 503, and come back when it does (NFR4.3).
+        log.warning("database unreachable", extra={"error": type(exc).__name__})
+        return JSONResponse(
+            {"code": "database_unavailable", "message": "The database is not reachable."},
+            status_code=503,
+        )
+
     # --------------------------------------------------------------------------- models ---
     @app.get("/v1/models")
     def models(request: Request, person: Verdict = Depends(current_person)):
@@ -128,6 +140,7 @@ def create_app(
         except InvalidRecord as exc:
             raise _err(422, "invalid_record", f"{exc.field}: {exc.message}") from exc
         except RecordConflict as exc:
+            log.warning("record conflict", extra={"event": "record_conflict", "model": model_id})
             raise _err(
                 409, "record_conflict", "A different record exists for this version."
             ) from exc

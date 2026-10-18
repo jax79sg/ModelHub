@@ -16,6 +16,14 @@ runner = CliRunner()
 SECRET = "mhi_" + "q7Zk" * 8
 
 
+@pytest.fixture(autouse=True)
+def _work_in_a_private_folder(tmp_path, monkeypatch):
+    """The import command writes its run record in the folder it is started from."""
+    folder = tmp_path / "cwd"
+    folder.mkdir()
+    monkeypatch.chdir(folder)
+
+
 @pytest.fixture
 def service(monkeypatch):
     fake = FakeImportService()
@@ -252,7 +260,7 @@ def test_progress_is_polled_until_the_service_ends_it(run, service, bundled, sig
     service.polls_before_done = 3
     assert run("import", bundled).exit_code == 0
     assert len([c for c in service.calls if c[0] == "GET"]) == 3
-    assert 2 in service.sleeps
+    assert importer.POLL_SECONDS in service.sleeps
 
 
 # --- one failure does not stop the rest (BR1.4, BR1.11) ------------------------------------------
@@ -376,3 +384,59 @@ def test_the_token_never_appears_even_in_server_messages(run, service, bundled, 
     )
     result = run("import", bundled)
     assert SECRET not in result.output
+
+
+# --- the run record (NFR6.3) -------------------------------------------------------------------
+def test_the_import_writes_the_run_record_with_a_line_per_model(
+    run, service, bundled, signed_in, tmp_path, monkeypatch
+):
+    here = tmp_path / "here"
+    here.mkdir()
+    monkeypatch.chdir(here)
+    assert run("import", bundled).exit_code == 0
+    record = json.loads((here / "run-record.json").read_text())
+    assert record["command"] == "import"
+    [item] = record["items"]
+    assert item["status"] == "imported" and item["model"] and len(item["commit"]) == 40
+
+
+def test_failed_and_skipped_models_carry_their_reason_and_code(
+    run, service, bundled, signed_in, tmp_path, monkeypatch
+):
+    here = tmp_path / "here"
+    here.mkdir()
+    monkeypatch.chdir(here)
+    service.create_error = (
+        409,
+        {
+            "code": "model_locked",
+            "message": "Another import of org/tiny is running.",
+            "retryable": False,
+        },
+    )
+    assert run("import", bundled).exit_code == 1
+    [item] = json.loads((here / "run-record.json").read_text())["items"]
+    assert item["status"] == "failed" and item["code"] == "model_locked"
+    assert "Another import" in item["reason"]
+
+
+def test_the_run_record_never_holds_the_token(
+    run, service, bundled, signed_in, tmp_path, monkeypatch
+):
+    here = tmp_path / "here"
+    here.mkdir()
+    monkeypatch.chdir(here)
+    service.create_error = (
+        400,
+        {"code": "bad", "message": f"Bearer {SECRET} was weird {SECRET}", "retryable": False},
+    )
+    run("import", bundled)
+    assert SECRET not in (here / "run-record.json").read_text()
+
+
+def test_nothing_is_written_when_the_run_cannot_start(run, bundled, tmp_path, monkeypatch):
+    here = tmp_path / "here"
+    here.mkdir()
+    monkeypatch.chdir(here)
+    assert run("import", bundled).exit_code == 2  # no settings
+    assert not (here / "run-record.json").exists()

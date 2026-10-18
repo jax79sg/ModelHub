@@ -23,6 +23,7 @@ from .app import create_app
 from .db import apply_grants, migrate
 from .store import CatalogStore
 
+STOP_GRACE_SECONDS = 30
 SECRETS = ["database_password", "token_hash_pepper"]
 SETTINGS = [
     *SHARED_SETTINGS,
@@ -94,7 +95,15 @@ def main() -> int:
     except StartupError as exc:
         sys.stderr.write(str(exc) + "\n")
         return 1
-    uvicorn.run(app, host="0.0.0.0", port=app.state.settings["MODELHUB_PORT"], log_config=None)
+    # A stop waits up to 30 seconds for stores in flight; a store cut off after that is rolled
+    # back by the database, so no half version is ever left behind (NFR4.4).
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=app.state.settings["MODELHUB_PORT"],
+        log_config=None,
+        timeout_graceful_shutdown=STOP_GRACE_SECONDS,
+    )
     return 0
 
 

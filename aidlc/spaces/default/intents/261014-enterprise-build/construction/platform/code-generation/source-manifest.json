@@ -1,0 +1,292 @@
+{
+  "stage": "code-generation",
+  "unit": "platform",
+  "version": 1,
+  "writes": [
+    {
+      "path": ".claude/loop/loop_guard.py"
+    },
+    {
+      "path": ".claude/loop/status_line.py"
+    },
+    {
+      "path": ".dockerignore"
+    },
+    {
+      "path": ".github/pull_request_template.md"
+    },
+    {
+      "path": ".github/workflows/ci.yml"
+    },
+    {
+      "path": ".github/workflows/release.yml"
+    },
+    {
+      "path": "deploy/Dockerfile"
+    },
+    {
+      "path": "deploy/README.md"
+    },
+    {
+      "path": "deploy/build-pack.sh"
+    },
+    {
+      "path": "deploy/compose.yaml"
+    },
+    {
+      "path": "deploy/env.example"
+    },
+    {
+      "path": "deploy/ops.sh"
+    },
+    {
+      "path": "deploy/proxy/Dockerfile"
+    },
+    {
+      "path": "deploy/proxy/nginx.conf"
+    },
+    {
+      "path": "deploy/smoke/Dockerfile"
+    },
+    {
+      "path": "deploy/smoke/compose.smoke.yaml"
+    },
+    {
+      "path": "deploy/smoke/driver.py"
+    },
+    {
+      "path": "deploy/smoke/env.smoke"
+    },
+    {
+      "path": "deploy/smoke/run.sh"
+    },
+    {
+      "path": "deploy/smoke/standins.py"
+    },
+    {
+      "path": "docs/ai-dlc-working-agreement.md"
+    },
+    {
+      "path": "docs/traceability.md"
+    },
+    {
+      "path": "server/e2e/tests/test_whole_stack.py"
+    },
+    {
+      "path": "src/modelhub/cli.py"
+    },
+    {
+      "path": "src/modelhub/serverpack.py"
+    },
+    {
+      "path": "tests/test_build_pack.py"
+    },
+    {
+      "path": "tests/test_deploy_definition.py"
+    },
+    {
+      "path": "tests/test_loop_guard.py"
+    },
+    {
+      "path": "tests/test_serverpack.py"
+    },
+    {
+      "path": "deploy/smoke/check_logs.py"
+    },
+    {
+      "path": "tests/test_smoke_logs.py"
+    },
+    {
+      "path": "deploy/monitoring/alerts.json"
+    },
+    {
+      "path": "deploy/monitoring/error_rate.py"
+    },
+    {
+      "path": "server/common/tests/test_monitoring.py"
+    },
+    {
+      "path": "server/common/pyproject.toml"
+    },
+    {
+      "path": "server/common/src/modelhub_common/__init__.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/config.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/guard.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/health.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/keys.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/logs.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/secrets.py"
+    },
+    {
+      "path": "server/common/src/modelhub_common/tokens.py"
+    },
+    {
+      "path": "server/common/tests/conftest.py"
+    },
+    {
+      "path": "server/common/tests/test_guard.py"
+    },
+    {
+      "path": "server/common/tests/test_health.py"
+    },
+    {
+      "path": "server/common/tests/test_keys.py"
+    },
+    {
+      "path": "server/common/tests/test_limits.py"
+    },
+    {
+      "path": "server/common/tests/test_logs.py"
+    },
+    {
+      "path": "server/common/tests/test_secrets_settings.py"
+    },
+    {
+      "path": "server/common/tests/test_tokens.py"
+    },
+    {
+      "path": "tests/conftest.py"
+    },
+    {
+      "path": "tests/fake_import_service.py"
+    },
+    {
+      "path": "tests/test_benchmark.py"
+    },
+    {
+      "path": "tests/test_bundle_cli.py"
+    },
+    {
+      "path": "tests/test_bundle_split.py"
+    },
+    {
+      "path": "tests/test_ci_definition.py"
+    },
+    {
+      "path": "tests/test_claude_usage.py"
+    },
+    {
+      "path": "tests/test_cli.py"
+    },
+    {
+      "path": "tests/test_download.py"
+    },
+    {
+      "path": "tests/test_exit_status.py"
+    },
+    {
+      "path": "tests/test_filetypes.py"
+    },
+    {
+      "path": "tests/test_fsutil.py"
+    },
+    {
+      "path": "tests/test_hubclient_network.py"
+    },
+    {
+      "path": "tests/test_import_cli.py"
+    },
+    {
+      "path": "tests/test_import_limits.py"
+    },
+    {
+      "path": "tests/test_interactive_drives.py"
+    },
+    {
+      "path": "tests/test_kill_restart.py"
+    },
+    {
+      "path": "tests/test_list.py"
+    },
+    {
+      "path": "tests/test_locking.py"
+    },
+    {
+      "path": "tests/test_logging.py"
+    },
+    {
+      "path": "tests/test_memory_limits.py"
+    },
+    {
+      "path": "tests/test_offline.py"
+    },
+    {
+      "path": "tests/test_packaging_defs.py"
+    },
+    {
+      "path": "tests/test_pieces.py"
+    },
+    {
+      "path": "tests/test_portable_names.py"
+    },
+    {
+      "path": "tests/test_progress.py"
+    },
+    {
+      "path": "tests/test_pull_metadata.py"
+    },
+    {
+      "path": "tests/test_pull_selection.py"
+    },
+    {
+      "path": "tests/test_readme_assets.py"
+    },
+    {
+      "path": "tests/test_record.py"
+    },
+    {
+      "path": "tests/test_runrecord.py"
+    },
+    {
+      "path": "tests/test_scale.py"
+    },
+    {
+      "path": "tests/test_secrets.py"
+    },
+    {
+      "path": "tests/test_signing.py"
+    },
+    {
+      "path": "tests/test_slice_roundtrip.py"
+    },
+    {
+      "path": "tests/test_summary.py"
+    },
+    {
+      "path": "tests/test_tamper_regression.py"
+    },
+    {
+      "path": "tests/test_text_encoding.py"
+    },
+    {
+      "path": "tests/test_token.py"
+    },
+    {
+      "path": "tests/test_trust.py"
+    },
+    {
+      "path": "tests/test_unpack.py"
+    },
+    {
+      "path": "tests/test_unpack_safety.py"
+    },
+    {
+      "path": "tests/test_verify.py"
+    },
+    {
+      "path": "deploy/constraints.txt"
+    }
+  ]
+}

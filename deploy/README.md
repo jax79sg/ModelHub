@@ -24,7 +24,7 @@ The two volumes are separate so a full import disk can never stop the database.
 ## First install
 
 ```bash
-./ops.sh preflight               # checks Docker, free space, .env
+./ops.sh preflight               # checks Docker, .env and 540 GB free (100 GB database + 440 GB import)
 cp env.example .env              # then fill it in (PUBLIC_URL, KEYCLOAK_ISSUER, ARTIFACTORY_*)
 ./ops.sh init-secrets            # random secrets are made; you type the three external ones
 cp /path/to/certificate.pem secrets/tls_certificate
@@ -66,12 +66,31 @@ are never in an image, an environment variable or `compose.yaml`. The folder is 
 people on the server (mode 700); the files are readable (mode 444) because each container runs as
 its own non-root user. Keep `secrets/` out of backups that leave the server.
 
+## Before the first real use with Artifactory
+
+The images were built and tested against a stand-in for Artifactory, with `huggingface_hub 2.2.0`
+(pinned in `constraints.txt`). The first real Artifactory test is the check that this version
+works with it: the first import into the organisation's Artifactory. import one small model, then list it and download it with
+`jf hf download`. If Artifactory refuses this version, change the pin in `constraints.txt`, rebuild
+and test again. The same first run is the place to check the rest of the Artifactory
+behaviour that the stand-in could only assume (see the stand-in's checklist).
+
 ## What the central monitoring should watch
 
 Any container unhealthy for 5 minutes in business hours; free space under 20% on the database
 volume and under 25% on `import-work`; the certificate within 30 days of expiry; memory over 90%
 for 10 minutes; proxy 5xx over 5% for 10 minutes. Every container writes JSON lines to standard
 output, and each request carries an `X-Request-Id` set by the proxy.
+
+The alerts of the design (ready 503 over 5 minutes, 5xx share over 5% and the list 95th percentile
+over 800 ms for 10 minutes, any import failed as `interrupted` or `artifactory_inconsistent`, import
+disk under 25% free, Artifactory down over 10 minutes) are listed with the signal each is read from
+in `monitoring/alerts.json`; the monitoring team loads them. The share of 5xx lines per service can
+be taken from the logs with `python3 monitoring/error_rate.py <log file> --fail-above 0.05`
+(`docker compose logs --no-color > logs.txt` makes the file).
+
+`./ops.sh preflight` stops when less than 540 GB are free; on a small test server only, run
+`MODELHUB_PREFLIGHT_SMALL=1 ./ops.sh preflight`.
 
 ## Not covered here
 

@@ -1,0 +1,130 @@
+{
+  "stage": "code-generation",
+  "unit": "artifactory-service",
+  "version": 1,
+  "writes": [
+    {
+      "path": "server/artifactory_service/pyproject.toml"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/__init__.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/app.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/catalog_client.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/db.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/gateway.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/importer.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/keys.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/main.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/migrations/0001_initial.sql"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/names.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/record_builder.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/retention.py"
+    },
+    {
+      "path": "server/artifactory_service/src/modelhub_artifactory_service/retry.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/conftest.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_api.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_catalog_client.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_cli_end_to_end.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_db.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_gateway.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_importer.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_keys.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_main.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_operability.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_pure.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_retention.py"
+    },
+    {
+      "path": "src/modelhub/verify.py"
+    },
+    {
+      "path": "src/modelhub/unpack.py"
+    },
+    {
+      "path": "src/modelhub/signing.py"
+    },
+    {
+      "path": "server/stand_in/src/modelhub_stand_in/app.py"
+    },
+    {
+      "path": "server/artifactory_service/tests/test_limits_and_resilience.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/relay.py"
+    },
+    {
+      "path": "server/testkit/pyproject.toml"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/__init__.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/bundles.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/issuer.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/keycloak.py"
+    },
+    {
+      "path": "server/testkit/src/modelhub_testkit/postgres.py"
+    },
+    {
+      "path": "server/testkit/tests/test_bundles.py"
+    },
+    {
+      "path": "server/testkit/tests/test_issuer.py"
+    },
+    {
+      "path": "server/testkit/tests/test_postgres.py"
+    }
+  ]
+}

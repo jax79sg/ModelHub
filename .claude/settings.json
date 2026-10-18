@@ -53,7 +53,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "aidlc engine statusline"
+    "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/loop/status_line.py\""
   },
   "env": {
     "AWS_AIDLC_DEFAULT_SCOPE": "classic"
@@ -107,6 +107,16 @@
             "type": "command",
             "command": "aidlc engine hook plan-approval-guard",
             "timeout": 1800
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/loop/loop_guard.py\"",
+            "timeout": 30
           }
         ]
       }

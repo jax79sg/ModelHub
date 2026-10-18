@@ -29,9 +29,18 @@ preflight() {
   done
   docker compose --env-file .env config --quiet 2>/dev/null \
     || say "Note: compose.yaml needs release.env (from the server pack) as well as .env"
+  root=$(docker info --format '{{.DockerRootDir}}' 2>/dev/null || echo /)
   say "Free space on the Docker data folder:"
-  df -h "$(docker info --format '{{.DockerRootDir}}' 2>/dev/null || echo /)" | tail -1
-  say "Minimums: 100 GB for the database volume, 500 GB for the import working volume, 16 GB memory."
+  df -h "${root}" | tail -1
+  say "Minimums: 100 GB for the database volume, 440 GB for the import working volume (planned at 500 GB), 16 GB memory."
+  free_gb=$(( $(df -Pk "${root}" | awk 'NR==2 {print $4}') / 1024 / 1024 ))
+  if [ "${free_gb}" -lt 540 ]; then
+    if [ "${MODELHUB_PREFLIGHT_SMALL:-}" = "1" ]; then
+      say "Note: only ${free_gb} GB are free (540 GB are needed); continuing because MODELHUB_PREFLIGHT_SMALL=1 says this is a small test server."
+    else
+      fail "only ${free_gb} GB are free on the Docker data folder; 540 GB are needed (100 GB database + 440 GB import area). For a small test server only, run: MODELHUB_PREFLIGHT_SMALL=1 ./ops.sh preflight"
+    fi
+  fi
   say "Preflight finished."
 }
 

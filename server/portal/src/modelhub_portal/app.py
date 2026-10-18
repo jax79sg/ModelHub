@@ -75,7 +75,16 @@ BANDS = [
     ("128b", "32B–128B"),
     ("gt500b", "> 500B"),
 ]
-FILTERS = ("task", "library", "license", "language", "parameters", "importedFrom", "importedTo")
+FILTERS = (
+    "task",
+    "library",
+    "license",
+    "language",
+    "parameters",
+    "importedByName",
+    "importedFrom",
+    "importedTo",
+)
 
 
 @dataclass
@@ -218,7 +227,9 @@ def create_app(
                     )
             response.headers.setdefault("Content-Security-Policy", CSP)
             response.headers.setdefault("X-Content-Type-Options", "nosniff")
-            response.headers.setdefault("Referrer-Policy", "no-referrer")
+            # Nothing is sent to other sites. Not "no-referrer": Chrome then sends "Origin: null" with
+            # every form post, and the origin check (BR1.3) would refuse every form (NFR10.1).
+            response.headers.setdefault("Referrer-Policy", "same-origin")
             if not path.startswith("/static/"):
                 response.headers.setdefault("Cache-Control", "no-store")
             response.headers["X-Request-Id"] = request.state.request_id

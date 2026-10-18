@@ -378,26 +378,40 @@ def import_(
         )
         raise typer.Exit(2)
     client = make_service_client(client_settings)
-    shown = progress.Reporter()
-    try:
-        report = importer.run(client, descriptions, shown)
-    except importer.RunStopped as error:
-        typer.echo(redact.redact(f"Error: {error}"), err=True)
-        raise typer.Exit(2) from None
-    except importer.Interrupted as stop:
-        shown.finish()
-        for entry in stop.report.entries:
+    with _session("import", Path.cwd()) as (shown, run, _names):
+        try:
+            report = importer.run(client, descriptions, shown)
+        except importer.RunStopped as error:
+            typer.echo(redact.redact(f"Error: {error}"), err=True)
+            raise typer.Exit(2) from None
+        except importer.Interrupted as stop:
+            shown.finish()
+            _record_entries(run, stop.report.entries)
+            for entry in stop.report.entries:
+                typer.echo(redact.redact(entry.line()))
+            typer.echo(
+                "Stopped. Not finished: " + ", ".join(stop.unfinished) + ". Run the same command "
+                "again to carry on; what was already sent is kept.",
+                err=True,
+            )
+            raise typer.Exit(130) from None
+        _record_entries(run, report.entries)
+        for entry in report.entries:
             typer.echo(redact.redact(entry.line()))
-        typer.echo(
-            "Stopped. Not finished: " + ", ".join(stop.unfinished) + ". Run the same command "
-            "again to carry on; what was already sent is kept.",
-            err=True,
-        )
-        raise typer.Exit(130) from None
-    for entry in report.entries:
-        typer.echo(redact.redact(entry.line()))
-    typer.echo(report.summary())
+        typer.echo(report.summary())
     raise typer.Exit(report.exit_status)
+
+
+def _record_entries(run: runrecord.RunRecord, entries: list) -> None:
+    """One run-record line per model: what happened and why, never the token (NFR6.3)."""
+    for entry in entries:
+        run.add(
+            entry.model_id,
+            entry.result,
+            commit=entry.commit or None,
+            reason=entry.reason,
+            code=entry.code,
+        )
 
 
 # --- verify, unpack, list -------------------------------------------------------------

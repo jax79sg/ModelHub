@@ -358,3 +358,33 @@ def test_creating_again_for_an_unfinished_import_returns_it_with_the_missing_pie
     world.put_piece(first["importId"], "u1", 1, io.BytesIO(data), hashlib.sha256(data).hexdigest())
     again = create(world, bundle)
     assert again["importId"] == first["importId"] and 1 not in again["missingPieces"]
+
+
+def test_the_disk_check_adds_ten_percent_and_the_refusal_can_be_retried(world, bundle):
+    size = json.loads(bundle.description_path.read_text())["stream"]["size"]
+    world.free_bytes = lambda path: size + size // 10 - 1  # one byte short of the sizes plus 10%
+    with pytest.raises(ServiceError) as err:
+        create(world, bundle)
+    assert err.value.status == 507 and err.value.retryable is True
+    world.free_bytes = lambda path: size + size // 10
+    assert create(world, bundle)["state"] == "receiving"
+
+
+def test_a_running_import_can_be_cancelled_and_stops_before_uploading(world, bundle):
+    job = create(world, bundle)
+    send_all(world, job, bundle)
+    world.start(job["importId"], "u1")  # now verifying, not yet run
+    world.cancel(job["importId"], "u1")  # asks it to stop; the run honours that
+    world.run(job["importId"])
+    got = world.get(job["importId"], "u1")
+    assert got["state"] == "cancelled" and got["error"]["code"] == "cancelled"
+    assert world.gateway.list_version(bundle.model_id, bundle.commit).state == "absent"
+    assert not (world.work / job["importId"]).exists()
+    create(world, bundle)  # the model is free again
+
+
+def test_cancelling_an_ended_import_is_refused(world, bundle):
+    job = run_import(world, bundle)
+    with pytest.raises(ServiceError) as err:
+        world.cancel(job["importId"], "u1")
+    assert err.value.status == 409

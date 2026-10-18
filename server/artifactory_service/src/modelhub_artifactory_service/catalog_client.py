@@ -99,6 +99,13 @@ class CatalogClient:
             raise AuthUnavailable("The Catalog did not accept this service's token.")
         return response
 
+    def ping(self) -> bool:
+        """True when the Catalog's live check answers (no token is needed or sent)."""
+        try:
+            return self._http.get(self._base + "/healthz").status_code == 200
+        except httpx.HTTPError:
+            return False
+
     def introspect(self, token_value: str) -> dict:
         r = self._request("POST", "/v1/tokens/introspect", json={"token": token_value})
         return r.json()

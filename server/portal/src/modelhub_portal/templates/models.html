@@ -11,8 +11,8 @@
 {% block body %}
 <div class="container list-layout">
   <aside class="filters" aria-label="Filters">
-    {% for key, label in [('task', 'Tasks'), ('library', 'Libraries'), ('license', 'Licenses'), ('language', 'Languages')] %}
-      {% if result.facets.get(key) %}<section><h3>{{ label }}</h3>{{ chips(label, result.facets[key], key) }}</section>{% endif %}
+    {% for key, label in [('task', 'Tasks'), ('library', 'Libraries'), ('license', 'Licenses'), ('language', 'Languages'), ('importedByName', 'Imported by')] %}
+      {% if result.facets.get(key if key != 'importedByName' else 'importedBy') %}<section><h3>{{ label }}</h3>{{ chips(label, result.facets[key if key != 'importedByName' else 'importedBy'], key) }}</section>{% endif %}
     {% endfor %}
     <section><h3>Parameters</h3>
       <div class="chips">

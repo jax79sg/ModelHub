@@ -93,3 +93,15 @@ def test_with_a_migration_role_the_service_runs_as_a_limited_one_that_sees_only_
             conn.execute("create table artifactory_service.sneaky (a int)")
         with pytest.raises(psycopg.errors.InsufficientPrivilege):
             conn.execute("select * from public.secret_stuff")
+
+
+def test_ready_says_degraded_when_artifactory_and_the_catalog_cannot_be_reached(
+    fresh_database, tmp_path
+):
+    """NFR6.2: the database is critical; Artifactory and the Catalog are reported, not fatal."""
+    env = env_for(fresh_database, tmp_path, tmp_path / "work")
+    app = build_app(env, jwks_fetch=FakeIssuer().jwks)
+    body = TestClient(app).get("/readyz")
+    assert body.status_code == 200
+    assert body.json()["status"] == "degraded"
+    assert body.json()["checks"] == {"database": "ok", "artifactory": "down", "catalog": "down"}

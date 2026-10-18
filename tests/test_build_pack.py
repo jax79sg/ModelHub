@@ -75,6 +75,8 @@ def test_the_pack_holds_the_images_the_settings_and_the_operator_files(tools, tm
         "env.example",
         "ops.sh",
         "README.md",
+        "monitoring/error_rate.py",
+        "monitoring/alerts.json",
         "release.env",
         "images/catalog.tar.gz",
         "images/artifactory-service.tar.gz",
@@ -106,7 +108,9 @@ def test_the_pack_compose_file_does_not_mention_the_smoke_override():
         assert word not in text
     base = yaml.safe_load(text)
     assert not ({"standins", "driver"} & set(base["services"]))
-    smoke = yaml.safe_load((DEPLOY / "smoke" / "compose.smoke.yaml").read_text())
+    smoke = yaml.safe_load(
+        (DEPLOY / "smoke" / "compose.smoke.yaml").read_text().replace("!reset", "")
+    )
     assert {"standins", "driver"} <= set(smoke["services"])
 
 

@@ -89,3 +89,47 @@ class FakeImportService:
                 )
             return self._json(200, {"importId": "i1", **self.final})
         return httpx.Response(404)
+
+
+def serve(fake: "FakeImportService", on_request=None):
+    """Put the fake behind a real local HTTP port, so a separate process can call it.
+
+    ``on_request(method, path)`` runs before each answer (a test uses it to kill the caller).
+    Returns ``(url, stop)``.
+    """
+    import threading
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    class Handler(BaseHTTPRequestHandler):
+        def _answer(self):
+            length = int(self.headers.get("content-length") or 0)
+            body = self.rfile.read(length) if length else b""
+            if on_request:
+                on_request(self.command, self.path)
+            request = httpx.Request(
+                self.command,
+                f"http://127.0.0.1{self.path}",
+                headers=dict(self.headers),
+                content=body,
+            )
+            response = fake._handle(request)
+            self.send_response(response.status_code)
+            data = response.content
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Content-Type", response.headers.get("content-type", "text/plain"))
+            self.end_headers()
+            self.wfile.write(data)
+
+        do_GET = do_POST = do_PUT = do_DELETE = _answer
+
+        def log_message(self, *args):
+            pass
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+
+    def stop() -> None:
+        server.shutdown()
+        server.server_close()
+
+    return f"http://127.0.0.1:{server.server_address[1]}", stop

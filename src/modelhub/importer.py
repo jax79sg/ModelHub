@@ -25,7 +25,7 @@ from modelhub.record import utc_now
 
 RETRY_WAITS = (1, 2, 4, 8, 16)
 BLOCK = 1 << 20
-POLL_SECONDS = 2
+POLL_SECONDS = 1  # so a finished import is reported within 2 seconds even on a slow link (NFR1.1)
 BUSY_POLL_SECONDS = 60
 BUSY_WAIT_MINUTES = 30
 DONE_STATES = {"done", "failed", "skipped", "cancelled"}

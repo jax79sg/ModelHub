@@ -1,0 +1,50 @@
+{
+  "stage": "code-generation",
+  "unit": "common",
+  "upstream_ids": [
+    "FR4.1",
+    "FR4.2",
+    "FR4.3",
+    "FR6.4",
+    "FR6.5",
+    "FR3.1",
+    "NFR9"
+  ],
+  "coverage": [
+    {
+      "id": "FR4.1",
+      "status": "OK",
+      "target": "server/common/src/modelhub_common/guard.py"
+    },
+    {
+      "id": "FR4.2",
+      "status": "OK",
+      "target": "server/common/src/modelhub_common/tokens.py"
+    },
+    {
+      "id": "FR4.3",
+      "status": "OK",
+      "target": "server/common/src/modelhub_common/guard.py"
+    },
+    {
+      "id": "FR6.4",
+      "status": "OK",
+      "target": "server/common/src/modelhub_common/secrets.py"
+    },
+    {
+      "id": "FR6.5",
+      "status": "OK",
+      "target": "server/common/src/modelhub_common/health.py"
+    },
+    {
+      "id": "FR3.1",
+      "status": "OK",
+      "target": "server/common/src/modelhub_common/guard.py"
+    },
+    {
+      "id": "NFR9",
+      "status": "OK",
+      "target": "server/common/tests/test_guard.py"
+    }
+  ]
+}

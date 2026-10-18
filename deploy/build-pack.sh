@@ -35,6 +35,8 @@ POSTGRES_IMAGE=modelhub/postgres:${RELEASE}
 ENV
 
 cp compose.yaml env.example ops.sh README.md "${OUT}/"
+mkdir -p "${OUT}/monitoring"
+cp monitoring/error_rate.py monitoring/alerts.json "${OUT}/monitoring/"
 chmod +x "${OUT}/ops.sh"
 
 if [ -n "${KEY_ID:-}" ]; then
