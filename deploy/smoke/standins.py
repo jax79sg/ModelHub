@@ -7,7 +7,11 @@ from pathlib import Path
 from modelhub_stand_in.server import StandIn
 from modelhub_testkit.keycloak import KeycloakServer
 
-token = Path("/run/secrets/artifactory_token").read_text().strip()
+token = (
+    Path(os.environ.get("ARTIFACTORY_TOKEN_FILE", "/run/secrets/artifactory_token"))
+    .read_text()
+    .strip()
+)
 # SIGNIN_STANDIN=0 runs only the Artifactory stand-in (beside a real Keycloak, deploy/keycloak/).
 keycloak = (
     KeycloakServer(host="0.0.0.0", public_host="standins", port=9000).start()

@@ -2129,3 +2129,290 @@
 **Stage**: code-generation
 
 ---
+
+## Human Turn
+**Timestamp**: 2026-10-19T00:23:53Z
+**Event**: HUMAN_TURN
+**Session**: 5686a56e-f4cb-480b-9d8e-9df6328a1a78
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-10-19T00:26:29Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/build-instructions.md
+**Context**: construction > build-and-test > build-instructions.md
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-10-19T00:26:33Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/integration-test-instructions.md
+**Context**: construction > build-and-test > integration-test-instructions.md
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-10-19T00:26:44Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/build-and-test-summary.md
+**Context**: construction > build-and-test > build-and-test-summary.md
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-10-19T00:26:51Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/test-results.md
+**Context**: construction > build-and-test > test-results.md
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-10-19T00:26:55Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/cross-unit-traceability.md
+**Context**: construction > build-and-test > cross-unit-traceability.md
+
+---
+
+## Change Accepted
+**Timestamp**: 2026-10-19T00:26:56Z
+**Event**: CHANGE_ACCEPTED
+**Stage**: code-generation
+**Unit**: keycloak
+**Checkpoint**: construction-unit
+**Changed**: deploy/smoke/standins.py, server/e2e/tests/test_real_keycloak.py, tests/test_keycloak_files.py
+**Recorded**: sha256:da2fa3632c928226de55e4136b63cc69cbca794b1032c314ce379292aba20e2c
+**Current**: sha256:95a63af2abe01b20a4369a8e67b5c3d8ce3d5a12650d1242a50b62faff59da4b
+**Details**: deploy/smoke/standins.py, server/e2e/tests/test_real_keycloak.py, tests/test_keycloak_files.py changed after you approved Unit keycloak; carrying on.
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: f7a7205b
+**Sensor ID**: required-sections
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/build-instructions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: f7a7205b
+**Sensor ID**: required-sections
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/build-instructions.md
+**Duration ms**: 52
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: 9f16c4b6
+**Sensor ID**: required-sections
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/integration-test-instructions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: 9f16c4b6
+**Sensor ID**: required-sections
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/integration-test-instructions.md
+**Duration ms**: 51
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: 5a32a7de
+**Sensor ID**: required-sections
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/build-and-test-summary.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: 5a32a7de
+**Sensor ID**: required-sections
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/build-and-test-summary.md
+**Duration ms**: 52
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: 8f0ff797
+**Sensor ID**: required-sections
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/test-results.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: 8f0ff797
+**Sensor ID**: required-sections
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/test-results.md
+**Duration ms**: 51
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: 63857eb4
+**Sensor ID**: required-sections
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/cross-unit-traceability.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_PASSED
+**Fire id**: 63857eb4
+**Sensor ID**: required-sections
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/cross-unit-traceability.md
+**Duration ms**: 52
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_FIRED
+**Fire id**: fdb1796b
+**Sensor ID**: upstream-coverage
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/build-instructions.md
+
+---
+
+## Sensor Failed
+**Timestamp**: 2026-10-19T00:26:57Z
+**Event**: SENSOR_FAILED
+**Fire id**: fdb1796b
+**Sensor ID**: upstream-coverage
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/build-instructions.md
+**Detail path**: aidlc/spaces/default/intents/261018-keycloak-container/.aidlc-engine/sensors/build-and-test/upstream-coverage-fdb1796b.md
+**Findings count**: 2
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-19T00:26:58Z
+**Event**: SENSOR_FIRED
+**Fire id**: 13ad64c6
+**Sensor ID**: upstream-coverage
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/integration-test-instructions.md
+
+---
+
+## Sensor Failed
+**Timestamp**: 2026-10-19T00:26:58Z
+**Event**: SENSOR_FAILED
+**Fire id**: 13ad64c6
+**Sensor ID**: upstream-coverage
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/integration-test-instructions.md
+**Detail path**: aidlc/spaces/default/intents/261018-keycloak-container/.aidlc-engine/sensors/build-and-test/upstream-coverage-13ad64c6.md
+**Findings count**: 2
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-19T00:26:58Z
+**Event**: SENSOR_FIRED
+**Fire id**: cf166a76
+**Sensor ID**: upstream-coverage
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/build-and-test-summary.md
+
+---
+
+## Sensor Failed
+**Timestamp**: 2026-10-19T00:26:58Z
+**Event**: SENSOR_FAILED
+**Fire id**: cf166a76
+**Sensor ID**: upstream-coverage
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/build-and-test-summary.md
+**Detail path**: aidlc/spaces/default/intents/261018-keycloak-container/.aidlc-engine/sensors/build-and-test/upstream-coverage-cf166a76.md
+**Findings count**: 2
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-19T00:26:58Z
+**Event**: SENSOR_FIRED
+**Fire id**: e5d40e97
+**Sensor ID**: upstream-coverage
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/test-results.md
+
+---
+
+## Sensor Failed
+**Timestamp**: 2026-10-19T00:26:58Z
+**Event**: SENSOR_FAILED
+**Fire id**: e5d40e97
+**Sensor ID**: upstream-coverage
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/test-results.md
+**Detail path**: aidlc/spaces/default/intents/261018-keycloak-container/.aidlc-engine/sensors/build-and-test/upstream-coverage-e5d40e97.md
+**Findings count**: 2
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-10-19T00:26:58Z
+**Event**: SENSOR_FIRED
+**Fire id**: b13aee27
+**Sensor ID**: upstream-coverage
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/cross-unit-traceability.md
+
+---
+
+## Sensor Failed
+**Timestamp**: 2026-10-19T00:26:58Z
+**Event**: SENSOR_FAILED
+**Fire id**: b13aee27
+**Sensor ID**: upstream-coverage
+**Stage slug**: build-and-test
+**Output path**: aidlc/spaces/default/intents/261018-keycloak-container/construction/build-and-test/cross-unit-traceability.md
+**Detail path**: aidlc/spaces/default/intents/261018-keycloak-container/.aidlc-engine/sensors/build-and-test/upstream-coverage-b13aee27.md
+**Findings count**: 2
+
+---
+
+## Stage Awaiting Approval
+**Timestamp**: 2026-10-19T00:26:59Z
+**Event**: STAGE_AWAITING_APPROVAL
+**Stage**: build-and-test
+
+---

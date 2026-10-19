@@ -5,6 +5,7 @@ Everything here is checked on the files (no Docker needed); the real sign-in tes
 """
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -178,7 +179,10 @@ def test_the_start_script_is_valid_shell_and_fills_the_stack_from_the_realm_file
     import subprocess
 
     text = UP.read_text(encoding="utf-8")
-    assert subprocess.run(["bash", "-n", str(UP)], check=False).returncode == 0
+    if (
+        sys.platform != "win32"
+    ):  # the script is for Linux and macOS; Windows may check it out with CRLF
+        assert subprocess.run(["bash", "-n", str(UP)], check=False).returncode == 0
     assert "KEYCLOAK_ISSUER=http://keycloak:8080/realms/modelhub" in text
     assert "modelhub-realm.json" in text and "init-secrets" in text
     assert "'modelhub'" in text and "'modelhub-artifactory-service'" in text
@@ -282,3 +286,27 @@ def test_ci_runs_the_real_keycloak_sign_in_tests_and_fails_where_chrome_or_docke
     assert "server/e2e/tests/test_real_keycloak.py" in job and "-rs" in job
     assert "postgres:16" in job and "playwright" in job
     assert "skipped" in job  # the run fails if the tests were skipped instead of run
+
+
+def test_the_stand_in_file_really_runs_only_the_artifactory_stand_in_when_told_to(tmp_path):
+    import os
+    import subprocess
+    import sys
+
+    pytest.importorskip("modelhub_stand_in")
+    token = tmp_path / "token"
+    token.write_text("test-token-not-for-production\n", encoding="utf-8")
+    env = {**os.environ, "SIGNIN_STANDIN": "0", "ARTIFACTORY_TOKEN_FILE": str(token)}
+    proc = subprocess.Popen(
+        [sys.executable, str(ROOT / "deploy" / "smoke" / "standins.py")],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    try:
+        line = proc.stdout.readline()
+    finally:
+        proc.kill()
+        proc.communicate()
+    assert line.startswith("no sign-in stand-in; Artifactory stand-in at ")
