@@ -1,0 +1,164 @@
+{
+  "stage": "code-generation",
+  "unit": "keycloak",
+  "upstream_ids": [
+    "FR1",
+    "FR1.1",
+    "FR1.2",
+    "FR1.3",
+    "FR2",
+    "FR2.1",
+    "FR2.2",
+    "FR2.3",
+    "FR3",
+    "FR3.1",
+    "FR3.2",
+    "FR3.3",
+    "FR4",
+    "FR4.1",
+    "FR5",
+    "FR5.1",
+    "FR5.2",
+    "FR6",
+    "FR6.1",
+    "FR6.2",
+    "FR6.3",
+    "NFR1",
+    "NFR2",
+    "NFR3",
+    "NFR4",
+    "NFR5"
+  ],
+  "coverage": [
+    {
+      "id": "FR1",
+      "status": "OK",
+      "target": "deploy/keycloak/compose.keycloak.yaml"
+    },
+    {
+      "id": "FR1.1",
+      "status": "OK",
+      "target": "deploy/keycloak/compose.keycloak.yaml"
+    },
+    {
+      "id": "FR1.2",
+      "status": "OK",
+      "target": "deploy/keycloak/compose.keycloak.yaml"
+    },
+    {
+      "id": "FR1.3",
+      "status": "OK",
+      "target": "deploy/keycloak/compose.keycloak.yaml"
+    },
+    {
+      "id": "FR2",
+      "status": "OK",
+      "target": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "id": "FR2.1",
+      "status": "OK",
+      "target": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "id": "FR2.2",
+      "status": "OK",
+      "target": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "id": "FR2.3",
+      "status": "OK",
+      "target": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "id": "FR3",
+      "status": "OK",
+      "target": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "id": "FR3.1",
+      "status": "OK",
+      "target": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "id": "FR3.2",
+      "status": "OK",
+      "target": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "id": "FR3.3",
+      "status": "OK",
+      "target": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "id": "FR4",
+      "status": "OK",
+      "target": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "id": "FR4.1",
+      "status": "OK",
+      "target": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "id": "FR5",
+      "status": "OK",
+      "target": "deploy/keycloak/up.sh"
+    },
+    {
+      "id": "FR5.1",
+      "status": "OK",
+      "target": "deploy/keycloak/compose.stack.yaml"
+    },
+    {
+      "id": "FR5.2",
+      "status": "OK",
+      "target": "deploy/keycloak/README.md"
+    },
+    {
+      "id": "FR6",
+      "status": "OK",
+      "target": "server/e2e/tests/test_real_keycloak.py"
+    },
+    {
+      "id": "FR6.1",
+      "status": "OK",
+      "target": "tests/test_keycloak_files.py"
+    },
+    {
+      "id": "FR6.2",
+      "status": "OK",
+      "target": "server/e2e/tests/test_real_keycloak.py"
+    },
+    {
+      "id": "FR6.3",
+      "status": "OK",
+      "target": ".github/workflows/ci.yml"
+    },
+    {
+      "id": "NFR1",
+      "status": "OK",
+      "target": "tests/test_keycloak_files.py"
+    },
+    {
+      "id": "NFR2",
+      "status": "OK",
+      "target": "tests/test_keycloak_files.py"
+    },
+    {
+      "id": "NFR3",
+      "status": "OK",
+      "target": "server/e2e/tests/test_real_keycloak.py"
+    },
+    {
+      "id": "NFR4",
+      "status": "OK",
+      "target": "deploy/keycloak/compose.keycloak.yaml"
+    },
+    {
+      "id": "NFR5",
+      "status": "OK",
+      "target": "tests/test_keycloak_files.py"
+    }
+  ]
+}

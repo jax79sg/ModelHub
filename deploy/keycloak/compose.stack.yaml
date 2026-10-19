@@ -1,0 +1,31 @@
+# Added to compose.yaml and compose.keycloak.yaml to run the whole stack against the REAL test
+# Keycloak, with only the Artifactory stand-in standing for Artifactory. Test and development only;
+# never part of the signed server pack. Use deploy/keycloak/up.sh.
+services:
+  standins:
+    image: modelhub/smoke:${SMOKE_VERSION:?set SMOKE_VERSION}
+    command: ["python", "/smoke/standins.py"]
+    environment:
+      SIGNIN_STANDIN: "0"   # no sign-in imitation: the real Keycloak is used
+    networks: {internal: {}}
+    secrets: [artifactory_token]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; socket.create_connection(('127.0.0.1', 9100), 3).close()"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  catalog:
+    depends_on:
+      keycloak: {condition: service_healthy}
+  artifactory-service:
+    depends_on:
+      keycloak: {condition: service_healthy}
+      standins: {condition: service_healthy}
+  portal:
+    depends_on:
+      keycloak: {condition: service_healthy}
+      standins: {condition: service_healthy}
+  proxy:
+    networks:
+      internal: {aliases: [modelhub.test]}
+    ports: !override ["127.0.0.1:8443:8443"]

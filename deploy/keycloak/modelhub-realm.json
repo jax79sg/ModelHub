@@ -1,0 +1,121 @@
+{
+  "realm": "modelhub",
+  "displayName": "ModelHub (TEST ONLY)",
+  "attributes": {
+    "note": "Realm for testing ModelHub's sign-in. Every secret and password in this file is a test value; never use this file for a real server."
+  },
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "accessTokenLifespan": 300,
+  "roles": {
+    "realm": [
+      {
+        "name": "modelhub-admin",
+        "description": "May use the administrator screens of ModelHub (retention, trusted keys)."
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "modelhub",
+      "name": "ModelHub portal",
+      "description": "The portal's sign-in: authorisation code with a proof key (S256).",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "portal-client-secret-test-not-for-production",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "rootUrl": "http://localhost:8000",
+      "redirectUris": [
+        "http://localhost:8000/auth/callback",
+        "https://modelhub.test:8443/auth/callback"
+      ],
+      "webOrigins": [],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:8000/*##https://modelhub.test:8443/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-modelhub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "modelhub",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "modelhub-artifactory-service",
+      "name": "ModelHub import service",
+      "description": "The import service's own identity: client credentials only.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "service-client-secret-test-not-for-production",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "protocolMappers": [
+        {
+          "name": "audience-modelhub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "modelhub",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "ada",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "ada@modelhub.test",
+      "firstName": "Ada",
+      "lastName": "Tester",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ada-password-test-not-for-production",
+          "temporary": false
+        }
+      ],
+      "realmRoles": []
+    },
+    {
+      "username": "root",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "root@modelhub.test",
+      "firstName": "Root",
+      "lastName": "Admin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "root-password-test-not-for-production",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["modelhub-admin"]
+    }
+  ]
+}

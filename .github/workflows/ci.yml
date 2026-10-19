@@ -219,6 +219,43 @@ jobs:
           -e web -e server/catalog -e server/artifactory_service -e server/portal
       - run: pytest server/e2e/tests/test_chrome.py -v --timeout=240 -rs
 
+  # The sign-in path against a REAL Keycloak (the test-only one in deploy/keycloak/): the portal
+  # login in Chrome, a personal token, the import service's own token. Docker and Chrome are the
+  # runner's own; a run that skipped its tests instead of running them fails.
+  keycloak-real:
+    name: keycloak (real sign-in)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      MODELHUB_TEST_POSTGRES_URL: postgresql://postgres:test@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: google-chrome --version
+      - run: docker compose version
+      - run: >-
+          pip install pytest pytest-timeout playwright -e .
+          -e server/testkit -e server/common -e "server/stand_in[test]"
+          -e web -e server/catalog -e server/artifactory_service -e server/portal
+      - name: Real Keycloak sign-in tests (a skipped run fails)
+        run: |
+          pytest server/e2e/tests/test_real_keycloak.py -v --timeout=400 -rs | tee keycloak-run.txt
+          if grep -q "skipped" keycloak-run.txt; then echo "the tests were skipped, not run"; exit 1; fi
+
   # The stand-in must run the same where the import command is tested (NFR10): Windows and macOS too.
   stand-in:
     strategy:

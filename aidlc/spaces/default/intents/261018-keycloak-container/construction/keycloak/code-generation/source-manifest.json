@@ -1,0 +1,40 @@
+{
+  "stage": "code-generation",
+  "unit": "keycloak",
+  "version": 1,
+  "writes": [
+    {
+      "path": "deploy/keycloak/README.md"
+    },
+    {
+      "path": "deploy/keycloak/compose.keycloak.yaml"
+    },
+    {
+      "path": "deploy/keycloak/compose.stack.yaml"
+    },
+    {
+      "path": "deploy/keycloak/modelhub-realm.json"
+    },
+    {
+      "path": "deploy/keycloak/up.sh"
+    },
+    {
+      "path": "server/e2e/tests/test_real_keycloak.py"
+    },
+    {
+      "path": "tests/test_keycloak_files.py"
+    },
+    {
+      "path": ".github/workflows/ci.yml"
+    },
+    {
+      "path": "deploy/README.md"
+    },
+    {
+      "path": "deploy/smoke/standins.py"
+    },
+    {
+      "path": "tests/test_build_pack.py"
+    }
+  ]
+}
