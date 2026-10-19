@@ -98,7 +98,7 @@ def test_no_stand_in_or_smoke_file_goes_into_a_pack(tools, tmp_path, home, key):
     out = tmp_path / "pack"
     assert build(tools, out, home, KEY_ID=key).returncode == 0
     listed = (out / "SHA256SUMS").read_text()
-    for forbidden in ("smoke", "stand", "driver", "testkit", ".env", "secrets"):
+    for forbidden in ("smoke", "stand", "driver", "testkit", ".env", "secrets", "keycloak"):
         assert forbidden not in listed.lower().replace("release.env", "")
 
 

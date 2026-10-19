@@ -66,6 +66,12 @@ are never in an image, an environment variable or `compose.yaml`. The folder is 
 people on the server (mode 700); the files are readable (mode 444) because each container runs as
 its own non-root user. Keep `secrets/` out of backups that leave the server.
 
+## Trying the sign-in against a real Keycloak
+
+`keycloak/` holds a real Keycloak for testing, already set up for ModelHub (realm, clients, role,
+two test users), with a guide that also lists what to set up in the organisation's Keycloak. It is
+test only and is not part of this pack.
+
 ## Before the first real use with Artifactory
 
 The images were built and tested against a stand-in for Artifactory, with `huggingface_hub 2.2.0`
